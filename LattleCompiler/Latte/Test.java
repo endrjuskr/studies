@@ -30,13 +30,7 @@ public class Test
       System.out.println();
       System.out.println("Parse Succesful!");
       System.out.println();
-      System.out.println("[Abstract Syntax]");
-      System.out.println();
-      System.out.println(PrettyPrinter.show(parse_tree));
-      System.out.println();
-      System.out.println("[Linearized Tree]");
-      System.out.println();
-      System.out.println(PrettyPrinter.print(parse_tree));
+      TypeChecker tc = new TypeChecker(parse_tree);
     }
     catch(Throwable e)
     {
