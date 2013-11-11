@@ -1,0 +1,2448 @@
+Created by PLY version 3.4 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    FOR
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> listtopdef
+Rule 2     listexpr -> <empty>
+Rule 3     listexpr -> expr
+Rule 4     listexpr -> listexpr COMMA expr
+Rule 5     listtopdef -> topdef
+Rule 6     listtopdef -> listtopdef topdef
+Rule 7     liststmt -> stmt
+Rule 8     liststmt -> liststmt stmt
+Rule 9     listitem -> <empty>
+Rule 10    listitem -> item
+Rule 11    listitem -> listitem COMMA item
+Rule 12    listarg -> <empty>
+Rule 13    listarg -> arg
+Rule 14    listarg -> listarg COMMA arg
+Rule 15    item -> ID
+Rule 16    item -> ID EQUALS expr
+Rule 17    arg -> type ID
+Rule 18    topdef -> type ID LPAREN listarg RPAREN block
+Rule 19    block -> LBRACE RBRACE
+Rule 20    block -> LBRACE liststmt RBRACE
+Rule 21    stmt -> SEMI
+Rule 22    stmt -> block
+Rule 23    stmt -> type listitem SEMI
+Rule 24    stmt -> ID EQUALS expr SEMI
+Rule 25    stmt -> ID PLUSPLUS SEMI
+Rule 26    stmt -> ID MINUSMINUS SEMI
+Rule 27    stmt -> RETURN expr SEMI
+Rule 28    stmt -> RETURN SEMI
+Rule 29    stmt -> IF LPAREN expr RPAREN stmt
+Rule 30    stmt -> IF LPAREN expr RPAREN stmt ELSE stmt
+Rule 31    stmt -> WHILE LPAREN expr RPAREN stmt
+Rule 32    stmt -> expr SEMI
+Rule 33    expr6 -> ID
+Rule 34    expr6 -> NUMBER
+Rule 35    expr6 -> TRUE
+Rule 36    expr6 -> FALSE
+Rule 37    expr6 -> ID LPAREN listexpr RPAREN
+Rule 38    expr6 -> LPAREN expr RPAREN
+Rule 39    expr6 -> SENTENCE
+Rule 40    expr5 -> MINUS expr6
+Rule 41    expr5 -> expr6
+Rule 42    expr5 -> NOT expr6
+Rule 43    expr4 -> expr5
+Rule 44    mulop -> TIMES
+Rule 45    mulop -> DIVIDE
+Rule 46    mulop -> MOD
+Rule 47    expr4 -> expr4 mulop expr5
+Rule 48    addop -> PLUS
+Rule 49    addop -> MINUS
+Rule 50    expr3 -> expr3 addop expr4
+Rule 51    expr3 -> expr4
+Rule 52    relop -> LT
+Rule 53    relop -> LE
+Rule 54    relop -> GT
+Rule 55    relop -> GE
+Rule 56    relop -> EQ
+Rule 57    relop -> NE
+Rule 58    expr2 -> expr2 relop expr3
+Rule 59    expr2 -> expr3
+Rule 60    expr1 -> expr2 AND expr1
+Rule 61    expr1 -> expr2
+Rule 62    expr -> expr1 OR expr
+Rule 63    expr -> expr1
+Rule 64    type -> INT
+Rule 65    type -> STRING
+Rule 66    type -> VOID
+Rule 67    type -> BOOLEAN
+
+Terminals, with rules where they appear
+
+AND                  : 60
+BOOLEAN              : 67
+COMMA                : 4 11 14
+DIVIDE               : 45
+ELSE                 : 30
+EQ                   : 56
+EQUALS               : 16 24
+FALSE                : 36
+FOR                  : 
+GE                   : 55
+GT                   : 54
+ID                   : 15 16 17 18 24 25 26 33 37
+IF                   : 29 30
+INT                  : 64
+LBRACE               : 19 20
+LE                   : 53
+LPAREN               : 18 29 30 31 37 38
+LT                   : 52
+MINUS                : 40 49
+MINUSMINUS           : 26
+MOD                  : 46
+NE                   : 57
+NOT                  : 42
+NUMBER               : 34
+OR                   : 62
+PLUS                 : 48
+PLUSPLUS             : 25
+RBRACE               : 19 20
+RETURN               : 27 28
+RPAREN               : 18 29 30 31 37 38
+SEMI                 : 21 23 24 25 26 27 28 32
+SENTENCE             : 39
+STRING               : 65
+TIMES                : 44
+TRUE                 : 35
+VOID                 : 66
+WHILE                : 31
+error                : 
+
+Nonterminals, with rules where they appear
+
+addop                : 50
+arg                  : 13 14
+block                : 18 22
+expr                 : 3 4 16 24 27 29 30 31 32 38 62
+expr1                : 60 62 63
+expr2                : 58 60 61
+expr3                : 50 58 59
+expr4                : 47 50 51
+expr5                : 43 47
+expr6                : 40 41 42
+item                 : 10 11
+listarg              : 14 18
+listexpr             : 4 37
+listitem             : 11 23
+liststmt             : 8 20
+listtopdef           : 1 6
+mulop                : 47
+program              : 0
+relop                : 58
+stmt                 : 7 8 29 30 30 31
+topdef               : 5 6
+type                 : 17 18 23
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . listtopdef
+    (5) listtopdef -> . topdef
+    (6) listtopdef -> . listtopdef topdef
+    (18) topdef -> . type ID LPAREN listarg RPAREN block
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+
+    topdef                         shift and go to state 2
+    listtopdef                     shift and go to state 4
+    program                        shift and go to state 6
+    type                           shift and go to state 8
+
+state 1
+
+    (65) type -> STRING .
+
+    ID              reduce using rule 65 (type -> STRING .)
+    SEMI            reduce using rule 65 (type -> STRING .)
+    COMMA           reduce using rule 65 (type -> STRING .)
+
+
+state 2
+
+    (5) listtopdef -> topdef .
+
+    INT             reduce using rule 5 (listtopdef -> topdef .)
+    STRING          reduce using rule 5 (listtopdef -> topdef .)
+    VOID            reduce using rule 5 (listtopdef -> topdef .)
+    BOOLEAN         reduce using rule 5 (listtopdef -> topdef .)
+    $end            reduce using rule 5 (listtopdef -> topdef .)
+
+
+state 3
+
+    (66) type -> VOID .
+
+    ID              reduce using rule 66 (type -> VOID .)
+    SEMI            reduce using rule 66 (type -> VOID .)
+    COMMA           reduce using rule 66 (type -> VOID .)
+
+
+state 4
+
+    (1) program -> listtopdef .
+    (6) listtopdef -> listtopdef . topdef
+    (18) topdef -> . type ID LPAREN listarg RPAREN block
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+
+    $end            reduce using rule 1 (program -> listtopdef .)
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+
+    topdef                         shift and go to state 9
+    type                           shift and go to state 8
+
+state 5
+
+    (64) type -> INT .
+
+    ID              reduce using rule 64 (type -> INT .)
+    SEMI            reduce using rule 64 (type -> INT .)
+    COMMA           reduce using rule 64 (type -> INT .)
+
+
+state 6
+
+    (0) S' -> program .
+
+
+
+state 7
+
+    (67) type -> BOOLEAN .
+
+    ID              reduce using rule 67 (type -> BOOLEAN .)
+    SEMI            reduce using rule 67 (type -> BOOLEAN .)
+    COMMA           reduce using rule 67 (type -> BOOLEAN .)
+
+
+state 8
+
+    (18) topdef -> type . ID LPAREN listarg RPAREN block
+
+    ID              shift and go to state 10
+
+
+state 9
+
+    (6) listtopdef -> listtopdef topdef .
+
+    INT             reduce using rule 6 (listtopdef -> listtopdef topdef .)
+    STRING          reduce using rule 6 (listtopdef -> listtopdef topdef .)
+    VOID            reduce using rule 6 (listtopdef -> listtopdef topdef .)
+    BOOLEAN         reduce using rule 6 (listtopdef -> listtopdef topdef .)
+    $end            reduce using rule 6 (listtopdef -> listtopdef topdef .)
+
+
+state 10
+
+    (18) topdef -> type ID . LPAREN listarg RPAREN block
+
+    LPAREN          shift and go to state 11
+
+
+state 11
+
+    (18) topdef -> type ID LPAREN . listarg RPAREN block
+    (12) listarg -> .
+    (13) listarg -> . arg
+    (14) listarg -> . listarg COMMA arg
+    (17) arg -> . type ID
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+
+    RPAREN          reduce using rule 12 (listarg -> .)
+    COMMA           reduce using rule 12 (listarg -> .)
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+
+    listarg                        shift and go to state 12
+    type                           shift and go to state 14
+    arg                            shift and go to state 13
+
+state 12
+
+    (18) topdef -> type ID LPAREN listarg . RPAREN block
+    (14) listarg -> listarg . COMMA arg
+
+    RPAREN          shift and go to state 15
+    COMMA           shift and go to state 16
+
+
+state 13
+
+    (13) listarg -> arg .
+
+    RPAREN          reduce using rule 13 (listarg -> arg .)
+    COMMA           reduce using rule 13 (listarg -> arg .)
+
+
+state 14
+
+    (17) arg -> type . ID
+
+    ID              shift and go to state 17
+
+
+state 15
+
+    (18) topdef -> type ID LPAREN listarg RPAREN . block
+    (19) block -> . LBRACE RBRACE
+    (20) block -> . LBRACE liststmt RBRACE
+
+    LBRACE          shift and go to state 18
+
+    block                          shift and go to state 19
+
+state 16
+
+    (14) listarg -> listarg COMMA . arg
+    (17) arg -> . type ID
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+
+    type                           shift and go to state 14
+    arg                            shift and go to state 20
+
+state 17
+
+    (17) arg -> type ID .
+
+    RPAREN          reduce using rule 17 (arg -> type ID .)
+    COMMA           reduce using rule 17 (arg -> type ID .)
+
+
+state 18
+
+    (19) block -> LBRACE . RBRACE
+    (20) block -> LBRACE . liststmt RBRACE
+    (7) liststmt -> . stmt
+    (8) liststmt -> . liststmt stmt
+    (21) stmt -> . SEMI
+    (22) stmt -> . block
+    (23) stmt -> . type listitem SEMI
+    (24) stmt -> . ID EQUALS expr SEMI
+    (25) stmt -> . ID PLUSPLUS SEMI
+    (26) stmt -> . ID MINUSMINUS SEMI
+    (27) stmt -> . RETURN expr SEMI
+    (28) stmt -> . RETURN SEMI
+    (29) stmt -> . IF LPAREN expr RPAREN stmt
+    (30) stmt -> . IF LPAREN expr RPAREN stmt ELSE stmt
+    (31) stmt -> . WHILE LPAREN expr RPAREN stmt
+    (32) stmt -> . expr SEMI
+    (19) block -> . LBRACE RBRACE
+    (20) block -> . LBRACE liststmt RBRACE
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    RBRACE          shift and go to state 35
+    SEMI            shift and go to state 27
+    ID              shift and go to state 39
+    RETURN          shift and go to state 21
+    IF              shift and go to state 40
+    WHILE           shift and go to state 24
+    LBRACE          shift and go to state 18
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 42
+    liststmt                       shift and go to state 22
+    stmt                           shift and go to state 37
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+    type                           shift and go to state 34
+    block                          shift and go to state 44
+
+state 19
+
+    (18) topdef -> type ID LPAREN listarg RPAREN block .
+
+    INT             reduce using rule 18 (topdef -> type ID LPAREN listarg RPAREN block .)
+    STRING          reduce using rule 18 (topdef -> type ID LPAREN listarg RPAREN block .)
+    VOID            reduce using rule 18 (topdef -> type ID LPAREN listarg RPAREN block .)
+    BOOLEAN         reduce using rule 18 (topdef -> type ID LPAREN listarg RPAREN block .)
+    $end            reduce using rule 18 (topdef -> type ID LPAREN listarg RPAREN block .)
+
+
+state 20
+
+    (14) listarg -> listarg COMMA arg .
+
+    RPAREN          reduce using rule 14 (listarg -> listarg COMMA arg .)
+    COMMA           reduce using rule 14 (listarg -> listarg COMMA arg .)
+
+
+state 21
+
+    (27) stmt -> RETURN . expr SEMI
+    (28) stmt -> RETURN . SEMI
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    SEMI            shift and go to state 45
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 47
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 22
+
+    (20) block -> LBRACE liststmt . RBRACE
+    (8) liststmt -> liststmt . stmt
+    (21) stmt -> . SEMI
+    (22) stmt -> . block
+    (23) stmt -> . type listitem SEMI
+    (24) stmt -> . ID EQUALS expr SEMI
+    (25) stmt -> . ID PLUSPLUS SEMI
+    (26) stmt -> . ID MINUSMINUS SEMI
+    (27) stmt -> . RETURN expr SEMI
+    (28) stmt -> . RETURN SEMI
+    (29) stmt -> . IF LPAREN expr RPAREN stmt
+    (30) stmt -> . IF LPAREN expr RPAREN stmt ELSE stmt
+    (31) stmt -> . WHILE LPAREN expr RPAREN stmt
+    (32) stmt -> . expr SEMI
+    (19) block -> . LBRACE RBRACE
+    (20) block -> . LBRACE liststmt RBRACE
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    RBRACE          shift and go to state 48
+    SEMI            shift and go to state 27
+    ID              shift and go to state 39
+    RETURN          shift and go to state 21
+    IF              shift and go to state 40
+    WHILE           shift and go to state 24
+    LBRACE          shift and go to state 18
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 42
+    stmt                           shift and go to state 49
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+    type                           shift and go to state 34
+    block                          shift and go to state 44
+
+state 23
+
+    (34) expr6 -> NUMBER .
+
+    TIMES           reduce using rule 34 (expr6 -> NUMBER .)
+    DIVIDE          reduce using rule 34 (expr6 -> NUMBER .)
+    MOD             reduce using rule 34 (expr6 -> NUMBER .)
+    PLUS            reduce using rule 34 (expr6 -> NUMBER .)
+    MINUS           reduce using rule 34 (expr6 -> NUMBER .)
+    AND             reduce using rule 34 (expr6 -> NUMBER .)
+    LT              reduce using rule 34 (expr6 -> NUMBER .)
+    LE              reduce using rule 34 (expr6 -> NUMBER .)
+    GT              reduce using rule 34 (expr6 -> NUMBER .)
+    GE              reduce using rule 34 (expr6 -> NUMBER .)
+    EQ              reduce using rule 34 (expr6 -> NUMBER .)
+    NE              reduce using rule 34 (expr6 -> NUMBER .)
+    OR              reduce using rule 34 (expr6 -> NUMBER .)
+    SEMI            reduce using rule 34 (expr6 -> NUMBER .)
+    RPAREN          reduce using rule 34 (expr6 -> NUMBER .)
+    COMMA           reduce using rule 34 (expr6 -> NUMBER .)
+
+
+state 24
+
+    (31) stmt -> WHILE . LPAREN expr RPAREN stmt
+
+    LPAREN          shift and go to state 50
+
+
+state 25
+
+    (35) expr6 -> TRUE .
+
+    TIMES           reduce using rule 35 (expr6 -> TRUE .)
+    DIVIDE          reduce using rule 35 (expr6 -> TRUE .)
+    MOD             reduce using rule 35 (expr6 -> TRUE .)
+    PLUS            reduce using rule 35 (expr6 -> TRUE .)
+    MINUS           reduce using rule 35 (expr6 -> TRUE .)
+    AND             reduce using rule 35 (expr6 -> TRUE .)
+    LT              reduce using rule 35 (expr6 -> TRUE .)
+    LE              reduce using rule 35 (expr6 -> TRUE .)
+    GT              reduce using rule 35 (expr6 -> TRUE .)
+    GE              reduce using rule 35 (expr6 -> TRUE .)
+    EQ              reduce using rule 35 (expr6 -> TRUE .)
+    NE              reduce using rule 35 (expr6 -> TRUE .)
+    OR              reduce using rule 35 (expr6 -> TRUE .)
+    SEMI            reduce using rule 35 (expr6 -> TRUE .)
+    RPAREN          reduce using rule 35 (expr6 -> TRUE .)
+    COMMA           reduce using rule 35 (expr6 -> TRUE .)
+
+
+state 26
+
+    (40) expr5 -> MINUS . expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr6                          shift and go to state 51
+
+state 27
+
+    (21) stmt -> SEMI .
+
+    RBRACE          reduce using rule 21 (stmt -> SEMI .)
+    SEMI            reduce using rule 21 (stmt -> SEMI .)
+    ID              reduce using rule 21 (stmt -> SEMI .)
+    RETURN          reduce using rule 21 (stmt -> SEMI .)
+    IF              reduce using rule 21 (stmt -> SEMI .)
+    WHILE           reduce using rule 21 (stmt -> SEMI .)
+    LBRACE          reduce using rule 21 (stmt -> SEMI .)
+    INT             reduce using rule 21 (stmt -> SEMI .)
+    STRING          reduce using rule 21 (stmt -> SEMI .)
+    VOID            reduce using rule 21 (stmt -> SEMI .)
+    BOOLEAN         reduce using rule 21 (stmt -> SEMI .)
+    MINUS           reduce using rule 21 (stmt -> SEMI .)
+    NOT             reduce using rule 21 (stmt -> SEMI .)
+    NUMBER          reduce using rule 21 (stmt -> SEMI .)
+    TRUE            reduce using rule 21 (stmt -> SEMI .)
+    FALSE           reduce using rule 21 (stmt -> SEMI .)
+    LPAREN          reduce using rule 21 (stmt -> SEMI .)
+    SENTENCE        reduce using rule 21 (stmt -> SEMI .)
+    ELSE            reduce using rule 21 (stmt -> SEMI .)
+
+
+state 28
+
+    (60) expr1 -> expr2 . AND expr1
+    (61) expr1 -> expr2 .
+    (58) expr2 -> expr2 . relop expr3
+    (52) relop -> . LT
+    (53) relop -> . LE
+    (54) relop -> . GT
+    (55) relop -> . GE
+    (56) relop -> . EQ
+    (57) relop -> . NE
+
+    AND             shift and go to state 52
+    OR              reduce using rule 61 (expr1 -> expr2 .)
+    RPAREN          reduce using rule 61 (expr1 -> expr2 .)
+    COMMA           reduce using rule 61 (expr1 -> expr2 .)
+    SEMI            reduce using rule 61 (expr1 -> expr2 .)
+    LT              shift and go to state 58
+    LE              shift and go to state 54
+    GT              shift and go to state 53
+    GE              shift and go to state 56
+    EQ              shift and go to state 59
+    NE              shift and go to state 57
+
+    relop                          shift and go to state 55
+
+state 29
+
+    (59) expr2 -> expr3 .
+    (50) expr3 -> expr3 . addop expr4
+    (48) addop -> . PLUS
+    (49) addop -> . MINUS
+
+    AND             reduce using rule 59 (expr2 -> expr3 .)
+    LT              reduce using rule 59 (expr2 -> expr3 .)
+    LE              reduce using rule 59 (expr2 -> expr3 .)
+    GT              reduce using rule 59 (expr2 -> expr3 .)
+    GE              reduce using rule 59 (expr2 -> expr3 .)
+    EQ              reduce using rule 59 (expr2 -> expr3 .)
+    NE              reduce using rule 59 (expr2 -> expr3 .)
+    OR              reduce using rule 59 (expr2 -> expr3 .)
+    SEMI            reduce using rule 59 (expr2 -> expr3 .)
+    RPAREN          reduce using rule 59 (expr2 -> expr3 .)
+    COMMA           reduce using rule 59 (expr2 -> expr3 .)
+    PLUS            shift and go to state 60
+    MINUS           shift and go to state 61
+
+    addop                          shift and go to state 62
+
+state 30
+
+    (62) expr -> expr1 . OR expr
+    (63) expr -> expr1 .
+
+    OR              shift and go to state 63
+    SEMI            reduce using rule 63 (expr -> expr1 .)
+    RPAREN          reduce using rule 63 (expr -> expr1 .)
+    COMMA           reduce using rule 63 (expr -> expr1 .)
+
+
+state 31
+
+    (41) expr5 -> expr6 .
+
+    TIMES           reduce using rule 41 (expr5 -> expr6 .)
+    DIVIDE          reduce using rule 41 (expr5 -> expr6 .)
+    MOD             reduce using rule 41 (expr5 -> expr6 .)
+    PLUS            reduce using rule 41 (expr5 -> expr6 .)
+    MINUS           reduce using rule 41 (expr5 -> expr6 .)
+    AND             reduce using rule 41 (expr5 -> expr6 .)
+    LT              reduce using rule 41 (expr5 -> expr6 .)
+    LE              reduce using rule 41 (expr5 -> expr6 .)
+    GT              reduce using rule 41 (expr5 -> expr6 .)
+    GE              reduce using rule 41 (expr5 -> expr6 .)
+    EQ              reduce using rule 41 (expr5 -> expr6 .)
+    NE              reduce using rule 41 (expr5 -> expr6 .)
+    OR              reduce using rule 41 (expr5 -> expr6 .)
+    SEMI            reduce using rule 41 (expr5 -> expr6 .)
+    RPAREN          reduce using rule 41 (expr5 -> expr6 .)
+    COMMA           reduce using rule 41 (expr5 -> expr6 .)
+
+
+state 32
+
+    (51) expr3 -> expr4 .
+    (47) expr4 -> expr4 . mulop expr5
+    (44) mulop -> . TIMES
+    (45) mulop -> . DIVIDE
+    (46) mulop -> . MOD
+
+    PLUS            reduce using rule 51 (expr3 -> expr4 .)
+    MINUS           reduce using rule 51 (expr3 -> expr4 .)
+    AND             reduce using rule 51 (expr3 -> expr4 .)
+    LT              reduce using rule 51 (expr3 -> expr4 .)
+    LE              reduce using rule 51 (expr3 -> expr4 .)
+    GT              reduce using rule 51 (expr3 -> expr4 .)
+    GE              reduce using rule 51 (expr3 -> expr4 .)
+    EQ              reduce using rule 51 (expr3 -> expr4 .)
+    NE              reduce using rule 51 (expr3 -> expr4 .)
+    OR              reduce using rule 51 (expr3 -> expr4 .)
+    SEMI            reduce using rule 51 (expr3 -> expr4 .)
+    RPAREN          reduce using rule 51 (expr3 -> expr4 .)
+    COMMA           reduce using rule 51 (expr3 -> expr4 .)
+    TIMES           shift and go to state 65
+    DIVIDE          shift and go to state 64
+    MOD             shift and go to state 67
+
+    mulop                          shift and go to state 66
+
+state 33
+
+    (43) expr4 -> expr5 .
+
+    TIMES           reduce using rule 43 (expr4 -> expr5 .)
+    DIVIDE          reduce using rule 43 (expr4 -> expr5 .)
+    MOD             reduce using rule 43 (expr4 -> expr5 .)
+    PLUS            reduce using rule 43 (expr4 -> expr5 .)
+    MINUS           reduce using rule 43 (expr4 -> expr5 .)
+    AND             reduce using rule 43 (expr4 -> expr5 .)
+    LT              reduce using rule 43 (expr4 -> expr5 .)
+    LE              reduce using rule 43 (expr4 -> expr5 .)
+    GT              reduce using rule 43 (expr4 -> expr5 .)
+    GE              reduce using rule 43 (expr4 -> expr5 .)
+    EQ              reduce using rule 43 (expr4 -> expr5 .)
+    NE              reduce using rule 43 (expr4 -> expr5 .)
+    OR              reduce using rule 43 (expr4 -> expr5 .)
+    SEMI            reduce using rule 43 (expr4 -> expr5 .)
+    RPAREN          reduce using rule 43 (expr4 -> expr5 .)
+    COMMA           reduce using rule 43 (expr4 -> expr5 .)
+
+
+state 34
+
+    (23) stmt -> type . listitem SEMI
+    (9) listitem -> .
+    (10) listitem -> . item
+    (11) listitem -> . listitem COMMA item
+    (15) item -> . ID
+    (16) item -> . ID EQUALS expr
+
+    SEMI            reduce using rule 9 (listitem -> .)
+    COMMA           reduce using rule 9 (listitem -> .)
+    ID              shift and go to state 70
+
+    item                           shift and go to state 68
+    listitem                       shift and go to state 69
+
+state 35
+
+    (19) block -> LBRACE RBRACE .
+
+    INT             reduce using rule 19 (block -> LBRACE RBRACE .)
+    STRING          reduce using rule 19 (block -> LBRACE RBRACE .)
+    VOID            reduce using rule 19 (block -> LBRACE RBRACE .)
+    BOOLEAN         reduce using rule 19 (block -> LBRACE RBRACE .)
+    $end            reduce using rule 19 (block -> LBRACE RBRACE .)
+    RBRACE          reduce using rule 19 (block -> LBRACE RBRACE .)
+    SEMI            reduce using rule 19 (block -> LBRACE RBRACE .)
+    ID              reduce using rule 19 (block -> LBRACE RBRACE .)
+    RETURN          reduce using rule 19 (block -> LBRACE RBRACE .)
+    IF              reduce using rule 19 (block -> LBRACE RBRACE .)
+    WHILE           reduce using rule 19 (block -> LBRACE RBRACE .)
+    LBRACE          reduce using rule 19 (block -> LBRACE RBRACE .)
+    MINUS           reduce using rule 19 (block -> LBRACE RBRACE .)
+    NOT             reduce using rule 19 (block -> LBRACE RBRACE .)
+    NUMBER          reduce using rule 19 (block -> LBRACE RBRACE .)
+    TRUE            reduce using rule 19 (block -> LBRACE RBRACE .)
+    FALSE           reduce using rule 19 (block -> LBRACE RBRACE .)
+    LPAREN          reduce using rule 19 (block -> LBRACE RBRACE .)
+    SENTENCE        reduce using rule 19 (block -> LBRACE RBRACE .)
+    ELSE            reduce using rule 19 (block -> LBRACE RBRACE .)
+
+
+state 36
+
+    (39) expr6 -> SENTENCE .
+
+    TIMES           reduce using rule 39 (expr6 -> SENTENCE .)
+    DIVIDE          reduce using rule 39 (expr6 -> SENTENCE .)
+    MOD             reduce using rule 39 (expr6 -> SENTENCE .)
+    PLUS            reduce using rule 39 (expr6 -> SENTENCE .)
+    MINUS           reduce using rule 39 (expr6 -> SENTENCE .)
+    AND             reduce using rule 39 (expr6 -> SENTENCE .)
+    LT              reduce using rule 39 (expr6 -> SENTENCE .)
+    LE              reduce using rule 39 (expr6 -> SENTENCE .)
+    GT              reduce using rule 39 (expr6 -> SENTENCE .)
+    GE              reduce using rule 39 (expr6 -> SENTENCE .)
+    EQ              reduce using rule 39 (expr6 -> SENTENCE .)
+    NE              reduce using rule 39 (expr6 -> SENTENCE .)
+    OR              reduce using rule 39 (expr6 -> SENTENCE .)
+    SEMI            reduce using rule 39 (expr6 -> SENTENCE .)
+    RPAREN          reduce using rule 39 (expr6 -> SENTENCE .)
+    COMMA           reduce using rule 39 (expr6 -> SENTENCE .)
+
+
+state 37
+
+    (7) liststmt -> stmt .
+
+    RBRACE          reduce using rule 7 (liststmt -> stmt .)
+    SEMI            reduce using rule 7 (liststmt -> stmt .)
+    ID              reduce using rule 7 (liststmt -> stmt .)
+    RETURN          reduce using rule 7 (liststmt -> stmt .)
+    IF              reduce using rule 7 (liststmt -> stmt .)
+    WHILE           reduce using rule 7 (liststmt -> stmt .)
+    LBRACE          reduce using rule 7 (liststmt -> stmt .)
+    INT             reduce using rule 7 (liststmt -> stmt .)
+    STRING          reduce using rule 7 (liststmt -> stmt .)
+    VOID            reduce using rule 7 (liststmt -> stmt .)
+    BOOLEAN         reduce using rule 7 (liststmt -> stmt .)
+    MINUS           reduce using rule 7 (liststmt -> stmt .)
+    NOT             reduce using rule 7 (liststmt -> stmt .)
+    NUMBER          reduce using rule 7 (liststmt -> stmt .)
+    TRUE            reduce using rule 7 (liststmt -> stmt .)
+    FALSE           reduce using rule 7 (liststmt -> stmt .)
+    LPAREN          reduce using rule 7 (liststmt -> stmt .)
+    SENTENCE        reduce using rule 7 (liststmt -> stmt .)
+
+
+state 38
+
+    (38) expr6 -> LPAREN . expr RPAREN
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 71
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 39
+
+    (24) stmt -> ID . EQUALS expr SEMI
+    (25) stmt -> ID . PLUSPLUS SEMI
+    (26) stmt -> ID . MINUSMINUS SEMI
+    (33) expr6 -> ID .
+    (37) expr6 -> ID . LPAREN listexpr RPAREN
+
+    EQUALS          shift and go to state 73
+    PLUSPLUS        shift and go to state 72
+    MINUSMINUS      shift and go to state 75
+    TIMES           reduce using rule 33 (expr6 -> ID .)
+    DIVIDE          reduce using rule 33 (expr6 -> ID .)
+    MOD             reduce using rule 33 (expr6 -> ID .)
+    PLUS            reduce using rule 33 (expr6 -> ID .)
+    MINUS           reduce using rule 33 (expr6 -> ID .)
+    AND             reduce using rule 33 (expr6 -> ID .)
+    LT              reduce using rule 33 (expr6 -> ID .)
+    LE              reduce using rule 33 (expr6 -> ID .)
+    GT              reduce using rule 33 (expr6 -> ID .)
+    GE              reduce using rule 33 (expr6 -> ID .)
+    EQ              reduce using rule 33 (expr6 -> ID .)
+    NE              reduce using rule 33 (expr6 -> ID .)
+    OR              reduce using rule 33 (expr6 -> ID .)
+    SEMI            reduce using rule 33 (expr6 -> ID .)
+    LPAREN          shift and go to state 74
+
+
+state 40
+
+    (29) stmt -> IF . LPAREN expr RPAREN stmt
+    (30) stmt -> IF . LPAREN expr RPAREN stmt ELSE stmt
+
+    LPAREN          shift and go to state 76
+
+
+state 41
+
+    (36) expr6 -> FALSE .
+
+    TIMES           reduce using rule 36 (expr6 -> FALSE .)
+    DIVIDE          reduce using rule 36 (expr6 -> FALSE .)
+    MOD             reduce using rule 36 (expr6 -> FALSE .)
+    PLUS            reduce using rule 36 (expr6 -> FALSE .)
+    MINUS           reduce using rule 36 (expr6 -> FALSE .)
+    AND             reduce using rule 36 (expr6 -> FALSE .)
+    LT              reduce using rule 36 (expr6 -> FALSE .)
+    LE              reduce using rule 36 (expr6 -> FALSE .)
+    GT              reduce using rule 36 (expr6 -> FALSE .)
+    GE              reduce using rule 36 (expr6 -> FALSE .)
+    EQ              reduce using rule 36 (expr6 -> FALSE .)
+    NE              reduce using rule 36 (expr6 -> FALSE .)
+    OR              reduce using rule 36 (expr6 -> FALSE .)
+    SEMI            reduce using rule 36 (expr6 -> FALSE .)
+    RPAREN          reduce using rule 36 (expr6 -> FALSE .)
+    COMMA           reduce using rule 36 (expr6 -> FALSE .)
+
+
+state 42
+
+    (32) stmt -> expr . SEMI
+
+    SEMI            shift and go to state 77
+
+
+state 43
+
+    (42) expr5 -> NOT . expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr6                          shift and go to state 78
+
+state 44
+
+    (22) stmt -> block .
+
+    RBRACE          reduce using rule 22 (stmt -> block .)
+    SEMI            reduce using rule 22 (stmt -> block .)
+    ID              reduce using rule 22 (stmt -> block .)
+    RETURN          reduce using rule 22 (stmt -> block .)
+    IF              reduce using rule 22 (stmt -> block .)
+    WHILE           reduce using rule 22 (stmt -> block .)
+    LBRACE          reduce using rule 22 (stmt -> block .)
+    INT             reduce using rule 22 (stmt -> block .)
+    STRING          reduce using rule 22 (stmt -> block .)
+    VOID            reduce using rule 22 (stmt -> block .)
+    BOOLEAN         reduce using rule 22 (stmt -> block .)
+    MINUS           reduce using rule 22 (stmt -> block .)
+    NOT             reduce using rule 22 (stmt -> block .)
+    NUMBER          reduce using rule 22 (stmt -> block .)
+    TRUE            reduce using rule 22 (stmt -> block .)
+    FALSE           reduce using rule 22 (stmt -> block .)
+    LPAREN          reduce using rule 22 (stmt -> block .)
+    SENTENCE        reduce using rule 22 (stmt -> block .)
+    ELSE            reduce using rule 22 (stmt -> block .)
+
+
+state 45
+
+    (28) stmt -> RETURN SEMI .
+
+    RBRACE          reduce using rule 28 (stmt -> RETURN SEMI .)
+    SEMI            reduce using rule 28 (stmt -> RETURN SEMI .)
+    ID              reduce using rule 28 (stmt -> RETURN SEMI .)
+    RETURN          reduce using rule 28 (stmt -> RETURN SEMI .)
+    IF              reduce using rule 28 (stmt -> RETURN SEMI .)
+    WHILE           reduce using rule 28 (stmt -> RETURN SEMI .)
+    LBRACE          reduce using rule 28 (stmt -> RETURN SEMI .)
+    INT             reduce using rule 28 (stmt -> RETURN SEMI .)
+    STRING          reduce using rule 28 (stmt -> RETURN SEMI .)
+    VOID            reduce using rule 28 (stmt -> RETURN SEMI .)
+    BOOLEAN         reduce using rule 28 (stmt -> RETURN SEMI .)
+    MINUS           reduce using rule 28 (stmt -> RETURN SEMI .)
+    NOT             reduce using rule 28 (stmt -> RETURN SEMI .)
+    NUMBER          reduce using rule 28 (stmt -> RETURN SEMI .)
+    TRUE            reduce using rule 28 (stmt -> RETURN SEMI .)
+    FALSE           reduce using rule 28 (stmt -> RETURN SEMI .)
+    LPAREN          reduce using rule 28 (stmt -> RETURN SEMI .)
+    SENTENCE        reduce using rule 28 (stmt -> RETURN SEMI .)
+    ELSE            reduce using rule 28 (stmt -> RETURN SEMI .)
+
+
+state 46
+
+    (33) expr6 -> ID .
+    (37) expr6 -> ID . LPAREN listexpr RPAREN
+
+    TIMES           reduce using rule 33 (expr6 -> ID .)
+    DIVIDE          reduce using rule 33 (expr6 -> ID .)
+    MOD             reduce using rule 33 (expr6 -> ID .)
+    PLUS            reduce using rule 33 (expr6 -> ID .)
+    MINUS           reduce using rule 33 (expr6 -> ID .)
+    AND             reduce using rule 33 (expr6 -> ID .)
+    LT              reduce using rule 33 (expr6 -> ID .)
+    LE              reduce using rule 33 (expr6 -> ID .)
+    GT              reduce using rule 33 (expr6 -> ID .)
+    GE              reduce using rule 33 (expr6 -> ID .)
+    EQ              reduce using rule 33 (expr6 -> ID .)
+    NE              reduce using rule 33 (expr6 -> ID .)
+    OR              reduce using rule 33 (expr6 -> ID .)
+    SEMI            reduce using rule 33 (expr6 -> ID .)
+    RPAREN          reduce using rule 33 (expr6 -> ID .)
+    COMMA           reduce using rule 33 (expr6 -> ID .)
+    LPAREN          shift and go to state 74
+
+
+state 47
+
+    (27) stmt -> RETURN expr . SEMI
+
+    SEMI            shift and go to state 79
+
+
+state 48
+
+    (20) block -> LBRACE liststmt RBRACE .
+
+    INT             reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    STRING          reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    VOID            reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    BOOLEAN         reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    $end            reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    RBRACE          reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    SEMI            reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    ID              reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    RETURN          reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    IF              reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    WHILE           reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    LBRACE          reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    MINUS           reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    NOT             reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    NUMBER          reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    TRUE            reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    FALSE           reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    LPAREN          reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    SENTENCE        reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+    ELSE            reduce using rule 20 (block -> LBRACE liststmt RBRACE .)
+
+
+state 49
+
+    (8) liststmt -> liststmt stmt .
+
+    RBRACE          reduce using rule 8 (liststmt -> liststmt stmt .)
+    SEMI            reduce using rule 8 (liststmt -> liststmt stmt .)
+    ID              reduce using rule 8 (liststmt -> liststmt stmt .)
+    RETURN          reduce using rule 8 (liststmt -> liststmt stmt .)
+    IF              reduce using rule 8 (liststmt -> liststmt stmt .)
+    WHILE           reduce using rule 8 (liststmt -> liststmt stmt .)
+    LBRACE          reduce using rule 8 (liststmt -> liststmt stmt .)
+    INT             reduce using rule 8 (liststmt -> liststmt stmt .)
+    STRING          reduce using rule 8 (liststmt -> liststmt stmt .)
+    VOID            reduce using rule 8 (liststmt -> liststmt stmt .)
+    BOOLEAN         reduce using rule 8 (liststmt -> liststmt stmt .)
+    MINUS           reduce using rule 8 (liststmt -> liststmt stmt .)
+    NOT             reduce using rule 8 (liststmt -> liststmt stmt .)
+    NUMBER          reduce using rule 8 (liststmt -> liststmt stmt .)
+    TRUE            reduce using rule 8 (liststmt -> liststmt stmt .)
+    FALSE           reduce using rule 8 (liststmt -> liststmt stmt .)
+    LPAREN          reduce using rule 8 (liststmt -> liststmt stmt .)
+    SENTENCE        reduce using rule 8 (liststmt -> liststmt stmt .)
+
+
+state 50
+
+    (31) stmt -> WHILE LPAREN . expr RPAREN stmt
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 80
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 51
+
+    (40) expr5 -> MINUS expr6 .
+
+    TIMES           reduce using rule 40 (expr5 -> MINUS expr6 .)
+    DIVIDE          reduce using rule 40 (expr5 -> MINUS expr6 .)
+    MOD             reduce using rule 40 (expr5 -> MINUS expr6 .)
+    PLUS            reduce using rule 40 (expr5 -> MINUS expr6 .)
+    MINUS           reduce using rule 40 (expr5 -> MINUS expr6 .)
+    AND             reduce using rule 40 (expr5 -> MINUS expr6 .)
+    LT              reduce using rule 40 (expr5 -> MINUS expr6 .)
+    LE              reduce using rule 40 (expr5 -> MINUS expr6 .)
+    GT              reduce using rule 40 (expr5 -> MINUS expr6 .)
+    GE              reduce using rule 40 (expr5 -> MINUS expr6 .)
+    EQ              reduce using rule 40 (expr5 -> MINUS expr6 .)
+    NE              reduce using rule 40 (expr5 -> MINUS expr6 .)
+    OR              reduce using rule 40 (expr5 -> MINUS expr6 .)
+    SEMI            reduce using rule 40 (expr5 -> MINUS expr6 .)
+    RPAREN          reduce using rule 40 (expr5 -> MINUS expr6 .)
+    COMMA           reduce using rule 40 (expr5 -> MINUS expr6 .)
+
+
+state 52
+
+    (60) expr1 -> expr2 AND . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 81
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 53
+
+    (54) relop -> GT .
+
+    MINUS           reduce using rule 54 (relop -> GT .)
+    NOT             reduce using rule 54 (relop -> GT .)
+    ID              reduce using rule 54 (relop -> GT .)
+    NUMBER          reduce using rule 54 (relop -> GT .)
+    TRUE            reduce using rule 54 (relop -> GT .)
+    FALSE           reduce using rule 54 (relop -> GT .)
+    LPAREN          reduce using rule 54 (relop -> GT .)
+    SENTENCE        reduce using rule 54 (relop -> GT .)
+
+
+state 54
+
+    (53) relop -> LE .
+
+    MINUS           reduce using rule 53 (relop -> LE .)
+    NOT             reduce using rule 53 (relop -> LE .)
+    ID              reduce using rule 53 (relop -> LE .)
+    NUMBER          reduce using rule 53 (relop -> LE .)
+    TRUE            reduce using rule 53 (relop -> LE .)
+    FALSE           reduce using rule 53 (relop -> LE .)
+    LPAREN          reduce using rule 53 (relop -> LE .)
+    SENTENCE        reduce using rule 53 (relop -> LE .)
+
+
+state 55
+
+    (58) expr2 -> expr2 relop . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr3                          shift and go to state 82
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 56
+
+    (55) relop -> GE .
+
+    MINUS           reduce using rule 55 (relop -> GE .)
+    NOT             reduce using rule 55 (relop -> GE .)
+    ID              reduce using rule 55 (relop -> GE .)
+    NUMBER          reduce using rule 55 (relop -> GE .)
+    TRUE            reduce using rule 55 (relop -> GE .)
+    FALSE           reduce using rule 55 (relop -> GE .)
+    LPAREN          reduce using rule 55 (relop -> GE .)
+    SENTENCE        reduce using rule 55 (relop -> GE .)
+
+
+state 57
+
+    (57) relop -> NE .
+
+    MINUS           reduce using rule 57 (relop -> NE .)
+    NOT             reduce using rule 57 (relop -> NE .)
+    ID              reduce using rule 57 (relop -> NE .)
+    NUMBER          reduce using rule 57 (relop -> NE .)
+    TRUE            reduce using rule 57 (relop -> NE .)
+    FALSE           reduce using rule 57 (relop -> NE .)
+    LPAREN          reduce using rule 57 (relop -> NE .)
+    SENTENCE        reduce using rule 57 (relop -> NE .)
+
+
+state 58
+
+    (52) relop -> LT .
+
+    MINUS           reduce using rule 52 (relop -> LT .)
+    NOT             reduce using rule 52 (relop -> LT .)
+    ID              reduce using rule 52 (relop -> LT .)
+    NUMBER          reduce using rule 52 (relop -> LT .)
+    TRUE            reduce using rule 52 (relop -> LT .)
+    FALSE           reduce using rule 52 (relop -> LT .)
+    LPAREN          reduce using rule 52 (relop -> LT .)
+    SENTENCE        reduce using rule 52 (relop -> LT .)
+
+
+state 59
+
+    (56) relop -> EQ .
+
+    MINUS           reduce using rule 56 (relop -> EQ .)
+    NOT             reduce using rule 56 (relop -> EQ .)
+    ID              reduce using rule 56 (relop -> EQ .)
+    NUMBER          reduce using rule 56 (relop -> EQ .)
+    TRUE            reduce using rule 56 (relop -> EQ .)
+    FALSE           reduce using rule 56 (relop -> EQ .)
+    LPAREN          reduce using rule 56 (relop -> EQ .)
+    SENTENCE        reduce using rule 56 (relop -> EQ .)
+
+
+state 60
+
+    (48) addop -> PLUS .
+
+    MINUS           reduce using rule 48 (addop -> PLUS .)
+    NOT             reduce using rule 48 (addop -> PLUS .)
+    ID              reduce using rule 48 (addop -> PLUS .)
+    NUMBER          reduce using rule 48 (addop -> PLUS .)
+    TRUE            reduce using rule 48 (addop -> PLUS .)
+    FALSE           reduce using rule 48 (addop -> PLUS .)
+    LPAREN          reduce using rule 48 (addop -> PLUS .)
+    SENTENCE        reduce using rule 48 (addop -> PLUS .)
+
+
+state 61
+
+    (49) addop -> MINUS .
+
+    MINUS           reduce using rule 49 (addop -> MINUS .)
+    NOT             reduce using rule 49 (addop -> MINUS .)
+    ID              reduce using rule 49 (addop -> MINUS .)
+    NUMBER          reduce using rule 49 (addop -> MINUS .)
+    TRUE            reduce using rule 49 (addop -> MINUS .)
+    FALSE           reduce using rule 49 (addop -> MINUS .)
+    LPAREN          reduce using rule 49 (addop -> MINUS .)
+    SENTENCE        reduce using rule 49 (addop -> MINUS .)
+
+
+state 62
+
+    (50) expr3 -> expr3 addop . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr4                          shift and go to state 83
+    expr6                          shift and go to state 31
+    expr5                          shift and go to state 33
+
+state 63
+
+    (62) expr -> expr1 OR . expr
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 84
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 64
+
+    (45) mulop -> DIVIDE .
+
+    MINUS           reduce using rule 45 (mulop -> DIVIDE .)
+    NOT             reduce using rule 45 (mulop -> DIVIDE .)
+    ID              reduce using rule 45 (mulop -> DIVIDE .)
+    NUMBER          reduce using rule 45 (mulop -> DIVIDE .)
+    TRUE            reduce using rule 45 (mulop -> DIVIDE .)
+    FALSE           reduce using rule 45 (mulop -> DIVIDE .)
+    LPAREN          reduce using rule 45 (mulop -> DIVIDE .)
+    SENTENCE        reduce using rule 45 (mulop -> DIVIDE .)
+
+
+state 65
+
+    (44) mulop -> TIMES .
+
+    MINUS           reduce using rule 44 (mulop -> TIMES .)
+    NOT             reduce using rule 44 (mulop -> TIMES .)
+    ID              reduce using rule 44 (mulop -> TIMES .)
+    NUMBER          reduce using rule 44 (mulop -> TIMES .)
+    TRUE            reduce using rule 44 (mulop -> TIMES .)
+    FALSE           reduce using rule 44 (mulop -> TIMES .)
+    LPAREN          reduce using rule 44 (mulop -> TIMES .)
+    SENTENCE        reduce using rule 44 (mulop -> TIMES .)
+
+
+state 66
+
+    (47) expr4 -> expr4 mulop . expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr6                          shift and go to state 31
+    expr5                          shift and go to state 85
+
+state 67
+
+    (46) mulop -> MOD .
+
+    MINUS           reduce using rule 46 (mulop -> MOD .)
+    NOT             reduce using rule 46 (mulop -> MOD .)
+    ID              reduce using rule 46 (mulop -> MOD .)
+    NUMBER          reduce using rule 46 (mulop -> MOD .)
+    TRUE            reduce using rule 46 (mulop -> MOD .)
+    FALSE           reduce using rule 46 (mulop -> MOD .)
+    LPAREN          reduce using rule 46 (mulop -> MOD .)
+    SENTENCE        reduce using rule 46 (mulop -> MOD .)
+
+
+state 68
+
+    (10) listitem -> item .
+
+    SEMI            reduce using rule 10 (listitem -> item .)
+    COMMA           reduce using rule 10 (listitem -> item .)
+
+
+state 69
+
+    (23) stmt -> type listitem . SEMI
+    (11) listitem -> listitem . COMMA item
+
+    SEMI            shift and go to state 87
+    COMMA           shift and go to state 86
+
+
+state 70
+
+    (15) item -> ID .
+    (16) item -> ID . EQUALS expr
+
+    SEMI            reduce using rule 15 (item -> ID .)
+    COMMA           reduce using rule 15 (item -> ID .)
+    EQUALS          shift and go to state 88
+
+
+state 71
+
+    (38) expr6 -> LPAREN expr . RPAREN
+
+    RPAREN          shift and go to state 89
+
+
+state 72
+
+    (25) stmt -> ID PLUSPLUS . SEMI
+
+    SEMI            shift and go to state 90
+
+
+state 73
+
+    (24) stmt -> ID EQUALS . expr SEMI
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 91
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 74
+
+    (37) expr6 -> ID LPAREN . listexpr RPAREN
+    (2) listexpr -> .
+    (3) listexpr -> . expr
+    (4) listexpr -> . listexpr COMMA expr
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    RPAREN          reduce using rule 2 (listexpr -> .)
+    COMMA           reduce using rule 2 (listexpr -> .)
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 93
+    listexpr                       shift and go to state 92
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 75
+
+    (26) stmt -> ID MINUSMINUS . SEMI
+
+    SEMI            shift and go to state 94
+
+
+state 76
+
+    (29) stmt -> IF LPAREN . expr RPAREN stmt
+    (30) stmt -> IF LPAREN . expr RPAREN stmt ELSE stmt
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 95
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 77
+
+    (32) stmt -> expr SEMI .
+
+    RBRACE          reduce using rule 32 (stmt -> expr SEMI .)
+    SEMI            reduce using rule 32 (stmt -> expr SEMI .)
+    ID              reduce using rule 32 (stmt -> expr SEMI .)
+    RETURN          reduce using rule 32 (stmt -> expr SEMI .)
+    IF              reduce using rule 32 (stmt -> expr SEMI .)
+    WHILE           reduce using rule 32 (stmt -> expr SEMI .)
+    LBRACE          reduce using rule 32 (stmt -> expr SEMI .)
+    INT             reduce using rule 32 (stmt -> expr SEMI .)
+    STRING          reduce using rule 32 (stmt -> expr SEMI .)
+    VOID            reduce using rule 32 (stmt -> expr SEMI .)
+    BOOLEAN         reduce using rule 32 (stmt -> expr SEMI .)
+    MINUS           reduce using rule 32 (stmt -> expr SEMI .)
+    NOT             reduce using rule 32 (stmt -> expr SEMI .)
+    NUMBER          reduce using rule 32 (stmt -> expr SEMI .)
+    TRUE            reduce using rule 32 (stmt -> expr SEMI .)
+    FALSE           reduce using rule 32 (stmt -> expr SEMI .)
+    LPAREN          reduce using rule 32 (stmt -> expr SEMI .)
+    SENTENCE        reduce using rule 32 (stmt -> expr SEMI .)
+    ELSE            reduce using rule 32 (stmt -> expr SEMI .)
+
+
+state 78
+
+    (42) expr5 -> NOT expr6 .
+
+    TIMES           reduce using rule 42 (expr5 -> NOT expr6 .)
+    DIVIDE          reduce using rule 42 (expr5 -> NOT expr6 .)
+    MOD             reduce using rule 42 (expr5 -> NOT expr6 .)
+    PLUS            reduce using rule 42 (expr5 -> NOT expr6 .)
+    MINUS           reduce using rule 42 (expr5 -> NOT expr6 .)
+    AND             reduce using rule 42 (expr5 -> NOT expr6 .)
+    LT              reduce using rule 42 (expr5 -> NOT expr6 .)
+    LE              reduce using rule 42 (expr5 -> NOT expr6 .)
+    GT              reduce using rule 42 (expr5 -> NOT expr6 .)
+    GE              reduce using rule 42 (expr5 -> NOT expr6 .)
+    EQ              reduce using rule 42 (expr5 -> NOT expr6 .)
+    NE              reduce using rule 42 (expr5 -> NOT expr6 .)
+    OR              reduce using rule 42 (expr5 -> NOT expr6 .)
+    SEMI            reduce using rule 42 (expr5 -> NOT expr6 .)
+    RPAREN          reduce using rule 42 (expr5 -> NOT expr6 .)
+    COMMA           reduce using rule 42 (expr5 -> NOT expr6 .)
+
+
+state 79
+
+    (27) stmt -> RETURN expr SEMI .
+
+    RBRACE          reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    SEMI            reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    ID              reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    RETURN          reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    IF              reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    WHILE           reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    LBRACE          reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    INT             reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    STRING          reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    VOID            reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    BOOLEAN         reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    MINUS           reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    NOT             reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    NUMBER          reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    TRUE            reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    FALSE           reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    LPAREN          reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    SENTENCE        reduce using rule 27 (stmt -> RETURN expr SEMI .)
+    ELSE            reduce using rule 27 (stmt -> RETURN expr SEMI .)
+
+
+state 80
+
+    (31) stmt -> WHILE LPAREN expr . RPAREN stmt
+
+    RPAREN          shift and go to state 96
+
+
+state 81
+
+    (60) expr1 -> expr2 AND expr1 .
+
+    OR              reduce using rule 60 (expr1 -> expr2 AND expr1 .)
+    RPAREN          reduce using rule 60 (expr1 -> expr2 AND expr1 .)
+    COMMA           reduce using rule 60 (expr1 -> expr2 AND expr1 .)
+    SEMI            reduce using rule 60 (expr1 -> expr2 AND expr1 .)
+
+
+state 82
+
+    (58) expr2 -> expr2 relop expr3 .
+    (50) expr3 -> expr3 . addop expr4
+    (48) addop -> . PLUS
+    (49) addop -> . MINUS
+
+    AND             reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    LT              reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    LE              reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    GT              reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    GE              reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    EQ              reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    NE              reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    OR              reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    SEMI            reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    RPAREN          reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    COMMA           reduce using rule 58 (expr2 -> expr2 relop expr3 .)
+    PLUS            shift and go to state 60
+    MINUS           shift and go to state 61
+
+    addop                          shift and go to state 62
+
+state 83
+
+    (50) expr3 -> expr3 addop expr4 .
+    (47) expr4 -> expr4 . mulop expr5
+    (44) mulop -> . TIMES
+    (45) mulop -> . DIVIDE
+    (46) mulop -> . MOD
+
+    PLUS            reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    MINUS           reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    AND             reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    LT              reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    LE              reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    GT              reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    GE              reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    EQ              reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    NE              reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    OR              reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    SEMI            reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    RPAREN          reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    COMMA           reduce using rule 50 (expr3 -> expr3 addop expr4 .)
+    TIMES           shift and go to state 65
+    DIVIDE          shift and go to state 64
+    MOD             shift and go to state 67
+
+    mulop                          shift and go to state 66
+
+state 84
+
+    (62) expr -> expr1 OR expr .
+
+    SEMI            reduce using rule 62 (expr -> expr1 OR expr .)
+    RPAREN          reduce using rule 62 (expr -> expr1 OR expr .)
+    COMMA           reduce using rule 62 (expr -> expr1 OR expr .)
+
+
+state 85
+
+    (47) expr4 -> expr4 mulop expr5 .
+
+    TIMES           reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    DIVIDE          reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    MOD             reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    PLUS            reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    MINUS           reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    AND             reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    LT              reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    LE              reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    GT              reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    GE              reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    EQ              reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    NE              reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    OR              reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    SEMI            reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    RPAREN          reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+    COMMA           reduce using rule 47 (expr4 -> expr4 mulop expr5 .)
+
+
+state 86
+
+    (11) listitem -> listitem COMMA . item
+    (15) item -> . ID
+    (16) item -> . ID EQUALS expr
+
+    ID              shift and go to state 70
+
+    item                           shift and go to state 97
+
+state 87
+
+    (23) stmt -> type listitem SEMI .
+
+    RBRACE          reduce using rule 23 (stmt -> type listitem SEMI .)
+    SEMI            reduce using rule 23 (stmt -> type listitem SEMI .)
+    ID              reduce using rule 23 (stmt -> type listitem SEMI .)
+    RETURN          reduce using rule 23 (stmt -> type listitem SEMI .)
+    IF              reduce using rule 23 (stmt -> type listitem SEMI .)
+    WHILE           reduce using rule 23 (stmt -> type listitem SEMI .)
+    LBRACE          reduce using rule 23 (stmt -> type listitem SEMI .)
+    INT             reduce using rule 23 (stmt -> type listitem SEMI .)
+    STRING          reduce using rule 23 (stmt -> type listitem SEMI .)
+    VOID            reduce using rule 23 (stmt -> type listitem SEMI .)
+    BOOLEAN         reduce using rule 23 (stmt -> type listitem SEMI .)
+    MINUS           reduce using rule 23 (stmt -> type listitem SEMI .)
+    NOT             reduce using rule 23 (stmt -> type listitem SEMI .)
+    NUMBER          reduce using rule 23 (stmt -> type listitem SEMI .)
+    TRUE            reduce using rule 23 (stmt -> type listitem SEMI .)
+    FALSE           reduce using rule 23 (stmt -> type listitem SEMI .)
+    LPAREN          reduce using rule 23 (stmt -> type listitem SEMI .)
+    SENTENCE        reduce using rule 23 (stmt -> type listitem SEMI .)
+    ELSE            reduce using rule 23 (stmt -> type listitem SEMI .)
+
+
+state 88
+
+    (16) item -> ID EQUALS . expr
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 98
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 89
+
+    (38) expr6 -> LPAREN expr RPAREN .
+
+    TIMES           reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    DIVIDE          reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    MOD             reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    PLUS            reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    MINUS           reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    AND             reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    LT              reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    LE              reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    GT              reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    GE              reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    EQ              reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    NE              reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    OR              reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    SEMI            reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    RPAREN          reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+    COMMA           reduce using rule 38 (expr6 -> LPAREN expr RPAREN .)
+
+
+state 90
+
+    (25) stmt -> ID PLUSPLUS SEMI .
+
+    RBRACE          reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    SEMI            reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    ID              reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    RETURN          reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    IF              reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    WHILE           reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    LBRACE          reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    INT             reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    STRING          reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    VOID            reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    BOOLEAN         reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    MINUS           reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    NOT             reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    NUMBER          reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    TRUE            reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    FALSE           reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    LPAREN          reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    SENTENCE        reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+    ELSE            reduce using rule 25 (stmt -> ID PLUSPLUS SEMI .)
+
+
+state 91
+
+    (24) stmt -> ID EQUALS expr . SEMI
+
+    SEMI            shift and go to state 99
+
+
+state 92
+
+    (37) expr6 -> ID LPAREN listexpr . RPAREN
+    (4) listexpr -> listexpr . COMMA expr
+
+    RPAREN          shift and go to state 100
+    COMMA           shift and go to state 101
+
+
+state 93
+
+    (3) listexpr -> expr .
+
+    RPAREN          reduce using rule 3 (listexpr -> expr .)
+    COMMA           reduce using rule 3 (listexpr -> expr .)
+
+
+state 94
+
+    (26) stmt -> ID MINUSMINUS SEMI .
+
+    RBRACE          reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    SEMI            reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    ID              reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    RETURN          reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    IF              reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    WHILE           reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    LBRACE          reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    INT             reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    STRING          reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    VOID            reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    BOOLEAN         reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    MINUS           reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    NOT             reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    NUMBER          reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    TRUE            reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    FALSE           reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    LPAREN          reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    SENTENCE        reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+    ELSE            reduce using rule 26 (stmt -> ID MINUSMINUS SEMI .)
+
+
+state 95
+
+    (29) stmt -> IF LPAREN expr . RPAREN stmt
+    (30) stmt -> IF LPAREN expr . RPAREN stmt ELSE stmt
+
+    RPAREN          shift and go to state 102
+
+
+state 96
+
+    (31) stmt -> WHILE LPAREN expr RPAREN . stmt
+    (21) stmt -> . SEMI
+    (22) stmt -> . block
+    (23) stmt -> . type listitem SEMI
+    (24) stmt -> . ID EQUALS expr SEMI
+    (25) stmt -> . ID PLUSPLUS SEMI
+    (26) stmt -> . ID MINUSMINUS SEMI
+    (27) stmt -> . RETURN expr SEMI
+    (28) stmt -> . RETURN SEMI
+    (29) stmt -> . IF LPAREN expr RPAREN stmt
+    (30) stmt -> . IF LPAREN expr RPAREN stmt ELSE stmt
+    (31) stmt -> . WHILE LPAREN expr RPAREN stmt
+    (32) stmt -> . expr SEMI
+    (19) block -> . LBRACE RBRACE
+    (20) block -> . LBRACE liststmt RBRACE
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    SEMI            shift and go to state 27
+    ID              shift and go to state 39
+    RETURN          shift and go to state 21
+    IF              shift and go to state 40
+    WHILE           shift and go to state 24
+    LBRACE          shift and go to state 18
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 42
+    stmt                           shift and go to state 103
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+    type                           shift and go to state 34
+    block                          shift and go to state 44
+
+state 97
+
+    (11) listitem -> listitem COMMA item .
+
+    SEMI            reduce using rule 11 (listitem -> listitem COMMA item .)
+    COMMA           reduce using rule 11 (listitem -> listitem COMMA item .)
+
+
+state 98
+
+    (16) item -> ID EQUALS expr .
+
+    SEMI            reduce using rule 16 (item -> ID EQUALS expr .)
+    COMMA           reduce using rule 16 (item -> ID EQUALS expr .)
+
+
+state 99
+
+    (24) stmt -> ID EQUALS expr SEMI .
+
+    RBRACE          reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    SEMI            reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    ID              reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    RETURN          reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    IF              reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    WHILE           reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    LBRACE          reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    INT             reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    STRING          reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    VOID            reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    BOOLEAN         reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    MINUS           reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    NOT             reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    NUMBER          reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    TRUE            reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    FALSE           reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    LPAREN          reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    SENTENCE        reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+    ELSE            reduce using rule 24 (stmt -> ID EQUALS expr SEMI .)
+
+
+state 100
+
+    (37) expr6 -> ID LPAREN listexpr RPAREN .
+
+    TIMES           reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    DIVIDE          reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    MOD             reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    PLUS            reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    MINUS           reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    AND             reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    LT              reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    LE              reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    GT              reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    GE              reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    EQ              reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    NE              reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    OR              reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    SEMI            reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    RPAREN          reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+    COMMA           reduce using rule 37 (expr6 -> ID LPAREN listexpr RPAREN .)
+
+
+state 101
+
+    (4) listexpr -> listexpr COMMA . expr
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    ID              shift and go to state 46
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 104
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+
+state 102
+
+    (29) stmt -> IF LPAREN expr RPAREN . stmt
+    (30) stmt -> IF LPAREN expr RPAREN . stmt ELSE stmt
+    (21) stmt -> . SEMI
+    (22) stmt -> . block
+    (23) stmt -> . type listitem SEMI
+    (24) stmt -> . ID EQUALS expr SEMI
+    (25) stmt -> . ID PLUSPLUS SEMI
+    (26) stmt -> . ID MINUSMINUS SEMI
+    (27) stmt -> . RETURN expr SEMI
+    (28) stmt -> . RETURN SEMI
+    (29) stmt -> . IF LPAREN expr RPAREN stmt
+    (30) stmt -> . IF LPAREN expr RPAREN stmt ELSE stmt
+    (31) stmt -> . WHILE LPAREN expr RPAREN stmt
+    (32) stmt -> . expr SEMI
+    (19) block -> . LBRACE RBRACE
+    (20) block -> . LBRACE liststmt RBRACE
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    SEMI            shift and go to state 27
+    ID              shift and go to state 39
+    RETURN          shift and go to state 21
+    IF              shift and go to state 40
+    WHILE           shift and go to state 24
+    LBRACE          shift and go to state 18
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 42
+    stmt                           shift and go to state 105
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+    type                           shift and go to state 34
+    block                          shift and go to state 44
+
+state 103
+
+    (31) stmt -> WHILE LPAREN expr RPAREN stmt .
+
+    RBRACE          reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    SEMI            reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    ID              reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    RETURN          reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    IF              reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    WHILE           reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    LBRACE          reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    INT             reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    STRING          reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    VOID            reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    BOOLEAN         reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    MINUS           reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    NOT             reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    NUMBER          reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    TRUE            reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    FALSE           reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    LPAREN          reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    SENTENCE        reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+    ELSE            reduce using rule 31 (stmt -> WHILE LPAREN expr RPAREN stmt .)
+
+
+state 104
+
+    (4) listexpr -> listexpr COMMA expr .
+
+    RPAREN          reduce using rule 4 (listexpr -> listexpr COMMA expr .)
+    COMMA           reduce using rule 4 (listexpr -> listexpr COMMA expr .)
+
+
+state 105
+
+    (29) stmt -> IF LPAREN expr RPAREN stmt .
+    (30) stmt -> IF LPAREN expr RPAREN stmt . ELSE stmt
+
+  ! shift/reduce conflict for ELSE resolved as shift
+    RBRACE          reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    SEMI            reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    ID              reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    RETURN          reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    IF              reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    WHILE           reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    LBRACE          reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    INT             reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    STRING          reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    VOID            reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    BOOLEAN         reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    MINUS           reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    NOT             reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    NUMBER          reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    TRUE            reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    FALSE           reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    LPAREN          reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    SENTENCE        reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .)
+    ELSE            shift and go to state 106
+
+  ! ELSE            [ reduce using rule 29 (stmt -> IF LPAREN expr RPAREN stmt .) ]
+
+
+state 106
+
+    (30) stmt -> IF LPAREN expr RPAREN stmt ELSE . stmt
+    (21) stmt -> . SEMI
+    (22) stmt -> . block
+    (23) stmt -> . type listitem SEMI
+    (24) stmt -> . ID EQUALS expr SEMI
+    (25) stmt -> . ID PLUSPLUS SEMI
+    (26) stmt -> . ID MINUSMINUS SEMI
+    (27) stmt -> . RETURN expr SEMI
+    (28) stmt -> . RETURN SEMI
+    (29) stmt -> . IF LPAREN expr RPAREN stmt
+    (30) stmt -> . IF LPAREN expr RPAREN stmt ELSE stmt
+    (31) stmt -> . WHILE LPAREN expr RPAREN stmt
+    (32) stmt -> . expr SEMI
+    (19) block -> . LBRACE RBRACE
+    (20) block -> . LBRACE liststmt RBRACE
+    (64) type -> . INT
+    (65) type -> . STRING
+    (66) type -> . VOID
+    (67) type -> . BOOLEAN
+    (62) expr -> . expr1 OR expr
+    (63) expr -> . expr1
+    (60) expr1 -> . expr2 AND expr1
+    (61) expr1 -> . expr2
+    (58) expr2 -> . expr2 relop expr3
+    (59) expr2 -> . expr3
+    (50) expr3 -> . expr3 addop expr4
+    (51) expr3 -> . expr4
+    (43) expr4 -> . expr5
+    (47) expr4 -> . expr4 mulop expr5
+    (40) expr5 -> . MINUS expr6
+    (41) expr5 -> . expr6
+    (42) expr5 -> . NOT expr6
+    (33) expr6 -> . ID
+    (34) expr6 -> . NUMBER
+    (35) expr6 -> . TRUE
+    (36) expr6 -> . FALSE
+    (37) expr6 -> . ID LPAREN listexpr RPAREN
+    (38) expr6 -> . LPAREN expr RPAREN
+    (39) expr6 -> . SENTENCE
+
+    SEMI            shift and go to state 27
+    ID              shift and go to state 39
+    RETURN          shift and go to state 21
+    IF              shift and go to state 40
+    WHILE           shift and go to state 24
+    LBRACE          shift and go to state 18
+    INT             shift and go to state 5
+    STRING          shift and go to state 1
+    VOID            shift and go to state 3
+    BOOLEAN         shift and go to state 7
+    MINUS           shift and go to state 26
+    NOT             shift and go to state 43
+    NUMBER          shift and go to state 23
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 41
+    LPAREN          shift and go to state 38
+    SENTENCE        shift and go to state 36
+
+    expr                           shift and go to state 42
+    stmt                           shift and go to state 107
+    expr2                          shift and go to state 28
+    expr3                          shift and go to state 29
+    expr1                          shift and go to state 30
+    expr6                          shift and go to state 31
+    expr4                          shift and go to state 32
+    expr5                          shift and go to state 33
+    type                           shift and go to state 34
+    block                          shift and go to state 44
+
+state 107
+
+    (30) stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .
+
+    RBRACE          reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    SEMI            reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    ID              reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    RETURN          reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    IF              reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    WHILE           reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    LBRACE          reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    INT             reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    STRING          reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    VOID            reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    BOOLEAN         reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    MINUS           reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    NOT             reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    NUMBER          reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    TRUE            reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    FALSE           reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    LPAREN          reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    SENTENCE        reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+    ELSE            reduce using rule 30 (stmt -> IF LPAREN expr RPAREN stmt ELSE stmt .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for ELSE in state 105 resolved as shift
