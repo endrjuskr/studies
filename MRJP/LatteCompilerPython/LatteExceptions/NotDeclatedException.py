@@ -1,7 +1,7 @@
 __author__ = 'andrzejskrodzki'
 
-class NotDeclaredException(Exception):
 
+class NotDeclaredException(Exception):
     def __init__(self, ident, is_fun):
         self.type = "function" if is_fun else "variable"
         self.ident = ident

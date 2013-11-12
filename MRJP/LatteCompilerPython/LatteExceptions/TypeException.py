@@ -1,5 +1,6 @@
 __author__ = 'andrzejskrodzki'
 
+
 class TypeEception(Exception):
     def __init__(self, expected_type, received_type):
         self.expected_type = expected_type

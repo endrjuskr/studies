@@ -51,7 +51,7 @@
       <file leaf-file-name="TypeException.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LatteExceptions/TypeException.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="118" selection-start="67" selection-end="345" vertical-scroll-proportion="-5.44" vertical-offset="0" max-vertical-offset="238">
+            <state line="3" column="0" selection-start="33" selection-end="346" vertical-scroll-proportion="-2.04" vertical-offset="0" max-vertical-offset="255">
               <folding />
             </state>
           </provider>
@@ -60,7 +60,7 @@
       <file leaf-file-name="SyntaxException.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LatteExceptions/SyntaxException.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="119">
+            <state line="3" column="12" selection-start="45" selection-end="45" vertical-scroll-proportion="-2.04" vertical-offset="0" max-vertical-offset="255">
               <folding />
             </state>
           </provider>
@@ -69,25 +69,25 @@
       <file leaf-file-name="ReturnException.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LatteExceptions/ReturnException.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="119">
+            <state line="8" column="92" selection-start="253" selection-end="253" vertical-scroll-proportion="-5.44" vertical-offset="0" max-vertical-offset="238">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DuplicateDeclarationException.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DuplicateDeclarationException.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LatteExceptions/DuplicateDeclarationException.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="102" selection-start="330" selection-end="330" vertical-scroll-proportion="0.24018839" vertical-offset="0" max-vertical-offset="637">
+            <state line="9" column="57" selection-start="285" selection-end="285" vertical-scroll-proportion="-6.12" vertical-offset="0" max-vertical-offset="255">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NotDeclatedException.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="NotDeclatedException.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LatteExceptions/NotDeclatedException.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="-6.12" vertical-offset="0" max-vertical-offset="255">
+            <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="0.24018839" vertical-offset="0" max-vertical-offset="637">
               <folding />
             </state>
           </provider>
@@ -141,11 +141,11 @@
         <option value="$PROJECT_DIR$/expressionparser.py" />
         <option value="$PROJECT_DIR$/lattemain.py" />
         <option value="$PROJECT_DIR$/lattetypechecker.py" />
-        <option value="$PROJECT_DIR$/LatteExceptions/SyntaxException.py" />
-        <option value="$PROJECT_DIR$/LatteExceptions/ReturnException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/TypeException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/NotDeclatedException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/DuplicateDeclarationException.py" />
+        <option value="$PROJECT_DIR$/LatteExceptions/SyntaxException.py" />
+        <option value="$PROJECT_DIR$/LatteExceptions/ReturnException.py" />
       </list>
     </option>
   </component>
@@ -596,37 +596,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LatteExceptions/ReturnException.py">
+    <entry file="file://$PROJECT_DIR$/LatteExceptions/DuplicateDeclarationException.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="119">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LatteExceptions/SyntaxException.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="637">
+        <state line="9" column="57" selection-start="285" selection-end="285" vertical-scroll-proportion="-6.12" vertical-offset="0" max-vertical-offset="255">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/LatteExceptions/TypeException.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="118" selection-start="67" selection-end="345" vertical-scroll-proportion="-5.44" vertical-offset="0" max-vertical-offset="238">
+        <state line="3" column="0" selection-start="33" selection-end="346" vertical-scroll-proportion="-2.04" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LatteExceptions/SyntaxException.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="12" selection-start="45" selection-end="45" vertical-scroll-proportion="-2.04" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LatteExceptions/ReturnException.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="92" selection-start="253" selection-end="253" vertical-scroll-proportion="-5.44" vertical-offset="0" max-vertical-offset="238">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/LatteExceptions/NotDeclatedException.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="-6.12" vertical-offset="0" max-vertical-offset="255">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LatteExceptions/DuplicateDeclarationException.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="102" selection-start="330" selection-end="330" vertical-scroll-proportion="0.24018839" vertical-offset="0" max-vertical-offset="637">
+        <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="0.24018839" vertical-offset="0" max-vertical-offset="637">
           <folding />
         </state>
       </provider>
