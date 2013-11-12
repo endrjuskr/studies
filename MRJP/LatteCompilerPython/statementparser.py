@@ -10,16 +10,28 @@ class Block:
         self.type = "block"
         self.stmtlist = stmtlist
 
+    def type_check(self, env):
+        old_env = env.copy()
+        for stmt in self.stmtlist:
+            env = stmt.type_check(env)
+        return old_env
+
 
 class EmptyStmt(Stmt):
     def __init__(self):
         self.type = "emptystmt"
+
+    def type_check(self, env):
+        return env
 
 
 class BStmt(Stmt):
     def __init__(self, block):
         self.type = "blockstmt"
         self.block = block
+
+    def type_check(self, env):
+        return self.block.type_check(env)
 
 
 class DeclStmt(Stmt):
@@ -33,6 +45,12 @@ class DeclStmt(Stmt):
         for item in self.itemlist:
             item.itemtype = self.itemtype
 
+    def type_check(self, env):
+        for item in self.itemlist:
+            item.type_check(env)
+            env.add_variable(item.ident, item.get_type(), fun_param=False)
+        return env
+
 
 class Item:
     pass
@@ -44,12 +62,19 @@ class NoInitItem(Item):
         self.ident = ident
         self.itemtype = "unknown"
 
+    def type_check(self, env):
+        pass
+
 
 class InitItem(Item):
     def __init__(self, ident, expr):
         self.type = "inititem"
         self.ident = ident
         self.expr = expr
+        self.itemtype = "unknown"
+
+    def type_check(self, env):
+        self.expr.type_check(env, self.itemtype)
 
 
 class AssStmt(Stmt):
@@ -58,11 +83,27 @@ class AssStmt(Stmt):
         self.ident = ident
         self.expr = expr
 
+    def type_check(self, env):
+        if env.get_variable_type(self.ident) is None:
+            print "Variable not declared."
+            exit(-1)
+        self.expr.type_check(env, env.get_variable_type(self.ident))
+        return env
+
 
 class IncrStmt(Stmt):
     def __init__(self, ident):
         self.type = "incrstmt"
         self.ident = ident
+
+    def type_check(self, env):
+        if env.get_variable_type(self.ident) is None:
+            print "Variable is not declared in the scope"
+            exit(-1)
+        elif env.get_variable_type(self.ident).type != "int":
+            print "Increment can be applied only to integers."
+            exit(-1)
+        return env
 
 
 class DecrStmt(Stmt):
@@ -70,11 +111,23 @@ class DecrStmt(Stmt):
         self.type = "decrstmt"
         self.ident = ident
 
+    def type_check(self, env):
+        if env.get_variable_type(self.ident) is None:
+            print "Variable is not declared in the scope"
+            exit(-1)
+        elif env.get_variable_type(self.ident).type != "int":
+            print "Decrement can be applied only to integers."
+            exit(-1)
+        return env
+
 
 class RetStmt(Stmt):
     def __init__(self, expr):
         self.type = "retstmt"
         self.expr = expr
+
+    def type_check(self, env):
+        return env
 
 
 class VRetStmt(Stmt):

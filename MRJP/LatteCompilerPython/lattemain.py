@@ -19,7 +19,7 @@ if __name__ == "__main__":
             tok = lattelexer.token()
             if not tok: break      # No more input
             print tok.type, tok.value, tok.lexpos
-    result = latteparser.parse(content, lexer = lattelexer, debug = debug)
+    result = latteparser.parse(content, lexer=lattelexer, debug=debug)
     if result is None:
         print "ERR"
     else:

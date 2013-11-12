@@ -1,10 +1,32 @@
 __author__ = 'andrzejskrodzki'
-
-env = dict
-
-def full_check(program):
-    program.
+from Env import Env
 
 
-def env_add_fun(fun)
-    env[fun.ident]fun.funtype
+class TypeCheck:
+    def __init__(self, program):
+        self.env = Env()
+        self.program = program
+
+    def full_check(self):
+        for fndef in self.program.topdeflist:
+            self.env.add_fun(fndef)
+
+        if not self.env.contain_main():
+            print "Main function doesn't exist."
+            exit(-1)
+
+        for fndef in self.program.topdeflist:
+            self.fun_check(fndef)
+
+
+    def fun_check(self, fun):
+        env_prim = self.prepare_env(fun.arglist)
+        fun.block.type_check(env_prim)
+        if fun.funtype.returntype.type == "void":
+            fun.block.return_check()
+
+
+    def prepare_env(self, arglist):
+        new_env = self.env.copy()
+        for arg in arglist:
+            new_env.add_variable(arg.ident, arg.type)
