@@ -37,10 +37,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="lattetypechecker.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="lattetypechecker.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lattetypechecker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="25" selection-start="271" selection-end="271" vertical-scroll-proportion="-7.48" vertical-offset="0" max-vertical-offset="680">
+            <state line="30" column="23" selection-start="908" selection-end="908" vertical-scroll-proportion="0.80062795" vertical-offset="0" max-vertical-offset="731">
               <folding>
                 <element signature="e#31#50#0" expanded="true" />
               </folding>
@@ -84,10 +84,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NotDeclatedException.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="NotDeclatedException.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LatteExceptions/NotDeclatedException.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="0.24018839" vertical-offset="0" max-vertical-offset="637">
+            <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="-6.12" vertical-offset="0" max-vertical-offset="255">
               <folding />
             </state>
           </provider>
@@ -102,19 +102,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="programparser.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/LatteParsers/programparser.py">
+      <file leaf-file-name="statementparser.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/LatteParsers/statementparser.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="20" selection-start="390" selection-end="397" vertical-scroll-proportion="-10.88" vertical-offset="0" max-vertical-offset="629">
+            <state line="222" column="20" selection-start="5467" selection-end="5467" vertical-scroll-proportion="-24.12" vertical-offset="3171" max-vertical-offset="3876">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="expressionparser.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/LatteParsers/expressionparser.py">
+      <file leaf-file-name="programparser.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/LatteParsers/programparser.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="163" column="30" selection-start="5313" selection-end="5313" vertical-scroll-proportion="-5.44" vertical-offset="2499" max-vertical-offset="3111">
+            <state line="16" column="20" selection-start="390" selection-end="397" vertical-scroll-proportion="-10.88" vertical-offset="0" max-vertical-offset="629">
               <folding />
             </state>
           </provider>
@@ -130,7 +130,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/typeparser.py" />
         <option value="$PROJECT_DIR$/programparser.py" />
         <option value="$PROJECT_DIR$/tokrules.py" />
         <option value="$PROJECT_DIR$/latteparser.py" />
@@ -140,12 +139,13 @@
         <option value="$PROJECT_DIR$/Env.py" />
         <option value="$PROJECT_DIR$/expressionparser.py" />
         <option value="$PROJECT_DIR$/lattemain.py" />
-        <option value="$PROJECT_DIR$/lattetypechecker.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/TypeException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/NotDeclatedException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/DuplicateDeclarationException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/SyntaxException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/ReturnException.py" />
+        <option value="$PROJECT_DIR$/LatteParsers/statementparser.py" />
+        <option value="$PROJECT_DIR$/lattetypechecker.py" />
       </list>
     </option>
   </component>
@@ -543,13 +543,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LatteParsers/statementparser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="0" selection-start="828" selection-end="828" vertical-scroll-proportion="-9.72" vertical-offset="471" max-vertical-offset="3213">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/LatteParsers/typeparser.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="24" selection-start="283" selection-end="294" vertical-scroll-proportion="-8.84" vertical-offset="0" max-vertical-offset="323">
@@ -561,38 +554,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="163" column="30" selection-start="5313" selection-end="5313" vertical-scroll-proportion="-5.44" vertical-offset="2499" max-vertical-offset="3111">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Env.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="46" selection-start="1484" selection-end="1484" vertical-scroll-proportion="-23.44" vertical-offset="111" max-vertical-offset="1258">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LatteParsers/programparser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="20" selection-start="390" selection-end="397" vertical-scroll-proportion="-10.88" vertical-offset="0" max-vertical-offset="629">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lattemain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="29" selection-start="769" selection-end="769" vertical-scroll-proportion="-16.32" vertical-offset="0" max-vertical-offset="578">
-          <folding>
-            <element signature="e#31#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lattetypechecker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="25" selection-start="271" selection-end="271" vertical-scroll-proportion="-7.48" vertical-offset="0" max-vertical-offset="680">
-          <folding>
-            <element signature="e#31#50#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -626,8 +587,47 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/LatteExceptions/NotDeclatedException.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="0.24018839" vertical-offset="0" max-vertical-offset="637">
+        <state line="9" column="89" selection-start="308" selection-end="308" vertical-scroll-proportion="-6.12" vertical-offset="0" max-vertical-offset="255">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lattemain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="29" selection-start="769" selection-end="769" vertical-scroll-proportion="-16.32" vertical-offset="0" max-vertical-offset="578">
+          <folding>
+            <element signature="e#31#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LatteParsers/programparser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="20" selection-start="390" selection-end="397" vertical-scroll-proportion="-10.88" vertical-offset="0" max-vertical-offset="629">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Env.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="46" selection-start="1484" selection-end="1484" vertical-scroll-proportion="-23.44" vertical-offset="111" max-vertical-offset="1258">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LatteParsers/statementparser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="222" column="20" selection-start="5467" selection-end="5467" vertical-scroll-proportion="-24.12" vertical-offset="3171" max-vertical-offset="3876">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lattetypechecker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="23" selection-start="908" selection-end="908" vertical-scroll-proportion="0.80062795" vertical-offset="0" max-vertical-offset="731">
+          <folding>
+            <element signature="e#31#50#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

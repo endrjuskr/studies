@@ -16,6 +16,11 @@ class Block:
             env = stmt.type_check(env)
         return old_env
 
+    def return_check(self):
+        for i in [1..len(self.stmtlist)]:
+            if self.stmtlist[i -1]:
+                return True
+        return False
 
 class EmptyStmt(Stmt):
     def __init__(self):
@@ -23,6 +28,9 @@ class EmptyStmt(Stmt):
 
     def type_check(self, env):
         return env
+
+    def return_check(self):
+        return False
 
 
 class BStmt(Stmt):
@@ -32,6 +40,9 @@ class BStmt(Stmt):
 
     def type_check(self, env):
         return self.block.type_check(env)
+
+    def return_check(self):
+        return self.block.return_check()
 
 
 class DeclStmt(Stmt):
@@ -51,6 +62,8 @@ class DeclStmt(Stmt):
             env.add_variable(item.ident, item.get_type(), fun_param=False)
         return env
 
+    def return_check(self):
+        return False
 
 class Item:
     pass
@@ -90,6 +103,9 @@ class AssStmt(Stmt):
         self.expr.type_check(env, expected_type = env.get_variable_type(self.ident))
         return env
 
+    def return_check(self):
+        return False
+
 
 class IncrStmt(Stmt):
     def __init__(self, ident):
@@ -106,6 +122,9 @@ class IncrStmt(Stmt):
         return env
 
 
+    def return_check(self):
+        return False
+
 class DecrStmt(Stmt):
     def __init__(self, ident):
         self.type = "decrstmt"
@@ -120,6 +139,8 @@ class DecrStmt(Stmt):
             exit(-1)
         return env
 
+    def return_check(self):
+        return False
 
 class RetStmt(Stmt):
     def __init__(self, expr):
@@ -132,6 +153,9 @@ class RetStmt(Stmt):
         self.expr.type_check(env, expected_type = env.current_fun_type.returntype)
         return env
 
+    def return_check(self):
+        return True
+
 
 class VRetStmt(Stmt):
     def __init__(self):
@@ -142,6 +166,9 @@ class VRetStmt(Stmt):
         self.expr.type_check(env, env.current_fun_type.returntype)
         return env
 
+    def return_check(self):
+        return False
+
 class CondStmt(Stmt):
     def __init__(self, expr, stmt):
         self.type = "condstmt"
@@ -151,6 +178,9 @@ class CondStmt(Stmt):
     def type_check(self, env):
         self.expr.type_check(env, expected_type = "boolean")
         self.stmt.type_check(env)
+
+    def return_check(self):
+        return False
 
 
 class CondElseStmt(Stmt):
@@ -165,6 +195,9 @@ class CondElseStmt(Stmt):
         self.stmt1.type_check(env)
         self.stmt1.type_check(env)
 
+    def return_check(self):
+        return self.stmt1.return_check() and self.stmt2.return_check()
+
 class WhileStmt(Stmt):
     def __init__(self, expr, stmt):
         self.type = "whilestmt"
@@ -175,6 +208,9 @@ class WhileStmt(Stmt):
         self.expr.type_check(env, expected_type = "boolean")
         self.stmt.type_check(env)
 
+    def return_check(self):
+        return self.stmt.return_check()
+
 class SExpStmt(Stmt):
     def __init__(self, expr):
         self.type = "sexpstmt"
@@ -182,3 +218,6 @@ class SExpStmt(Stmt):
 
     def type_check(self, env):
         self.expr.type_check(env)
+
+    def return_check(self):
+        return False
