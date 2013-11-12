@@ -1,11 +1,8 @@
+from LatteParsers import typeparser, expressionparser, statementparser, programparser
+
 __author__ = 'andrzejskrodzki'
 
 import ply.yacc as yacc
-import expressionparser
-import statementparser
-import programparser
-import typeparser
-from tokrules import tokens
 
 precedence = (
     ('nonassoc', 'GE', 'GT', 'LE', 'LT', 'EQ', 'NE'),

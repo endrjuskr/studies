@@ -1,11 +1,13 @@
 __author__ = 'andrzejskrodzki'
 from Env import Env
+import LatteParsers
 
 
 class TypeCheck:
     def __init__(self, program):
         self.env = Env()
         self.program = program
+        assert self.program is LatteParsers.programparser.Program
 
     def full_check(self):
         for fndef in self.program.topdeflist:
@@ -30,3 +32,4 @@ class TypeCheck:
         new_env = self.env.copy()
         for arg in arglist:
             new_env.add_variable(arg.ident, arg.type)
+        return new_env

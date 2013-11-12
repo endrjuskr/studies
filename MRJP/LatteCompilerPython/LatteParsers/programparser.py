@@ -1,6 +1,6 @@
 __author__ = 'andrzejskrodzki'
 
-from typeparser import FunType
+from LatteParsers.typeparser import FunType
 
 
 class Program:

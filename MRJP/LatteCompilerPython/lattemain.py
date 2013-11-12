@@ -2,6 +2,7 @@ __author__ = 'andrzejskrodzki'
 import sys
 import lattepar
 import lattelex
+import lattetypechecker
 
 if __name__ == "__main__":
     with open(sys.argv[1], 'r') as content_file:
@@ -20,6 +21,8 @@ if __name__ == "__main__":
             if not tok: break      # No more input
             print tok.type, tok.value, tok.lexpos
     result = latteparser.parse(content, lexer=lattelexer, debug=debug)
+    lattechecker = lattetypechecker.TypeCheck(result)
+    lattechecker.full_check()
     if result is None:
         print "ERR"
     else:
