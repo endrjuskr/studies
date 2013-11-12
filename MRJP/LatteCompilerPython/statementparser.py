@@ -74,7 +74,7 @@ class InitItem(Item):
         self.itemtype = "unknown"
 
     def type_check(self, env):
-        self.expr.type_check(env, self.itemtype)
+        self.expr.type_check(env, expected_type = self.itemtype)
 
 
 class AssStmt(Stmt):
@@ -87,7 +87,7 @@ class AssStmt(Stmt):
         if env.get_variable_type(self.ident) is None:
             print "Variable not declared."
             exit(-1)
-        self.expr.type_check(env, env.get_variable_type(self.ident))
+        self.expr.type_check(env, expected_type = env.get_variable_type(self.ident))
         return env
 
 
@@ -127,19 +127,30 @@ class RetStmt(Stmt):
         self.expr = expr
 
     def type_check(self, env):
+        if env.current_fun_type.returntype == "void":
+            print "Incorrrect return type. Expected void."
+        self.expr.type_check(env, expected_type = env.current_fun_type.returntype)
         return env
 
 
 class VRetStmt(Stmt):
     def __init__(self):
         self.type = "vretstmt"
-
+    def type_check(self, env):
+        if env.current_fun_type.returntype != "void":
+            print "Incorrect return type. Expected not void."
+        self.expr.type_check(env, env.current_fun_type.returntype)
+        return env
 
 class CondStmt(Stmt):
     def __init__(self, expr, stmt):
         self.type = "condstmt"
         self.expr = expr
         self.stmt = stmt
+
+    def type_check(self, env):
+        self.expr.type_check(env, expected_type = "boolean")
+        self.stmt.type_check(env)
 
 
 class CondElseStmt(Stmt):
@@ -149,6 +160,10 @@ class CondElseStmt(Stmt):
         self.stmt1 = stmt1
         self.stmt2 = stmt2
 
+    def type_check(self, env):
+        self.expr.type_check(env, expected_type = "boolean")
+        self.stmt1.type_check(env)
+        self.stmt1.type_check(env)
 
 class WhileStmt(Stmt):
     def __init__(self, expr, stmt):
@@ -156,8 +171,14 @@ class WhileStmt(Stmt):
         self.expr = expr
         self.stmt = stmt
 
+    def type_check(self, env):
+        self.expr.type_check(env, expected_type = "boolean")
+        self.stmt.type_check(env)
 
 class SExpStmt(Stmt):
     def __init__(self, expr):
         self.type = "sexpstmt"
         self.expr = expr
+
+    def type_check(self, env):
+        self.expr.type_check(env)

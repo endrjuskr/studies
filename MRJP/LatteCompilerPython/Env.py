@@ -25,7 +25,7 @@ class Env:
             exit(-1)
         self.current_env[fun.ident] = fun.funtype
 
-    def contain_fun(self, ident):
+    def contain_ident(self, ident):
         return self.current_env[ident] is not None
 
     def contain_main(self):
@@ -35,6 +35,11 @@ class Env:
         self.current_fun_type = self.current_env[ident]
 
     def get_fun_type(self, ident):
+        assert self.current_env[ident] is FunType
+        return self.current_env[ident]
+
+    def get_var_type(self, ident):
+        assert self.current_env[ident] is Type
         return self.current_env[ident]
 
     def copy(self):
