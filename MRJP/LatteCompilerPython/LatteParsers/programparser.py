@@ -10,12 +10,13 @@ class Program:
 
 
 class FnDef:
-    def __init__(self, type, ident, arglist, block):
+    def __init__(self, type, ident, arglist, block, no_line):
         self.type = "fndef"
         self.funtype = self.calculate_type(type, arglist)
         self.ident = ident
         self.arglist = arglist
         self.block = block
+        self.no_line = no_line
 
     def get_type(self, arg):
         return arg.argtype

@@ -101,7 +101,7 @@ def p_arg(p):
 
 def p_fndef(p):
     'topdef : type ID LPAREN listarg RPAREN block'
-    p[0] = programparser.FnDef(p[1], p[2], p[4], p[6])
+    p[0] = programparser.FnDef(p[1], p[2], p[4], p[6], p.lineno(1))
 
 
 def p_block(p):
