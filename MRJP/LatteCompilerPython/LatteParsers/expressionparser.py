@@ -1,5 +1,7 @@
 __author__ = 'andrzejskrodzki'
 
+import typeparser
+
 
 class Expr: pass
 
@@ -12,8 +14,8 @@ class EOr(Expr):
         self.no_line = no_line
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "boolean":
-            print "Expected " + expected_type + ", but got boolean."
+        if expected_type is not None and expected_type != typeparser.Type("boolean"):
+            print "Expected " + expected_type + ", but got boolean. At line: " + str(self.no_line)
             exit(-1)
         self.left.type_check(env, expected_type)
         self.right.type_check(env, expected_type)
@@ -27,12 +29,12 @@ class EAnd(Expr):
         self.no_line = no_line
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "boolean":
-            print "Expected " + expected_type + ", but got boolean."
+        if expected_type is not None and expected_type != typeparser.Type("boolean"):
+            print "Expected " + expected_type + ", but got boolean. At line: " + str(self.no_line)
             exit(-1)
-        self.left.type_check(env, "boolean")
-        self.right.type_check(env, "boolean")
-        return "boolean"
+        self.left.type_check(env, typeparser.Type("boolean"))
+        self.right.type_check(env, typeparser.Type("boolean"))
+        return typeparser.Type("boolean")
 
 
 class ERel(Expr):
@@ -44,12 +46,14 @@ class ERel(Expr):
         self.no_line = no_line
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "boolean":
-            print "Expected " + expected_type + ", but got boolean."
+        print expected_type, self.no_line
+        if expected_type is not None and expected_type != typeparser.Type("boolean"):
+            print "Expected " + str(expected_type) + ", but got boolean. At line: " + str(self.no_line)
             exit(-1)
-        self.left.type_check(env, "boolean")
-        self.right.type_check(env, "boolean")
-        return "boolean"
+
+        returntype = self.left.type_check(env, None)
+        self.right.type_check(env, returntype)
+        return typeparser.Type("boolean")
 
 
 class EAdd(Expr):
@@ -61,10 +65,10 @@ class EAdd(Expr):
         self.no_line = no_line
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type == "boolean":
-            print "Expected " + expected_type + ", but got not boolean."
+        if expected_type is not None and expected_type == typeparser.Type("boolean"):
+            print "Expected " + expected_type + ", but got not boolean. At line: " + str(self.no_line)
             exit(-1)
-        if expected_type == "string" and self.op == "-":
+        if expected_type is not None and expected_type == typeparser.Type("string") and self.op == "-":
             print "String does not support - operator."
             exit(-1)
         returned_type = self.left.type_check(env, expected_type)
@@ -81,12 +85,13 @@ class EMul(Expr):
         self.no_line = no_line
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "int":
-            print "Expected " + expected_type + ", but got integer."
+        print expected_type
+        if expected_type is not None and expected_type != typeparser.Type("int"):
+            print "Expected " + expected_type + ", but got integer. At line: " + str(self.no_line)
             exit(-1)
-        self.left.type_check(env, "int")
-        self.right.type_check(env, "int")
-        return "int"
+        self.left.type_check(env, typeparser.Type("int"))
+        self.right.type_check(env, typeparser.Type("int"))
+        return typeparser.Type("int")
 
 
 class ENot(Expr):
@@ -96,11 +101,11 @@ class ENot(Expr):
         self.no_line = no_line
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "boolean":
-            print "Expected " + expected_type + ", but got boolean."
+        if expected_type is not None and expected_type != typeparser.Type("boolean"):
+            print "Expected " + expected_type + ", but got boolean. At line: " + str(self.no_line)
             exit(-1)
-        self.value.type_check(env, "boolean")
-        return "boolean"
+        self.value.type_check(env, typeparser.Type("boolean"))
+        return typeparser.Type("boolean")
 
 
 class ENeg(Expr):
@@ -110,11 +115,12 @@ class ENeg(Expr):
         self.no_line = no_line
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "int":
-            print "Expected " + expected_type + ", but got integer."
+        print expected_type
+        if expected_type is not None and expected_type != typeparser.Type("int"):
+            print "Expected " + expected_type + ", but got integer. At line: " + str(self.no_line)
             exit(-1)
-        self.value.type_check(env, "int")
-        return "int"
+        self.value.type_check(env, typeparser.Type("int"))
+        return typeparser.Type("int")
 
 
 class EString(Expr):
@@ -125,10 +131,10 @@ class EString(Expr):
         self.pos = pos
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "string":
-            print "Expected " + expected_type + ", but got string."
+        if expected_type is not None and expected_type != typeparser.Type("string"):
+            print "Expected " + expected_type + ", but got string. At line: " + str(self.no_line)
             exit(-1)
-        return "string"
+        return typeparser.Type("string")
 
 
 class EApp(Expr):
@@ -146,15 +152,17 @@ class EApp(Expr):
 
         fun_type = env.get_fun_type(self.funident)
         if expected_type is not None and expected_type != fun_type.returntype:
-            print "Expected " + expected_type + ", but got " + fun_type.returntype + "."
+            print "Expected " + str(expected_type) + ", but got " + str(fun_type.returntype) + ". At line: " + str(
+                self.no_line)
             exit(-1)
 
-        if (len(self.exprlist) != len(fun_type.paramstypes)):
-            print "Wrong number of parameters."
+        if len(self.exprlist) != len(fun_type.paramstypes):
+            print "Wrong number of parameters. At line: " + str(
+                self.no_line), self.funident, len(self.exprlist), len(fun_type.paramstypes)
             exit(-1)
 
-        for i in [1..len(self.exprlist)]:
-            self.exprlist[i - 1].type_check(env, fun_type.paramstypes[i - 1])
+        for i in range(len(self.exprlist)):
+            self.exprlist[i].type_check(env, fun_type.paramstypes[i])
         return fun_type.returntype
 
 
@@ -166,10 +174,10 @@ class ELitBoolean(Expr):
         self.pos = pos
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "boolean":
-            print "Expected " + expected_type + ", but got boolean."
+        if expected_type is not None and expected_type != typeparser.Type("boolean"):
+            print "Expected " + str(expected_type) + ", but got boolean. At line: " + str(self.no_line)
             exit(-1)
-        return "boolean"
+        return typeparser.Type("boolean")
 
 
 class ELitInt(Expr):
@@ -180,10 +188,10 @@ class ELitInt(Expr):
         self.pos = pos
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != "boolean":
-            print "Expected " + expected_type + ", but got boolean."
+        if expected_type is not None and expected_type != typeparser.Type("int"):
+            print "Expected " + str(expected_type) + ", but got int. At line: " + str(self.no_line)
             exit(-1)
-        return "boolean"
+        return typeparser.Type("int")
 
 
 class EVar(Expr):
@@ -199,8 +207,9 @@ class EVar(Expr):
             exit(-1)
 
         var_type = env.get_variable_type(self.value)
+        print self.no_line, var_type
         if expected_type is not None and expected_type != var_type:
-            print "Expected " + expected_type + ", but got " + var_type + "."
+            print "Expected " + str(expected_type) + ", but got " + str(var_type) + ". At line: " + str(self.no_line)
             exit(-1)
 
         return var_type

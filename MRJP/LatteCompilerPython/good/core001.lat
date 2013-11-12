@@ -11,7 +11,7 @@ int main() {
 	    r = r * n;
 	    n--;
 	  }
-	  printInt();
+	  printInt(r);
 	}
 	printString (repStr("=",60));
 	printString ("hello */");

@@ -7,7 +7,7 @@ class TypeCheck:
     def __init__(self, program):
         self.env = Env()
         self.program = program
-        assert self.program is LatteParsers.programparser.Program
+        assert self.program.type == "program"
 
     def full_check(self):
         for fndef in self.program.topdeflist:
@@ -23,6 +23,7 @@ class TypeCheck:
 
     def fun_check(self, fun):
         env_prim = self.prepare_env(fun.arglist)
+        print fun.funtype
         env_prim.current_fun_type = fun.funtype
         fun.block.type_check(env_prim)
         if fun.funtype.returntype.type != "void":
@@ -34,5 +35,5 @@ class TypeCheck:
     def prepare_env(self, arglist):
         new_env = self.env.copy()
         for arg in arglist:
-            new_env.add_variable(arg.ident, arg.type)
+            new_env.add_variable(arg.ident, arg.argtype, -1)
         return new_env
