@@ -301,7 +301,7 @@ def p_type(p):
     p[0] = typeparser.Type(p[1])
 
 def p_error(p):
-    print "Wrong token at position: " + p.lineno(1) + " line, " + p.lexpos(1) + " pos. Token - " + p.type
+    print "Wrong expression '" + p.value + "'. At pos (" + str(p.lineno) + ", " + str(p.lexpos) + ")"
     # Read ahead looking for a closing '}'
     while 1:
         tok = yacc.token()             # Get the next token

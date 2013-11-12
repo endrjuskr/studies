@@ -15,13 +15,12 @@ class Block:
     def type_check(self, env):
         env_prim = env.copy()
         for stmt in self.stmtlist:
-            print stmt
             env_prim = stmt.type_check(env_prim)
         return env
 
     def return_check(self):
         for i in range(len(self.stmtlist)):
-            if self.stmtlist[i]:
+            if self.stmtlist[i].return_check():
                 return True
         return False
 
@@ -64,7 +63,6 @@ class DeclStmt(Stmt):
     def type_check(self, env):
         for item in self.itemlist:
             item.type_check(env)
-            print item.itemtype
             env.add_variable(item.ident, item.itemtype, self.no_line, fun_param=False)
         return env
 
@@ -105,10 +103,9 @@ class AssStmt(Stmt):
         self.no_line = no_line
 
     def type_check(self, env):
-        if env.get_variable_type(self.ident) is None:
+        if not env.contain_variable(self.ident):
             print "Variable not declared."
             exit(-1)
-        print "test", env.get_variable_type(self.ident)
         self.expr.type_check(env, expected_type=env.get_variable_type(self.ident))
         return env
 
@@ -162,7 +159,6 @@ class RetStmt(Stmt):
         self.no_line = no_line
 
     def type_check(self, env):
-        print self.no_line
         if env.current_fun_type.returntype == typeparser.Type("void"):
             print "Incorrrect return type. Expected void."
         self.expr.type_check(env, expected_type=env.current_fun_type.returntype)
@@ -180,6 +176,7 @@ class VRetStmt(Stmt):
     def type_check(self, env):
         if env.current_fun_type.returntype != typeparser.Type("void"):
             print "Incorrect return type. Expected not void."
+            exit(-1)
         return env
 
     def return_check(self):
@@ -199,7 +196,10 @@ class CondStmt(Stmt):
         return env
 
     def return_check(self):
-        return False
+        if self.expr.value is True:
+            return self.stmt.return_check()
+        else:
+            return False
 
 
 class CondElseStmt(Stmt):
@@ -217,7 +217,12 @@ class CondElseStmt(Stmt):
         return env
 
     def return_check(self):
-        return self.stmt1.return_check() and self.stmt2.return_check()
+        if self.expr.value is None:
+            return self.stmt1.return_check() and self.stmt2.return_check()
+        elif self.expr.value:
+            return self.stmt1.return_check()
+        else:
+            return self.stmt2.return_check()
 
 
 class WhileStmt(Stmt):

@@ -20,10 +20,10 @@ if __name__ == "__main__":
             tok = lattelexer.token()
             if not tok: break      # No more input
             print tok.type, tok.value, tok.lexpos
-    result = latteparser.parse(content, lexer=lattelexer, debug=debug)
-    lattechecker = lattetypechecker.TypeCheck(result)
-    lattechecker.full_check()
+    result = latteparser.parse(content, lexer=lattelexer, debug=debug, tracking=True)
     if result is None:
         print "ERR"
-    else:
-        print "OK"
+        exit(-1)
+    lattechecker = lattetypechecker.TypeCheck(result)
+    lattechecker.full_check()
+    print "OK"

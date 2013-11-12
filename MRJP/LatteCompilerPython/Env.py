@@ -26,8 +26,12 @@ class Env:
             exit(-1)
         self.current_env[fun.ident] = fun.funtype
 
-    def contain_ident(self, ident):
-        return self.current_env.has_key(ident)
+    def contain_funtion(self, ident):
+        return self.current_env.has_key(ident) and hasattr(self.current_env[ident], "isFunction")
+
+    def contain_variable(self, ident):
+        return self.current_env.has_key(ident) and not hasattr(self.current_env[ident], "isFunction")
+
 
     def contain_main(self):
         return self.current_env.has_key("main") and self.current_env["main"] == FunType(Type("int"), [])
@@ -36,7 +40,7 @@ class Env:
         self.current_fun_type = self.current_env[ident]
 
     def get_fun_type(self, ident):
-        assert self.current_env[ident].type == "funtype"
+        assert hasattr(self.current_env[ident], "isFunction")
         return self.current_env[ident]
 
     def copy(self):
@@ -50,7 +54,6 @@ class Env:
         return Env(new_env=new_env, inside_fun=self.current_fun_type)
 
     def add_variable(self, ident, type, no_line, fun_param=True):
-        print ident
         if not self.current_env.has_key(ident):
             self.current_env[ident] = (type, 0 if fun_param else 1)
         elif hasattr(self.current_env[ident], "isFunction"):
@@ -68,7 +71,8 @@ class Env:
                 self.current_env[ident] = (type, count + 1)
 
     def get_variable_type(self, ident):
-        return None if self.current_env[ident] is None else self.current_env[ident][0]
+        assert not hasattr(self.current_env[ident], "isFunction")
+        return self.current_env[ident][0]
 
     def __str__(self):
         output = ""

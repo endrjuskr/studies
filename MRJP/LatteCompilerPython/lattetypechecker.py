@@ -23,7 +23,6 @@ class TypeCheck:
 
     def fun_check(self, fun):
         env_prim = self.prepare_env(fun.arglist)
-        print fun.funtype
         env_prim.current_fun_type = fun.funtype
         fun.block.type_check(env_prim)
         if fun.funtype.returntype.type != "void":
