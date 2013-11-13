@@ -1,7 +1,7 @@
 __author__ = 'andrzejskrodzki'
 
 import typeparser
-
+from LatteExceptions import TypeException, SyntaxException, NotDeclaredException
 
 class Expr:
     pass
@@ -17,8 +17,7 @@ class EOr(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("boolean"):
-            print "Expected " + expected_type + ", but got boolean. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("boolean"), self.no_line)
         self.left.type_check(env, expected_type)
         self.right.type_check(env, expected_type)
 
@@ -38,8 +37,7 @@ class EAnd(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("boolean"):
-            print "Expected " + expected_type + ", but got boolean. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("boolean"), self.no_line)
         self.left.type_check(env, typeparser.Type("boolean"))
         self.right.type_check(env, typeparser.Type("boolean"))
 
@@ -62,12 +60,12 @@ class ERel(Expr):
         self.value = None
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != typeparser.Type("boolean"):
-            print "Expected " + str(expected_type) + ", but got boolean. At line: " + str(self.no_line)
-            exit(-1)
+        return_type = self.left.type_check(env, None)
 
-        returntype = self.left.type_check(env, None)
-        self.right.type_check(env, returntype)
+        if expected_type is not None and expected_type != typeparser.Type("boolean"):
+            raise TypeException.TypeException(expected_type, typeparser.Type("boolean"), self.no_line)
+
+        self.right.type_check(env, return_type)
 
         if self.left.value is not None and self.right.value is not None:
             if self.op == "==":
@@ -97,13 +95,11 @@ class EAdd(Expr):
         self.value = None
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type == typeparser.Type("boolean"):
-            print "Expected " + expected_type + ", but got not boolean. At line: " + str(self.no_line)
-            exit(-1)
-        if expected_type is not None and expected_type == typeparser.Type("string") and self.op == "-":
-            print "String does not support - operator."
-            exit(-1)
         returned_type = self.left.type_check(env, expected_type)
+        if expected_type is not None and expected_type == typeparser.Type("boolean"):
+            raise TypeException.TypeException(expected_type, returned_type, self.no_line)
+        if expected_type is not None and expected_type == typeparser.Type("string") and self.op == "-":
+            raise SyntaxException.SyntaxEception("String does not support - operator.", self.no_line)
         self.right.type_check(env, returned_type)
 
         if self.left.value is not None and self.right.value is not None:
@@ -125,22 +121,19 @@ class EMul(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("int"):
-            print "Expected " + expected_type + ", but got integer. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("int"), self.no_line)
         self.left.type_check(env, typeparser.Type("int"))
         self.right.type_check(env, typeparser.Type("int"))
         if self.left.value is not None and self.right.value is not None:
             if self.op == "/":
                 if self.right.value == 0:
-                    print "Division by 0"
-                    exit(-1)
+                    raise SyntaxException.SyntaxEception("Division by 0", self.no_line)
                 self.value = self.left.value / self.right.value
             elif self.op == "*":
                 self.value = self.left.value * self.right.value
             elif self.op == "%":
                 if self.right.value == 0:
-                    print "Mod by 0"
-                    exit(-1)
+                    raise SyntaxException.SyntaxEception("Modulo by 0", self.no_line)
                 self.value = self.left.value % self.right.value
 
         return typeparser.Type("int")
@@ -155,8 +148,7 @@ class ENot(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("boolean"):
-            print "Expected " + expected_type + ", but got boolean. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("boolean"), self.no_line)
         self.expr.type_check(env, typeparser.Type("boolean"))
 
         if self.expr.value is not None:
@@ -174,8 +166,7 @@ class ENeg(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("int"):
-            print "Expected " + expected_type + ", but got integer. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("int"), self.no_line)
         self.expr.type_check(env, typeparser.Type("int"))
         if self.expr.value is not None:
             self.value = - self.expr.value
@@ -191,8 +182,7 @@ class EString(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("string"):
-            print "Expected " + str(expected_type) + ", but got string. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("string"), self.no_line)
 
         return typeparser.Type("string")
 
@@ -208,19 +198,17 @@ class EApp(Expr):
 
     def type_check(self, env, expected_type=None):
         if not env.contain_funtion(self.funident):
-            print "Funtion " + self.funident + " is not declared."
-            exit(-1)
+            raise NotDeclaredException.NotDeclaredException(self.funident, True, self.no_line, self.pos)
 
         fun_type = env.get_fun_type(self.funident)
         if expected_type is not None and expected_type != fun_type.returntype:
-            print "Expected " + str(expected_type) + ", but got " + str(fun_type.returntype) + ". At line: " + str(
-                self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, fun_type.returntype, self.no_line)
 
         if len(self.exprlist) != len(fun_type.paramstypes):
-            print "Wrong number of parameters. At line: " + str(
-                self.no_line), self.funident, len(self.exprlist), len(fun_type.paramstypes)
-            exit(-1)
+            raise SyntaxException.SyntaxEception("Wrong number of parameters for function "
+                                                 + self.funident + " - expected:"
+                                                 + str(len(fun_type.paramstypes)) + " actual: "
+                                                 + str(len(self.exprlist)) + ".", self.no_line)
 
         for i in range(len(self.exprlist)):
             self.exprlist[i].type_check(env, fun_type.paramstypes[i])
@@ -236,8 +224,7 @@ class ELitBoolean(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("boolean"):
-            print "Expected " + str(expected_type) + ", but got boolean. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("boolean"), self.no_line)
         return typeparser.Type("boolean")
 
 
@@ -250,8 +237,7 @@ class ELitInt(Expr):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != typeparser.Type("int"):
-            print "Expected " + str(expected_type) + ", but got int. At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, typeparser.Type("int"), self.no_line)
         return typeparser.Type("int")
 
 
@@ -265,12 +251,10 @@ class EVar(Expr):
 
     def type_check(self, env, expected_type=None):
         if not env.contain_variable(self.ident):
-            print "Variable " + self.ident + " is not declared."
-            exit(-1)
+            raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
 
         var_type = env.get_variable_type(self.ident)
         if expected_type is not None and expected_type != var_type:
-            print "Expected " + str(expected_type) + ", but got " + str(var_type) + ". At line: " + str(self.no_line)
-            exit(-1)
+            raise TypeException.TypeException(expected_type, var_type, self.no_line)
 
         return var_type

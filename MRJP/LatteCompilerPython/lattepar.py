@@ -5,6 +5,12 @@ __author__ = 'andrzejskrodzki'
 import ply.yacc as yacc
 from tokrules import tokens
 
+class LatteParserErrorCounter:
+    def __init__(self):
+        self.no_errors = 0
+
+counter = LatteParserErrorCounter()
+
 precedence = (
     ('nonassoc', 'GE', 'GT', 'LE', 'LT', 'EQ', 'NE'),
     ('right', 'AND', 'OR'),
@@ -87,17 +93,17 @@ def p_list_arg(p):
 
 def p_item_noinit(p):
     'item : ID'
-    p[0] = statementparser.NoInitItem(p[1])
+    p[0] = statementparser.NoInitItem(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_item_init(p):
     'item : ID EQUALS expr'
-    p[0] = statementparser.InitItem(p[1], p[3])
+    p[0] = statementparser.InitItem(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 def p_arg(p):
     'arg : type ID'
-    p[0] = programparser.Arg(p[1], p[2])
+    p[0] = programparser.Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
 
 
 def p_fndef(p):
@@ -131,17 +137,17 @@ def p_statement_decl(p):
 
 def p_statement_ass(p):
     'stmt : ID EQUALS expr SEMI'
-    p[0] = statementparser.AssStmt(p[1], p[3], p.lineno(1))
+    p[0] = statementparser.AssStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_incr(p):
     'stmt : ID PLUSPLUS SEMI'
-    p[0] = statementparser.IncrStmt(p[1], p.lineno(1))
+    p[0] = statementparser.IncrStmt(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_decr(p):
     'stmt : ID MINUSMINUS SEMI'
-    p[0] = statementparser.DecrStmt(p[1], p.lineno(1))
+    p[0] = statementparser.DecrStmt(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_ret(p):
@@ -301,6 +307,7 @@ def p_type(p):
     p[0] = typeparser.Type(p[1])
 
 def p_error(p):
+    counter.no_errors += 1
     print "Wrong expression '" + p.value + "'. At pos (" + str(p.lineno) + ", " + str(p.lexpos) + ")"
     # Read ahead looking for a closing '}'
     while 1:

@@ -1,7 +1,7 @@
 __author__ = 'andrzejskrodzki'
 
 import typeparser
-
+from LatteExceptions import NotDeclaredException, SyntaxException
 
 class Stmt:
     pass
@@ -63,7 +63,7 @@ class DeclStmt(Stmt):
     def type_check(self, env):
         for item in self.itemlist:
             item.type_check(env)
-            env.add_variable(item.ident, item.itemtype, self.no_line, fun_param=False)
+            env.add_variable(item.ident, item.itemtype, item.no_line, item.pos, fun_param=False)
         return env
 
     def return_check(self):
@@ -75,37 +75,41 @@ class Item:
 
 
 class NoInitItem(Item):
-    def __init__(self, ident):
+    def __init__(self, ident, no_line, pos):
         self.type = "noinititem"
         self.ident = ident
         self.itemtype = "unknown"
+        self.no_line = no_line
+        self.pos = pos
 
     def type_check(self, env):
         pass
 
 
 class InitItem(Item):
-    def __init__(self, ident, expr):
+    def __init__(self, ident, expr, no_line, pos):
         self.type = "inititem"
         self.ident = ident
         self.expr = expr
         self.itemtype = "unknown"
+        self.no_line = no_line
+        self.pos = pos
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=self.itemtype)
 
 
 class AssStmt(Stmt):
-    def __init__(self, ident, expr, no_line):
+    def __init__(self, ident, expr, no_line, pos):
         self.type = "assstmt"
         self.ident = ident
         self.expr = expr
         self.no_line = no_line
+        self.pos = pos
 
     def type_check(self, env):
         if not env.contain_variable(self.ident):
-            print "Variable not declared."
-            exit(-1)
+            raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
         self.expr.type_check(env, expected_type=env.get_variable_type(self.ident))
         return env
 
@@ -114,38 +118,39 @@ class AssStmt(Stmt):
 
 
 class IncrStmt(Stmt):
-    def __init__(self, ident, no_line):
+    def __init__(self, ident, no_line, pos):
         self.type = "incrstmt"
         self.ident = ident
         self.no_line = no_line
+        self.pos = pos
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
-            print "Variable is not declared in the scope"
-            exit(-1)
+            raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
         elif env.get_variable_type(self.ident).type != "int":
-            print "Increment can be applied only to integers."
-            exit(-1)
+            raise SyntaxException.SyntaxEception("Increment can be applied only to integers, but got "
+                                                 + str(env.get_variable_type(self.ident))
+                                                 + " for variable " + self.ident + ".", self.no_line)
         return env
-
 
     def return_check(self):
         return False
 
 
 class DecrStmt(Stmt):
-    def __init__(self, ident, no_line):
+    def __init__(self, ident, no_line, pos):
         self.type = "decrstmt"
         self.ident = ident
         self.no_line = no_line
+        self.pos = pos
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
-            print "Variable is not declared in the scope"
-            exit(-1)
+            raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
         elif env.get_variable_type(self.ident).type != "int":
-            print "Decrement can be applied only to integers."
-            exit(-1)
+            raise SyntaxException.SyntaxEception("Decrement can be applied only to integers, but got "
+                                                 + str(env.get_variable_type(self.ident))
+                                                 + " for variable " + self.ident + ".", self.no_line)
         return env
 
     def return_check(self):
@@ -159,8 +164,6 @@ class RetStmt(Stmt):
         self.no_line = no_line
 
     def type_check(self, env):
-        if env.current_fun_type.returntype == typeparser.Type("void"):
-            print "Incorrrect return type. Expected void."
         self.expr.type_check(env, expected_type=env.current_fun_type.returntype)
         return env
 
@@ -175,8 +178,7 @@ class VRetStmt(Stmt):
 
     def type_check(self, env):
         if env.current_fun_type.returntype != typeparser.Type("void"):
-            print "Incorrect return type. Expected not void."
-            exit(-1)
+            raise SyntaxException.SyntaxEception("Incorrect return type, expected not void.", self.no_line)
         return env
 
     def return_check(self):
@@ -248,7 +250,7 @@ class SExpStmt(Stmt):
         self.no_line = no_line
 
     def type_check(self, env):
-        self.expr.type_check(env)
+        self.expr.type_check(env, None)
         return env
 
     def return_check(self):

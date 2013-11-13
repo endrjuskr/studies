@@ -3,6 +3,7 @@ import sys
 import lattepar
 import lattelex
 import lattetypechecker
+from LatteExceptions import SyntaxException
 
 if __name__ == "__main__":
     with open(sys.argv[1], 'r') as content_file:
@@ -21,9 +22,11 @@ if __name__ == "__main__":
             if not tok: break      # No more input
             print tok.type, tok.value, tok.lexpos
     result = latteparser.parse(content, lexer=lattelexer, debug=debug, tracking=True)
-    if result is None:
-        print "ERR"
-        exit(-1)
-    lattechecker = lattetypechecker.TypeCheck(result)
-    lattechecker.full_check()
-    print "OK"
+    try:
+        if result is None:
+            raise SyntaxException.SyntaxEception(str(lattepar.counter.no_errors) + " errors occured.", 0)
+        lattechecker = lattetypechecker.TypeCheck(result)
+        lattechecker.full_check()
+        print "OK"
+    except BaseException as e:
+        print e

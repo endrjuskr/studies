@@ -1,7 +1,7 @@
 __author__ = 'andrzejskrodzki'
 
 from LatteParsers.typeparser import Type, FunType
-
+from LatteExceptions import DuplicateDeclarationException, SyntaxException
 
 class Env:
     current_env = {}
@@ -22,8 +22,7 @@ class Env:
 
     def add_fun(self, fun):
         if self.current_env.has_key(fun.ident) and self.current_env[fun.ident] == fun.funtype:
-            print "Function already exists with this name and type."
-            exit(-1)
+            raise DuplicateDeclarationException.DuplicateDeclarationException(fun.ident, True, fun.no_line, 0)
         self.current_env[fun.ident] = fun.funtype
 
     def contain_funtion(self, ident):
@@ -53,20 +52,18 @@ class Env:
                 new_env[key] = (t, 0)
         return Env(new_env=new_env, inside_fun=self.current_fun_type)
 
-    def add_variable(self, ident, type, no_line, fun_param=True):
+    def add_variable(self, ident, type, no_line, pos, fun_param=True):
         if not self.current_env.has_key(ident):
             self.current_env[ident] = (type, 0 if fun_param else 1)
         elif hasattr(self.current_env[ident], "isFunction"):
-            print "Trying override function."
-            exit(-1)
+            raise SyntaxException.SyntaxEception("Trying override function " + ident + ".", no_line)
         elif fun_param:
-            print "Two arguments with the same name."
-            exit(-1)
+            raise SyntaxException.SyntaxEception("More than one argument with the name " + ident
+                                                 + " in function " + ident + ".", no_line)
         else:
             (_, count) = self.current_env[ident]
             if count > 0:
-                print "Variable has been already declared in the block." + ident, self.current_fun_type, no_line
-                exit(-1)
+                raise DuplicateDeclarationException.DuplicateDeclarationException(ident, True, no_line, pos)
             else:
                 self.current_env[ident] = (type, count + 1)
 

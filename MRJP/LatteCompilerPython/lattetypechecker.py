@@ -1,6 +1,7 @@
 __author__ = 'andrzejskrodzki'
+
 from Env import Env
-import LatteParsers
+from LatteExceptions import ReturnException
 
 
 class TypeCheck:
@@ -27,12 +28,11 @@ class TypeCheck:
         fun.block.type_check(env_prim)
         if fun.funtype.returntype.type != "void":
             if not fun.block.return_check():
-                print fun.ident + " does not have proper return statement."
-                exit(-1)
+                raise ReturnException.ReturnException(fun.ident, fun.no_line)
 
 
     def prepare_env(self, arglist):
         new_env = self.env.copy()
         for arg in arglist:
-            new_env.add_variable(arg.ident, arg.argtype, -1)
+            new_env.add_variable(arg.ident, arg.argtype, arg.no_line, arg.pos)
         return new_env
