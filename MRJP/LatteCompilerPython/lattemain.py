@@ -21,10 +21,10 @@ if __name__ == "__main__":
             tok = lattelexer.token()
             if not tok: break      # No more input
             print tok.type, tok.value, tok.lexpos
-    result = latteparser.parse(content, lexer=lattelexer, debug=debug, tracking=True)
     try:
+        result = latteparser.parse(content, lexer=lattelexer, debug=debug, tracking=True)
         if result is None:
-            raise SyntaxException.SyntaxEception(str(lattepar.counter.no_errors) + " errors occured.", 0)
+            raise SyntaxException.SyntaxEception("Something happened wrong, but compiler could not find out :(.", 0)
         lattechecker = lattetypechecker.TypeCheck(result)
         lattechecker.full_check()
         print "OK"

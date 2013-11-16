@@ -1,10 +1,12 @@
 __author__ = 'andrzejskrodzki'
 
+from LatteExceptions import BaseException
 
-class SyntaxEception(BaseException):
-    def __init__(self, inner_exception, no_line):
-        self.no_line = no_line
+
+class SyntaxEception(BaseException.BaseException):
+    def __init__(self, inner_exception, no_line, pos=0):
+        super(SyntaxEception, self).__init__(no_line, pos)
         self.inner_exception = inner_exception
 
     def __str__(self):
-        return "Syntax Error: Error occured at the line " + str(self.no_line) + " - " + self.inner_exception
+        return super(SyntaxEception, self).__str__() + "Syntax Error: " + self.inner_exception

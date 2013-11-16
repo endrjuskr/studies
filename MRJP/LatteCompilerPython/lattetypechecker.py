@@ -1,7 +1,7 @@
 __author__ = 'andrzejskrodzki'
 
 from Env import Env
-from LatteExceptions import ReturnException
+from LatteExceptions import ReturnException, SyntaxException
 
 
 class TypeCheck:
@@ -15,8 +15,7 @@ class TypeCheck:
             self.env.add_fun(fndef)
 
         if not self.env.contain_main():
-            print "Main function doesn't exist."
-            exit(-1)
+            raise SyntaxException.SyntaxEception("Main funtion is not declared.", 0)
 
         for fndef in self.program.topdeflist:
             self.fun_check(fndef)

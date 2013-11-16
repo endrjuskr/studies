@@ -3,6 +3,7 @@ __author__ = 'andrzejskrodzki'
 import typeparser
 from LatteExceptions import NotDeclaredException, SyntaxException
 
+
 class Stmt:
     pass
 

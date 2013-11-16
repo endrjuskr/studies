@@ -3,11 +3,12 @@ __author__ = 'andrzejskrodzki'
 from LatteParsers.typeparser import Type, FunType
 from LatteExceptions import DuplicateDeclarationException, SyntaxException
 
+
 class Env:
     current_env = {}
     current_fun_type = None
 
-    def __init__(self, new_env={}, inside_fun = None):
+    def __init__(self, new_env={}, inside_fun=None):
         self.current_env = new_env
         self.current_fun_type = inside_fun
         if len(self.current_env) == 0:
