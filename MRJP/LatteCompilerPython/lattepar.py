@@ -142,17 +142,17 @@ def p_block(p):
 
 def p_statement_empty(p):
     'stmt : SEMI'
-    p[0] = statementparser.EmptyStmt()
+    p[0] = statementparser.EmptyStmt(p.lineno(1), p.lexpos(1))
 
 
 def p_statement_block(p):
     'stmt : block'
-    p[0] = statementparser.BStmt(p[1])
+    p[0] = statementparser.BStmt(p[1], p.lineno(1))
 
 
 def p_statement_decl(p):
     'stmt : type listitem SEMI'
-    p[0] = statementparser.DeclStmt(p[1], p[2], p.lineno(1))
+    p[0] = statementparser.DeclStmt(p[1], p[2], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_ass(p):
@@ -172,32 +172,32 @@ def p_statement_decr(p):
 
 def p_statement_ret(p):
     'stmt : RETURN expr SEMI'
-    p[0] = statementparser.RetStmt(p[2], p.lineno(1))
+    p[0] = statementparser.RetStmt(p[2], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_vret(p):
     'stmt : RETURN SEMI'
-    p[0] = statementparser.VRetStmt(p.lineno(1))
+    p[0] = statementparser.VRetStmt(p.lineno(1), p.lexpos(1))
 
 
 def p_statement_cond(p):
     'stmt : IF LPAREN expr RPAREN stmt'
-    p[0] = statementparser.CondStmt(p[3], p[5], p.lineno(1))
+    p[0] = statementparser.CondStmt(p[3], p[5], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_condelse(p):
     'stmt : IF LPAREN expr RPAREN stmt ELSE stmt'
-    p[0] = statementparser.CondElseStmt(p[3], p[5], p[7], p.lineno(1))
+    p[0] = statementparser.CondElseStmt(p[3], p[5], p[7], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_while(p):
     'stmt : WHILE LPAREN expr RPAREN stmt'
-    p[0] = statementparser.WhileStmt(p[3], p[5], p.lineno(1))
+    p[0] = statementparser.WhileStmt(p[3], p[5], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_sexp(p):
     'stmt : expr SEMI'
-    p[0] = statementparser.SExpStmt(p[1], p.lineno(1))
+    p[0] = statementparser.SExpStmt(p[1], p.lineno(1), p.lexpos(1))
 
 # Expression definitions
 
@@ -334,7 +334,7 @@ def p_type(p):
 
 
 def p_error(p):
-    raise SyntaxException.SyntaxEception("Wrong expression '" + p.value + "'.", p.lineno, pos=p.lexpos)
+    raise SyntaxException.SyntaxException("Wrong expression '" + p.value + "'.", p.lineno, pos=p.lexpos)
 
 
 def get_parser():

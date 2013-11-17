@@ -15,7 +15,7 @@ class TypeCheck:
             self.env.add_fun(fndef)
 
         if not self.env.contain_main():
-            raise SyntaxException.SyntaxEception("Main funtion is not declared.", 0)
+            raise SyntaxException.SyntaxException("Main funtion is not declared.", 0)
 
         for fndef in self.program.topdeflist:
             self.fun_check(fndef)

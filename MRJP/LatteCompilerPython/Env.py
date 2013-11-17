@@ -57,9 +57,9 @@ class Env:
         if not self.current_env.has_key(ident):
             self.current_env[ident] = (type, 0 if fun_param else 1)
         elif hasattr(self.current_env[ident], "isFunction"):
-            raise SyntaxException.SyntaxEception("Trying override function " + ident + ".", no_line)
+            raise SyntaxException.SyntaxException("Trying override function " + ident + ".", no_line)
         elif fun_param:
-            raise SyntaxException.SyntaxEception("More than one argument with the name " + ident
+            raise SyntaxException.SyntaxException("More than one argument with the name " + ident
                                                  + " in function " + ident + ".", no_line)
         else:
             (_, count) = self.current_env[ident]

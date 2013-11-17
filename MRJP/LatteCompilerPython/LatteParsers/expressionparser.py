@@ -117,7 +117,7 @@ class ERel(TwoArgExpr):
 
     def arg_type_check(self, rtype):
         if rtype == typeparser.Type("boolean") and self.op != "==":
-            raise SyntaxException.SyntaxEception("Boolean does not support rel operators except ==.", self.no_line)
+            raise SyntaxException.SyntaxException("Boolean does not support rel operators except ==.", self.no_line)
 
     def calculate_value(self):
         if self.left.get_value() is not None and self.right.get_value() is not None:
@@ -140,9 +140,9 @@ class EAdd(TwoArgExpr):
 
     def arg_type_check(self, rtype):
         if rtype == typeparser.Type("boolean"):
-            raise SyntaxException.SyntaxEception("Boolean does not support add operators.", self.no_line)
+            raise SyntaxException.SyntaxException("Boolean does not support add operators.", self.no_line)
         if rtype == typeparser.Type("string") and self.op == "-":
-            raise SyntaxException.SyntaxEception("String does not support - operator.", self.no_line)
+            raise SyntaxException.SyntaxException("String does not support - operator.", self.no_line)
 
         self.etype = rtype
 
@@ -165,13 +165,13 @@ class EMul(TwoArgExpr):
         if self.left.get_value() is not None and self.right.get_value() is not None:
             if self.op == "/":
                 if self.right.get_value() == 0:
-                    raise SyntaxException.SyntaxEception("Division by 0", self.no_line)
+                    raise SyntaxException.SyntaxException("Division by 0", self.no_line)
                 self.value = self.left.get_value() / self.right.get_value()
             elif self.op == "*":
                 self.value = self.left.get_value() * self.right.get_value()
             elif self.op == "%":
                 if self.right.get_value() == 0:
-                    raise SyntaxException.SyntaxEception("Modulo by 0", self.no_line)
+                    raise SyntaxException.SyntaxException("Modulo by 0", self.no_line)
                 self.value = self.left.get_value() % self.right.get_value()
 
 
@@ -211,7 +211,7 @@ class EApp(ZeroArgExpr):
 
     def check_arg_list(self, env):
         if len(self.exprlist) != len(self.etype.paramstypes):
-            raise SyntaxException.SyntaxEception("Wrong number of parameters for function "
+            raise SyntaxException.SyntaxException("Wrong number of parameters for function "
                                                  + self.funident + " - expected:"
                                                  + str(len(self.etype.paramstypes)) + " actual: "
                                                  + str(len(self.exprlist)) + ".", self.no_line)

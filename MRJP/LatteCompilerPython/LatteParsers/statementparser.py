@@ -4,8 +4,17 @@ import typeparser
 from LatteExceptions import NotDeclaredException, SyntaxException
 
 
-class Stmt:
-    pass
+class Stmt(object):
+    def __init__(self, type, no_line, pos):
+        self.type = type
+        self.no_line = no_line
+        self.pos = pos
+
+    def type_check(self, env):
+        return env
+
+    def return_check(self):
+        return False
 
 
 class Block:
@@ -27,19 +36,12 @@ class Block:
 
 
 class EmptyStmt(Stmt):
-    def __init__(self):
-        self.type = "emptystmt"
-
-    def type_check(self, env):
-        return env
-
-    def return_check(self):
-        return False
-
+    def __init__(self, no_line, pos):
+        super(EmptyStmt, self).__init__("emptystmt", no_line, pos)
 
 class BStmt(Stmt):
-    def __init__(self, block):
-        self.type = "blockstmt"
+    def __init__(self, block, no_line):
+        super(BStmt, self).__init__("blockstmt", no_line, 0)
         self.block = block
 
     def type_check(self, env):
@@ -50,11 +52,10 @@ class BStmt(Stmt):
 
 
 class DeclStmt(Stmt):
-    def __init__(self, itemtype, itemlist, no_line):
-        self.type = "declstmt"
+    def __init__(self, itemtype, itemlist, no_line, pos):
+        super(DeclStmt, self).__init__("declstmt", no_line, pos)
         self.itemtype = itemtype
         self.itemlist = itemlist
-        self.no_line = no_line
         self.settypes()
 
     def settypes(self):
@@ -67,34 +68,28 @@ class DeclStmt(Stmt):
             env.add_variable(item.ident, item.itemtype, item.no_line, item.pos, fun_param=False)
         return env
 
-    def return_check(self):
-        return False
 
-
-class Item:
-    pass
-
-
-class NoInitItem(Item):
-    def __init__(self, ident, no_line, pos):
-        self.type = "noinititem"
+class Item(object):
+    def __init__(self, ident, no_line, pos, type):
         self.ident = ident
         self.itemtype = "unknown"
         self.no_line = no_line
         self.pos = pos
+        self.type = type
 
     def type_check(self, env):
         pass
 
 
+class NoInitItem(Item):
+    def __init__(self, ident, no_line, pos):
+        super(NoInitItem, self).__init__(ident, no_line, pos, "noinititem")
+
+
 class InitItem(Item):
     def __init__(self, ident, expr, no_line, pos):
-        self.type = "inititem"
-        self.ident = ident
+        super(InitItem, self).__init__(ident, no_line, pos, "inititem")
         self.expr = expr
-        self.itemtype = "unknown"
-        self.no_line = no_line
-        self.pos = pos
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=self.itemtype)
@@ -102,11 +97,9 @@ class InitItem(Item):
 
 class AssStmt(Stmt):
     def __init__(self, ident, expr, no_line, pos):
-        self.type = "assstmt"
+        super(AssStmt, self).__init__("assstmt", no_line, pos)
         self.ident = ident
         self.expr = expr
-        self.no_line = no_line
-        self.pos = pos
 
     def type_check(self, env):
         if not env.contain_variable(self.ident):
@@ -120,49 +113,39 @@ class AssStmt(Stmt):
 
 class IncrStmt(Stmt):
     def __init__(self, ident, no_line, pos):
-        self.type = "incrstmt"
+        super(IncrStmt, self).__init__("incrstmt", no_line, pos)
         self.ident = ident
-        self.no_line = no_line
-        self.pos = pos
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
             raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
         elif env.get_variable_type(self.ident).type != "int":
-            raise SyntaxException.SyntaxEception("Increment can be applied only to integers, but got "
+            raise SyntaxException.SyntaxException("Increment can be applied only to integers, but got "
                                                  + str(env.get_variable_type(self.ident))
                                                  + " for variable " + self.ident + ".", self.no_line)
         return env
-
-    def return_check(self):
-        return False
 
 
 class DecrStmt(Stmt):
     def __init__(self, ident, no_line, pos):
-        self.type = "decrstmt"
+        super(DecrStmt, self).__init__("decrstmt", no_line, pos)
         self.ident = ident
-        self.no_line = no_line
-        self.pos = pos
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
             raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
         elif env.get_variable_type(self.ident).type != "int":
-            raise SyntaxException.SyntaxEception("Decrement can be applied only to integers, but got "
+            raise SyntaxException.SyntaxException("Decrement can be applied only to integers, but got "
                                                  + str(env.get_variable_type(self.ident))
                                                  + " for variable " + self.ident + ".", self.no_line)
         return env
 
-    def return_check(self):
-        return False
-
 
 class RetStmt(Stmt):
-    def __init__(self, expr, no_line):
-        self.type = "retstmt"
+    def __init__(self, expr, no_line, pos):
+        super(RetStmt, self).__init__("retstmt", no_line, pos)
         self.expr = expr
-        self.no_line = no_line
+
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=env.current_fun_type.returntype)
@@ -173,25 +156,20 @@ class RetStmt(Stmt):
 
 
 class VRetStmt(Stmt):
-    def __init__(self, no_line):
-        self.type = "vretstmt"
-        self.no_line = no_line
+    def __init__(self, no_line, pos):
+        super(VRetStmt, self).__init__("vretstmt", no_line, pos)
 
     def type_check(self, env):
         if env.current_fun_type.returntype != typeparser.Type("void"):
-            raise SyntaxException.SyntaxEception("Incorrect return type, expected not void.", self.no_line)
+            raise SyntaxException.SyntaxException("Incorrect return type, expected not void.", self.no_line)
         return env
 
-    def return_check(self):
-        return False
-
-
 class CondStmt(Stmt):
-    def __init__(self, expr, stmt, no_line):
-        self.type = "condstmt"
+    def __init__(self, expr, stmt, no_line, pos):
+        super(CondStmt, self).__init__("condstmt", no_line, pos)
         self.expr = expr
         self.stmt = stmt
-        self.no_line = no_line
+
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=typeparser.Type("boolean"))
@@ -206,17 +184,16 @@ class CondStmt(Stmt):
 
 
 class CondElseStmt(Stmt):
-    def __init__(self, expr, stmt1, stmt2, no_line):
-        self.type = "condelsestmt"
+    def __init__(self, expr, stmt1, stmt2, no_line, pos):
+        super(CondElseStmt, self).__init__("condelsestmt", no_line, pos)
         self.expr = expr
         self.stmt1 = stmt1
         self.stmt2 = stmt2
-        self.no_line = no_line
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=typeparser.Type("boolean"))
         self.stmt1.type_check(env)
-        self.stmt1.type_check(env)
+        self.stmt2.type_check(env)
         return env
 
     def return_check(self):
@@ -229,11 +206,10 @@ class CondElseStmt(Stmt):
 
 
 class WhileStmt(Stmt):
-    def __init__(self, expr, stmt, no_line):
-        self.type = "whilestmt"
+    def __init__(self, expr, stmt, no_line, pos):
+        super(WhileStmt, self).__init__("whilestmt", no_line, pos)
         self.expr = expr
         self.stmt = stmt
-        self.no_line = no_line
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=typeparser.Type("boolean"))
@@ -245,14 +221,11 @@ class WhileStmt(Stmt):
 
 
 class SExpStmt(Stmt):
-    def __init__(self, expr, no_line):
-        self.type = "sexpstmt"
+    def __init__(self, expr, no_line, pos):
+        super(SExpStmt, self).__init__("sexpstmt", no_line, pos)
         self.expr = expr
-        self.no_line = no_line
 
     def type_check(self, env):
-        self.expr.type_check(env, None)
+        # Here we assume that the only expression is invocation of void function.
+        self.expr.type_check(env, expected_type=typeparser.Type("void"))
         return env
-
-    def return_check(self):
-        return False

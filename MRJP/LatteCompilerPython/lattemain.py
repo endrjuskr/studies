@@ -6,6 +6,9 @@ import lattetypechecker
 from LatteExceptions import SyntaxException
 
 if __name__ == "__main__":
+    if len(sys.argv) == 0:
+        print "Please provide file name."
+        sys.exit(-1)
     with open(sys.argv[1], 'r') as content_file:
         content = content_file.read()
         # Build the parser
@@ -24,9 +27,14 @@ if __name__ == "__main__":
     try:
         result = latteparser.parse(content, lexer=lattelexer, debug=debug, tracking=True)
         if result is None:
-            raise SyntaxException.SyntaxEception("Something happened wrong, but compiler could not find out :(.", 0)
+            raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", 0)
         lattechecker = lattetypechecker.TypeCheck(result)
         lattechecker.full_check()
-        print "OK"
     except BaseException as e:
-        print e
+        sys.stderr.write("ERROR\n")
+        sys.stderr.write("{}\n".format(e))
+        sys.stdout.write("{}\n".format(e))
+        sys.exit(-2)
+
+    sys.stderr.write("OK\n")
+    sys.exit()
