@@ -26,10 +26,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="lattemain.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="lattemain.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/lattemain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="41" selection-start="758" selection-end="758" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="915">
+            <state line="12" column="42" selection-start="378" selection-end="378" vertical-scroll-proportion="0.24539877" vertical-offset="60" max-vertical-offset="825">
               <folding>
                 <element signature="e#31#41#0" expanded="true" />
               </folding>
@@ -46,10 +46,64 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Makefile" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Makefile" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Makefile">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="59" selection-start="219" selection-end="219" vertical-scroll-proportion="0.26367188" vertical-offset="0" max-vertical-offset="512">
+            <state line="6" column="114" selection-start="180" selection-end="180" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="lattepar.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lattepar.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="339" column="17" selection-start="6958" selection-end="6958" vertical-scroll-proportion="0.0" vertical-offset="4656" max-vertical-offset="5145">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tokrules.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/tokrules.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="30" selection-start="130" selection-end="130" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1470">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LexerException.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/LatteExceptions/LexerException.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="0" selection-start="75" selection-end="75" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SyntaxException.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/LatteExceptions/SyntaxException.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="95" selection-start="132" selection-end="411" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DuplicateDeclarationException.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/LatteExceptions/DuplicateDeclarationException.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="63" selection-start="112" selection-end="139" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="300">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/LatteExceptions/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="105">
               <folding />
             </state>
           </provider>
@@ -65,9 +119,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/Env.py" />
-        <option value="$PROJECT_DIR$/LatteParsers/programparser.py" />
-        <option value="$PROJECT_DIR$/LatteParsers/expressionparser.py" />
         <option value="$PROJECT_DIR$/lattetypechecker.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/DuplicateDeclarationException.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/BaseException.py" />
@@ -78,9 +129,12 @@
         <option value="$PROJECT_DIR$/lattepar.py" />
         <option value="$PROJECT_DIR$/lattemain.py" />
         <option value="$PROJECT_DIR$/LatteExceptions/SyntaxException.py" />
-        <option value="$PROJECT_DIR$/src/lattemain.py" />
         <option value="$PROJECT_DIR$/src/bashscript.sh" />
+        <option value="$PROJECT_DIR$/src/LatteExceptions/LexerException.py" />
+        <option value="$PROJECT_DIR$/src/tokrules.py" />
         <option value="$PROJECT_DIR$/Makefile" />
+        <option value="$PROJECT_DIR$/src/lattepar.py" />
+        <option value="$PROJECT_DIR$/src/lattemain.py" />
       </list>
     </option>
   </component>
@@ -144,6 +198,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LatteCompilerPython" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LatteCompilerPython" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LatteExceptions" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -410,12 +482,31 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/lattemain.py">
+    <entry file="file://$PROJECT_DIR$/src/LatteExceptions/DuplicateDeclarationException.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="41" selection-start="758" selection-end="758" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="915">
-          <folding>
-            <element signature="e#31#41#0" expanded="true" />
-          </folding>
+        <state line="5" column="63" selection-start="112" selection-end="139" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="300">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/LatteExceptions/SyntaxException.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="95" selection-start="132" selection-end="411" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/LatteExceptions/LexerException.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="0" selection-start="75" selection-end="75" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tokrules.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="30" selection-start="130" selection-end="130" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1470">
+          <folding />
         </state>
       </provider>
     </entry>
@@ -428,8 +519,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Makefile">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="59" selection-start="219" selection-end="219" vertical-scroll-proportion="0.26367188" vertical-offset="0" max-vertical-offset="512">
+        <state line="6" column="114" selection-start="180" selection-end="180" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/LatteExceptions/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="512">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lattepar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="339" column="17" selection-start="6958" selection-end="6958" vertical-scroll-proportion="0.0" vertical-offset="4656" max-vertical-offset="5145">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lattemain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="42" selection-start="378" selection-end="378" vertical-scroll-proportion="0.24539877" vertical-offset="60" max-vertical-offset="825">
+          <folding>
+            <element signature="e#31#41#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

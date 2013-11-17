@@ -4,7 +4,7 @@ COMPNAME=latc
 CWD = $(shell pwd)
 
 latcmake:
-	sed "s|srcpath|$(CWD)|g" $(SDIR)/bashscript.sh > $(COMPNAME) && chmod +x $(COMPNAME)
+	sed "s|srcpath|$(CWD)|g" $(SDIR)/bashscript.sh > $(COMPNAME) && chmod +x $(COMPNAME) && python -m compileall .
 
 clean:
 	rm -f -r $(SDIR)/*.pyc $(COMPNAME) $(TDIR)/good/output/ $(TDIR)/bad/output/

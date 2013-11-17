@@ -28,19 +28,13 @@ if __name__ == "__main__":
         print "File does not exist - '{}'.".format(sys.argv[1])
         sys.exit(-1)
     debug = 0
-    print_tokens = 0
+    if len(sys.argv) > 2:
+        debug = 1 if sys.argv[2] == "-d" else 0
+
     lattelexer = lattelex.get_lexer()
     latteparser = lattepar.get_parser()
-    if len(sys.argv) > 2:
-        debug = 1
-    if len(sys.argv) > 3:
-        lattelexer.input(content)
-        while True:
-            tok = lattelexer.token()
-            if not tok: break      # No more input
-            print tok.type, tok.value, tok.lexpos
     try:
-        result = latteparser.parse(content, lexer=lattelexer, debug=debug, tracking=True)
+        result = latteparser.parse(content, lexer=lattelexer)
         if result is None:
             raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", 0)
         lattechecker = lattetypechecker.TypeCheck(result)

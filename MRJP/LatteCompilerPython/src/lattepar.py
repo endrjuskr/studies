@@ -338,4 +338,4 @@ def p_error(p):
 
 
 def get_parser():
-    return yacc.yacc()
+    return yacc.yacc(write_tables=0, debug=0)

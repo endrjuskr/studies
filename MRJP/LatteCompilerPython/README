@@ -1,9 +1,23 @@
 Compiler construction (MRJP 2013) lab project
-developed by Andrzej Skrodzki (292510)
+Developed by Andrzej Skrodzki (292510)
 
 Catalog structure:
 src/ - project files
 README - readme file
 Makefile
 lattetests/ - set of latte tests provided within project description extended with few new ones
+ply/ - PLY (Python Lex-Yacc). Python implementation of the common parsing tools lex and yacc. Developed by David M. Beazley (Dabeaz LLC). Found at https://github.com/dabeaz/ply.
 
+How to install:
+Simply run 'make' to create latc compiler. 'make clean' command cleans up directories to original state.
+
+How to use:
+Run 'calc [file]' where '[file]' is the path to file, which should be compiled.
+
+How to test:
+To run tests go to folder 'lattetests' and run 'runtests.sh [foldername]', 
+where '[foldername]' is the folder with tests like 'good' or 'bad'.
+Output will be placed in folder 'output' under folder, which you specified previously.
+
+Note:
+Right now, there are no extensions, so only tests from 'good' and 'bad' folders work.
