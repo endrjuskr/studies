@@ -5,13 +5,28 @@ import lattelex
 import lattetypechecker
 from LatteExceptions import SyntaxException
 
+def print_usage():
+    print "##############"
+    print "\n  latc - latte compiler written in python using PLY.\n"
+    print "\tUsage:\n"
+    print "  latc [file] - passing file to compile.\n"
+    print "  latc help - showing usage.\n"
+
 if __name__ == "__main__":
-    if len(sys.argv) == 0:
-        print "Please provide file name."
+    if len(sys.argv) == 1:
+        print "Please provide file name.\n"
+        print_usage()
         sys.exit(-1)
-    with open(sys.argv[1], 'r') as content_file:
-        content = content_file.read()
-        # Build the parser
+    if sys.argv[1] == "help":
+        print_usage()
+        sys.exit()
+    try:
+        with open(sys.argv[1], 'r') as content_file:
+            content = content_file.read()
+
+    except IOError:
+        print "File does not exist - '{}'.".format(sys.argv[1])
+        sys.exit(-1)
     debug = 0
     print_tokens = 0
     lattelexer = lattelex.get_lexer()

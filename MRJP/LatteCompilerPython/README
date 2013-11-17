@@ -1,0 +1,9 @@
+Compiler construction (MRJP 2013) lab project
+developed by Andrzej Skrodzki (292510)
+
+Catalog structure:
+src/ - project files
+README - readme file
+Makefile
+lattetests/ - set of latte tests provided within project description extended with few new ones
+
