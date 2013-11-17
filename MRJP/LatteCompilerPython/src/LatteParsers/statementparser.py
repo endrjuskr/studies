@@ -22,8 +22,11 @@ class Block:
         self.type = "block"
         self.stmtlist = stmtlist
 
-    def type_check(self, env):
-        env_prim = env.copy()
+    def type_check(self, env, should_copy=True):
+        if should_copy:
+            env_prim = env.copy()
+        else:
+            env_prim = env
         for stmt in self.stmtlist:
             env_prim = stmt.type_check(env_prim)
         return env

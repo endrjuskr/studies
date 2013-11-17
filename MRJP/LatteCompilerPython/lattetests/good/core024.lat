@@ -1,0 +1,17 @@
+int main()
+{
+    f();
+    boolean k = (1 > 0) == true;
+    return 0;
+}
+
+int t(int k)
+{
+    k = 8;
+    return 1;
+}
+
+void f()
+{
+    return;
+}

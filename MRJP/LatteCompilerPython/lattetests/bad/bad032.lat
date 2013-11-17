@@ -1,0 +1,14 @@
+int main()
+{
+    return 0;
+}
+
+int t()
+{
+    return 0;
+}
+
+string t()
+{
+    return "";
+}

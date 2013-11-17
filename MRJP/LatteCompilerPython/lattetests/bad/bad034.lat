@@ -1,0 +1,5 @@
+int main()
+{
+    string k = "as" - "a";
+    return 0;
+}

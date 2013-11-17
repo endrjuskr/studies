@@ -1,0 +1,5 @@
+int main()
+{
+    boolean k = 1 == true;
+    return 0;
+}

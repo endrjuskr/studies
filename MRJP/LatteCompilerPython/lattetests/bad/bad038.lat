@@ -1,0 +1,9 @@
+int main()
+{
+    t();
+    return 0;
+}
+int t()
+{
+    return 1;
+}

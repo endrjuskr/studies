@@ -22,7 +22,7 @@ class Env:
         self.current_env["error"] = FunType(Type("void"), [])
 
     def add_fun(self, fun):
-        if self.current_env.has_key(fun.ident) and self.current_env[fun.ident] == fun.funtype:
+        if self.current_env.has_key(fun.ident):
             raise DuplicateDeclarationException.DuplicateDeclarationException(fun.ident, True, fun.no_line, 0)
         self.current_env[fun.ident] = fun.funtype
 
@@ -55,12 +55,12 @@ class Env:
 
     def add_variable(self, ident, type, no_line, pos, fun_param=True):
         if not self.current_env.has_key(ident):
-            self.current_env[ident] = (type, 0 if fun_param else 1)
+            self.current_env[ident] = (type, 1)
         elif hasattr(self.current_env[ident], "isFunction"):
             raise SyntaxException.SyntaxException("Trying override function " + ident + ".", no_line)
         elif fun_param:
-            raise SyntaxException.SyntaxException("More than one argument with the name " + ident
-                                                 + " in function " + ident + ".", no_line)
+            raise SyntaxException.SyntaxException("More than one argument with the name " + ident +
+                                                  " in function " + ident + ".", no_line)
         else:
             (_, count) = self.current_env[ident]
             if count > 0:

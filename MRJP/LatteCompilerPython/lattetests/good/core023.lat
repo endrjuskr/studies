@@ -1,0 +1,9 @@
+int main()
+{
+    int x;
+    {
+        string x;
+    }
+    x = 4;
+    return 0;
+}

@@ -24,7 +24,7 @@ class TypeCheck:
     def fun_check(self, fun):
         env_prim = self.prepare_env(fun.arglist)
         env_prim.current_fun_type = fun.funtype
-        fun.block.type_check(env_prim)
+        fun.block.type_check(env_prim, should_copy=False)
         if fun.funtype.returntype.type != "void":
             if not fun.block.return_check():
                 raise ReturnException.ReturnException(fun.ident, fun.no_line)
