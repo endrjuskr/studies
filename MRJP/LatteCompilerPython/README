@@ -6,7 +6,7 @@ src/ - project files
 README - readme file
 Makefile
 lattetests/ - set of latte tests provided within project description extended with few new ones
-ply/ - PLY (Python Lex-Yacc). Python implementation of the common parsing tools lex and yacc. Developed by David M. Beazley (Dabeaz LLC). Found at https://github.com/dabeaz/ply.
+lib/ply/ - PLY (Python Lex-Yacc). Python implementation of the common parsing tools lex and yacc. Developed by David M. Beazley (Dabeaz LLC). Found at https://github.com/dabeaz/ply.
 
 How to install:
 Simply run 'make' to create latc compiler. 'make clean' command cleans up directories to original state.

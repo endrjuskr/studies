@@ -5,6 +5,7 @@
 *.o
 *.pyc
 *.class
+*.gz
 
 # Compiled Dynamic libraries
 *.so
@@ -14,3 +15,6 @@
 *.lai
 *.la
 *.a
+
+# ide files
+MRJP/LatteCompilerPython/.idea/
