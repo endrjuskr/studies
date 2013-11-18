@@ -117,7 +117,8 @@ class ERel(TwoArgExpr):
 
     def arg_type_check(self, rtype):
         if rtype == typeparser.Type("boolean") and self.op != "==" and self.op != "!=":
-            raise SyntaxException.SyntaxException("Boolean does not support rel operators except ==.", self.no_line)
+            raise SyntaxException.SyntaxException("Boolean does not support rel operators except '==' and '!='.",
+                                                  self.no_line, pos=self.pos)
 
     def calculate_value(self):
         if self.left.get_value() is not None and self.right.get_value() is not None:
@@ -142,9 +143,9 @@ class EAdd(TwoArgExpr):
 
     def arg_type_check(self, rtype):
         if rtype == typeparser.Type("boolean"):
-            raise SyntaxException.SyntaxException("Boolean does not support add operators.", self.no_line)
+            raise SyntaxException.SyntaxException("Boolean does not support add operators.", self.no_line, pos=self.pos)
         if rtype == typeparser.Type("string") and self.op == "-":
-            raise SyntaxException.SyntaxException("String does not support - operator.", self.no_line)
+            raise SyntaxException.SyntaxException("String does not support - operator.", self.no_line, pos=self.pos)
 
         self.etype = rtype
 
@@ -167,13 +168,13 @@ class EMul(TwoArgExpr):
         if self.left.get_value() is not None and self.right.get_value() is not None:
             if self.op == "/":
                 if self.right.get_value() == 0:
-                    raise SyntaxException.SyntaxException("Division by 0", self.no_line)
+                    raise SyntaxException.SyntaxException("Division by 0", self.no_line, pos=self.pos)
                 self.value = self.left.get_value() / self.right.get_value()
             elif self.op == "*":
                 self.value = self.left.get_value() * self.right.get_value()
             elif self.op == "%":
                 if self.right.get_value() == 0:
-                    raise SyntaxException.SyntaxException("Modulo by 0", self.no_line)
+                    raise SyntaxException.SyntaxException("Modulo by 0", self.no_line, pos=self.pos)
                 self.value = self.left.get_value() % self.right.get_value()
 
 

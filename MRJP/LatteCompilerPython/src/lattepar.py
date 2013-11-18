@@ -126,7 +126,7 @@ def p_arg(p):
 
 def p_fndef(p):
     'topdef : type ID LPAREN listarg RPAREN block'
-    p[0] = programparser.FnDef(p[1], p[2], p[4], p[6], p.lineno(1))
+    p[0] = programparser.FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
 
 
 def p_block(p):
@@ -152,7 +152,7 @@ def p_statement_block(p):
 
 def p_statement_decl(p):
     'stmt : type listitem SEMI'
-    p[0] = statementparser.DeclStmt(p[1], p[2], p.lineno(1), p.lexpos(1))
+    p[0] = statementparser.DeclStmt(p[1], p[2], p.lineno(3), p.lexpos(3))
 
 
 def p_statement_ass(p):

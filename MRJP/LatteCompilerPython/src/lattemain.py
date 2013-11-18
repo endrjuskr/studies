@@ -41,6 +41,7 @@ if __name__ == "__main__":
         lattechecker.full_check()
     except BaseException as e:
         sys.stderr.write("ERROR\n")
+        e.find_column(content)
         sys.stderr.write("{}\n".format(e))
         sys.stdout.write("{}\n".format(e))
         sys.exit(-2)
