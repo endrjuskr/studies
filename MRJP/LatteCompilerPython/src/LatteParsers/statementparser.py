@@ -164,7 +164,8 @@ class VRetStmt(Stmt):
 
     def type_check(self, env):
         if env.current_fun_type.returntype != typeparser.Type("void"):
-            raise SyntaxException.SyntaxException("Incorrect return type, expected not void.", self.no_line)
+            raise SyntaxException.SyntaxException("Incorrect return type, expected not void.", self.no_line,
+                                                  pos=self.pos)
         return env
 
 class CondStmt(Stmt):

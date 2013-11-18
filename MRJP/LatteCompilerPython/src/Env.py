@@ -60,11 +60,11 @@ class Env:
             raise SyntaxException.SyntaxException("Trying override function " + ident + ".", no_line)
         elif fun_param:
             raise SyntaxException.SyntaxException("More than one argument with the name " + ident +
-                                                  " in function " + ident + ".", no_line)
+                                                  ".", no_line, pos=pos)
         else:
             (_, count) = self.current_env[ident]
             if count > 0:
-                raise DuplicateDeclarationException.DuplicateDeclarationException(ident, True, no_line, pos)
+                raise DuplicateDeclarationException.DuplicateDeclarationException(ident, False, no_line, pos)
             else:
                 self.current_env[ident] = (type, count + 1)
 

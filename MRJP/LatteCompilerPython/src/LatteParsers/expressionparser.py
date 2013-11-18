@@ -217,7 +217,7 @@ class EApp(ZeroArgExpr):
             raise SyntaxException.SyntaxException("Wrong number of parameters for function "
                                                  + self.funident + " - expected:"
                                                  + str(len(self.etype.paramstypes)) + " actual: "
-                                                 + str(len(self.exprlist)) + ".", self.no_line)
+                                                 + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos)
 
         for i in range(len(self.exprlist)):
             #print "arg"
