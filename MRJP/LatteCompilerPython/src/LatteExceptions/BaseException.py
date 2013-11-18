@@ -7,5 +7,4 @@ class BaseException(Exception):
         self.pos = pos
 
     def __str__(self):
-        return "Position - (Line:" + str(self.no_line) + ", Character:" + str(
-            self.pos) + "). " if self.no_line != 0 else ""
+        return "(Line:" + str(self.no_line) + ") " if self.no_line != -1 else ""

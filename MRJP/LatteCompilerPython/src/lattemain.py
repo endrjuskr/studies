@@ -36,7 +36,7 @@ if __name__ == "__main__":
     try:
         result = latteparser.parse(content, lexer=lattelexer)
         if result is None:
-            raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", 0)
+            raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
         lattechecker = lattetypechecker.TypeCheck(result)
         lattechecker.full_check()
     except BaseException as e:

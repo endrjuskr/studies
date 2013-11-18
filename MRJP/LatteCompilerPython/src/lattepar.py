@@ -262,7 +262,7 @@ def p_mulop(p):
 
 def p_expression_mul_2(p):
     '''expr4 : expr4 mulop expr5'''
-    p[0] = expressionparser.EMul(p[1], p[3], p[2], p.lineno(1), p.lexpos(2))
+    p[0] = expressionparser.EMul(p[1], p[3], p[2], p[1].no_line, p[1].pos)
 
 
 def p_addop(p):
@@ -273,7 +273,7 @@ def p_addop(p):
 
 def p_expression_add_1(p):
     '''expr3 : expr3 addop expr4'''
-    p[0] = expressionparser.EAdd(p[1], p[3], p[2], p.lineno(1), p.lexpos(2))
+    p[0] = expressionparser.EAdd(p[1], p[3], p[2], p[1].no_line, p[1].pos)
 
 
 def p_expression_add_3(p):
@@ -293,7 +293,7 @@ def p_relop(p):
 
 def p_expression_rel_1(p):
     '''expr2 : expr2 relop expr3'''
-    p[0] = expressionparser.ERel(p[1], p[3], p[2], p.lineno(1), p.lexpos(2))
+    p[0] = expressionparser.ERel(p[1], p[3], p[2], p[1].no_line, p[1].pos)
 
 
 def p_expression_rel_2(p):
@@ -303,7 +303,7 @@ def p_expression_rel_2(p):
 
 def p_expression_and_1(p):
     '''expr1 : expr2 AND expr1'''
-    p[0] = expressionparser.EAnd(p[1], p[3], p.lineno(1), p.lexpos(2))
+    p[0] = expressionparser.EAnd(p[1], p[3], p[1].no_line, p[1].pos)
 
 
 def p_expression_and_2(p):
@@ -313,7 +313,7 @@ def p_expression_and_2(p):
 
 def p_expression_or_1(p):
     '''expr : expr1 OR expr'''
-    p[0] = expressionparser.EOr(p[1], p[3], p.lineno(1), p.lexpos(2))
+    p[0] = expressionparser.EOr(p[1], p[3], p[1].no_line, p[1].pos)
 
 
 def p_expression_or_2(p):

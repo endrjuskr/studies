@@ -116,17 +116,19 @@ class ERel(TwoArgExpr):
         self.type = "erel"
 
     def arg_type_check(self, rtype):
-        if rtype == typeparser.Type("boolean") and self.op != "==":
+        if rtype == typeparser.Type("boolean") and self.op != "==" and self.op != "!=":
             raise SyntaxException.SyntaxException("Boolean does not support rel operators except ==.", self.no_line)
 
     def calculate_value(self):
         if self.left.get_value() is not None and self.right.get_value() is not None:
             if self.op == "==":
                 self.value = self.left.get_value() == self.right.get_value()
+            elif self.op == "!=":
+                self.value = self.left.get_value() != self.right.get_value()
             elif self.op == "<=":
                 self.value = self.left.get_value() <= self.right.get_value()
             elif self.op == ">=":
-                self.value = self.left.get_value() <= self.right.get_value()
+                self.value = self.left.get_value() >= self.right.get_value()
             elif self.op == "<":
                 self.value = self.left.get_value() < self.right.get_value()
             elif self.op == ">":

@@ -19,5 +19,21 @@ To run tests go to folder 'lattetests' and run 'runtests.sh [foldername]',
 where '[foldername]' is the folder with tests like 'good' or 'bad'.
 Output will be placed in folder 'output' under folder, which you specified previously.
 
+Main parts of project:
+1. LatteExceptions - package containing all used exceptions. All exceptions have information about line and character where they occured.
+2. LatteParsers - set of classes used to build AST.
+3. Env.py - class to represent current environment.
+4. LatteLex.py - lexer for Latte language.
+5. LattePar.py - parser for Latte Language. Production written to satisfy PLY requirements.
+6. LatteTypeChecker.py - type checker for Latte Language.
+7. TokRules.py - set of used tokens.
+
+Compiler assumption:
+1. Booleans have only '==' and '!=' relation operators.
+2. All return statements must have proper expression type.
+3. Values of variables are not counted during return checking.
+4. Used parser - LALR.
+
+
 Note:
 Right now, there are no extensions, so only tests from 'good' and 'bad' folders work.

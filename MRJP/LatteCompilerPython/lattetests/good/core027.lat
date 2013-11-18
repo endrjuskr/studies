@@ -1,0 +1,10 @@
+# Test comment one
+// Test comment two
+/* Test comment one
+
+*/
+int main()
+{
+    if((1 == 1) != false)
+    {return 0;}
+}
