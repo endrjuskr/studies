@@ -77,8 +77,7 @@ countsignb:			push [b]
 					mov rdx, rax
 					mov [signa], rcx
 compsign			cmp rcx, rdx
-					je sames	; same signs so act as add
-					jneq difs	; different sign so act as sub
+					jn difs	; different sign so act as sub
 sames:				add [significanta], [significantb]
 					jmp normalize
 difs:				sub [significanta], [significantb]
@@ -95,7 +94,7 @@ normalizer:			mov rcx, 1
 					cmp rcx, rdx
 					je rets
 					cmp [exp], 0
-					jnq decrease exp
+					jn decrease exp
 					mov [signicanta], 0
 					jmp rets
 decreaseexp:		sub [exp], 1
@@ -106,7 +105,7 @@ normalizel:			mov rcx, [significanta]
 					cmp rcx, 1
 					je rets
 					cmp [exp], 2047
-					jnq increaseexp
+					jn increaseexp
 					mov [significanta], 0
 					jmp rets
 increaseexp:		shr [significanta], 1
