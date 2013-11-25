@@ -10,8 +10,8 @@ section .bss
     	b:	 			resq	1
     	significanta:	resq	1
     	significantb:	resq	1
-    	exp:			resb	1
-    	signa 			resb	1
+    	exp:			resq	1
+    	signa 			resq	1
 
 section .text
         			global plus, _start
@@ -37,7 +37,7 @@ get_exp:			; Gets exponential from number which is represented by bits 63..53 wi
 					and rax, rbx 		; Collect bits 63..53
 					leave
 					ret
-get_sing:			; Gets sign of number which is represented by bit 64
+get_sign:			; Gets sign of number which is represented by bit 64
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
 					shr rbx, POS_SIGN
@@ -47,81 +47,90 @@ plus:
 					enter 0, 0
 assigna:			mov qword [a], rax
 assignb:			mov qword [b], rbx
-countsiga:			push [a]
+countsiga:			push qword [a]
 					call get_exp
-					mov [significanta], rax
-countexpa:			push [a]
+					mov qword [signa], rax
+countexpa:			push qword [a]
 					call get_exp
 					mov rcx, rax
-countexpb			push [b]
+countexpb			push qword [b]
 					call get_exp
 					mov rdx, rax
 					cmp rcx, rdx
 					je expeq	; Exponents are the same
 					jg expgt	; Exponent of a is greater
 					jl explt	; Exponent of b is greater 
-expeq:				mov [exp], rcx
+expeq:				mov qword [exp], rcx
 					jmp countsigna
-expgt:				mov [exp], rcx
+expgt:				mov qword [exp], rcx
 					sub rcx, rdx
-					shr [significantb], rcx
-					jmp countsiga
-explt:				mov [exp], rdx
+shiftb:				cmp rcx, 0
+					je countsiga
+					shr qword [significantb], 1
+					sub rcx, 1
+					jmp shiftb  
+explt:				mov qword [exp], rdx
 					sub rdx, rcx
-					shr [significanta], rdx
-countsigna:			push [a]
+shifta:				cmp rdx, 0
+					je countsiga
+					shr qword [significanta], 1
+					sub rdx, 1
+					jmp shifta 
+countsigna:			push qword [a]
 					call get_sign
 					mov rcx, rax
-countsignb:			push [b]
+countsignb:			push qword [b]
 					call get_sign
 					mov rdx, rax
-					mov [signa], rcx
+					mov qword [signa], rcx
 compsign			cmp rcx, rdx
-					jn difs	; different sign so act as sub
-sames:				add [significanta], [significantb]
+					jne difs	; different sign so act as sub
+sames:				mov rax, qword [significantb]
+					add qword [significanta], rax
 					jmp normalize
-difs:				sub [significanta], [significantb]
+difs:				mov rax, qword [significantb]
+					sub qword [significanta], rax
 normalize:			mov rax, 1
 					shl rax, POS_EX
-					cmp [significanta], rax
+					cmp qword [significanta], rax
 					jl  normalizer
 					jg  normalizel
 					jmp rets
 normalizer:			mov rcx, 1
 					shl rcx, POS_EX
 					mov rdx, rcx
-					and rcx, [significanta]
+					and rcx, qword [significanta]
 					cmp rcx, rdx
 					je rets
-					cmp [exp], 0
-					jn decrease exp
-					mov [signicanta], 0
+					cmp qword [exp], 0
+					jne decreaseexp
+					mov qword [significanta], 0
 					jmp rets
-decreaseexp:		sub [exp], 1
-					shl [significanta], 1
+decreaseexp:		sub qword [exp], 1
+					shl qword [significanta], 1
 					jmp normalizer
-normalizel:			mov rcx, [significanta]
+normalizel:			mov rcx, qword [significanta]
 					shr rcx, POS_EX
 					cmp rcx, 1
 					je rets
-					cmp [exp], 2047
-					jn increaseexp
-					mov [significanta], 0
+					cmp qword [exp], 2047
+					jne increaseexp
+					mov qword [significanta], 0
 					jmp rets
-increaseexp:		shr [significanta], 1
-					add [exp], 1
+increaseexp:		shr qword [significanta], 1
+					add qword [exp], 1
 					jmp normalizel
-rets:				mov eax, [signa]
-					shl eax, 11
-					add eax, [exp]
-					shl eax, POS_EXP
-					add eax, [significanta]
+rets:				mov rax, qword [signa]
+					shl rax, 11
+					add rax, qword [exp]
+					shl rax, POS_EX
+					add rax, qword [significanta]
 					leave
 					ret
 
 minus:
 					enter 0, 0
-					mul rbx, -1
+					imul rbx, -1
 					call plus
 					leave
 					ret
