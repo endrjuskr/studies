@@ -2,8 +2,6 @@
 
 SYS_WRITE equ 1
 SYS_EXIT  equ 60
-POS_SIGN  equ 63
-POS_EX    equ 52
 
 section .data
 
@@ -17,16 +15,14 @@ section .bss
 
 section .text
         			global plus
+        			extern get_sign, get_exp, get_significant, LEN_EX, LEN_SIG
 plus:
 					enter 0, 0
 assigna:			mov qword [a], rax
 assignb:			mov qword [b], rbx
 countsiga:			push qword [a]
-					call get_exp
+					call get_sign
 					mov qword [signa], rax
-					push qword [a]
-					push dword fmt
-					call printf
 countexpa:			push qword [a]
 					call get_exp
 					mov rcx, rax
@@ -68,13 +64,13 @@ sames:				mov rax, qword [significantb]
 difs:				mov rax, qword [significantb]
 					sub qword [significanta], rax
 normalize:			mov rax, 1
-					shl rax, POS_EX
+					shl rax, LEN_SIG
 					cmp qword [significanta], rax
 					jl  normalizer
 					jg  normalizel
 					jmp rets
 normalizer:			mov rcx, 1
-					shl rcx, POS_EX
+					shl rcx, LEN_SIG
 					mov rdx, rcx
 					and rcx, qword [significanta]
 					cmp rcx, rdx
@@ -87,7 +83,7 @@ decreaseexp:		sub qword [exp], 1
 					shl qword [significanta], 1
 					jmp normalizer
 normalizel:			mov rcx, qword [significanta]
-					shr rcx, POS_EX
+					shr rcx, LEN_SIG
 					cmp rcx, 1
 					je rets
 					cmp qword [exp], 2047
@@ -98,9 +94,9 @@ increaseexp:		shr qword [significanta], 1
 					add qword [exp], 1
 					jmp normalizel
 rets:				mov rax, qword [signa]
-					shl rax, 11
+					shl rax, LEN_EX
 					add rax, qword [exp]
-					shl rax, POS_EX
+					shl rax, LEN_SIG
 					add rax, qword [significanta]
 					leave
 					ret

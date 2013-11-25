@@ -1,13 +1,18 @@
 all: fpc
 
-fpc: fpasm floatingpoint.c
-	gcc -g -o fpc floatingpoint.o floatingpoint.c
+fpc: np po mo floatingpoint.c
+	gcc -g -o fpc numberpartition.o plusop.o minusop.o floatingpoint.c
 
-fpasm: floatingpoint.asm
-	/usr/local/bin/nasm -g -f macho64 floatingpoint.asm
-	##ld -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o fpasm -lc fpoint.o
+np: numberpartition.asm
+	nasm -g -f elf64 numberpartition.asm
+
+po: plusop.asm
+	nasm -g -f elf64 plusop.asm
+
+mo: minusop.asm
+	nasm -g -f elf64 minusop.asm
 
 clean:
-	rm -f *.o fpasm fpc
+	rm -f *.o fpc
 
 ##EOF
