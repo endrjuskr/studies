@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-/*extern long plus (long arg1, long arg2);
-extern long minus (long arg1, long arg2);
+extern long plus (long arg1, long arg2);
+/*extern long minus (long arg1, long arg2);
 extern long times (long arg1, long arg2);
 extern long diviide (long arg1, long arg2);
 */
@@ -20,7 +20,7 @@ long tolong(double l)
         result = result * 16 * 16;
         result += (long)bit_representation[i];
     }
-    return result;	
+    return result;  
 }
 
 double fromlong(long long l)
@@ -76,5 +76,6 @@ int main()
     scanf("%lf", &b);
     printf("Long repr - %ld\n", tolong(b));
     printf("Back to double - %.20lf\n", fromlong(tolong(b)));
+    printf("%ld\n", plus(tolong(b), tolong(-2.0)));
     return 0;
 }
