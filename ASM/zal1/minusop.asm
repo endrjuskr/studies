@@ -3,7 +3,9 @@ section .text
 		extern plus
 minus:
 		enter 0, 0
-		imul rbx, -1
+		mov rcx, 1
+		shl rcx, 63
+		xor rbx, rcx
 		call plus
 		leave
 		ret

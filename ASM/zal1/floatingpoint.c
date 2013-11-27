@@ -5,8 +5,8 @@
 #define DEBUG 1
 
 extern long plus (long arg1, long arg2);
-/*extern long minus (long arg1, long arg2);
-extern long times (long arg1, long arg2);
+extern long minus (long arg1, long arg2);
+/*extern long times (long arg1, long arg2);
 extern long diviide (long arg1, long arg2);
 */
 
@@ -106,20 +106,29 @@ void test(int i, double b, double c)
     if (DEBUG) printf ("tolong(b) = %ld\n", tolong(b));
     if (DEBUG) printf ("tolong(c) = %ld\n", tolong(c));
     printf ("Case %d: %lf, %lf\n",i, b, c);
-    printf("%ld\n", plus(tolong(b), tolong(c)));
+    if (DEBUG) printf("My result long(b - c) = %ld\n", plus(tolong(b), tolong(c)));
     printf("%lf\n", d = fromlong(plus(tolong(b), tolong(c))));
-    if (DEBUG) printf ("long(b + c) = %ld\n", tolong(b + c));
-    if (DEBUG) printf ("b + c = %lf\n", b + c);
+    if (DEBUG) printf ("IEEE long(b + c) = %ld\n", tolong(b + c));
+    if (DEBUG) printf ("IEEE b + c = %lf\n", b + c);
     assert(d == b + c);
+}
+
+void test2(int i, double b, double c)
+{
+    double d;
+    if (DEBUG) printf ("tolong(b) = %ld\n", tolong(b));
+    if (DEBUG) printf ("tolong(c) = %ld\n", tolong(c));
+    printf ("Case %d: %lf, %lf\n",i, b, c);
+    if (DEBUG) printf("My result long(b - c) = %ld\n", minus(tolong(b), tolong(c)));
+    printf("My result b - c = %lf\n", d = fromlong(minus(tolong(b), tolong(c))));
+    if (DEBUG) printf ("IEEE long(b - c) = %ld\n", tolong(b - c));
+    if (DEBUG) printf ("IEEE b - c = %lf\n", b - c);
+    assert(d == b - c);
 }
 
 int main()
 {
     double b, c, d;
-    test(13, -DBL_MAX, 0);
-    test(12, -DBL_MAX, DBL_MAX / 2);
-    test(11, DBL_MAX, DBL_MAX / 2);
-    test(10, DBL_MAX, 0);
     test(1, 1, 2);
     test(2, 2, 2);
     test(3, 1.5, 2);
@@ -129,5 +138,18 @@ int main()
     test(7, 2, -2);
     test(8, -2, 2);
     test(9, -2, -2);
+    test(10, DBL_MIN, 0);
+    test(11, DBL_MIN, DBL_MAX / 2);
+    test(12, DBL_MAX, DBL_MAX / 2);
+    test(13, DBL_MAX, 0);
+    test(14, DBL_MAX, DBL_EPSILON);
+    test(15, DBL_MIN, DBL_MAX);
+    test(16, DBL_MIN, -DBL_MIN);
+    test(17, DBL_MAX, -2);
+    test(18, DBL_EPSILON, DBL_EPSILON);
+    test(19, DBL_EPSILON, -DBL_EPSILON);
+    test2(20, 2, 2);
+    test2(21, DBL_MAX, DBL_EPSILON);
+    test2(22, DBL_MAX, -DBL_MAX / 2);
     return 0;
 }
