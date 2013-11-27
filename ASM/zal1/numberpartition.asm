@@ -1,4 +1,4 @@
-global get_significant, get_exp, get_sign, prepare_significant, LEN_SIG, LEN_EX, LEN_SIG_EX, LEN_SIG_EXT
+global get_fraction, get_exp, get_sign, prepare_fraction, LEN_SIG, LEN_EX, LEN_SIG_EX, LEN_SIG_EXT
 
 LEN_SIGN  equ 1
 LEN_EX    equ 11
@@ -7,7 +7,7 @@ LEN_SIG_EX equ 53
 LEN_SIG_EXT equ 1
 
 section .text
-get_significant:	; Gets significant from number which is represented by bits 52..0
+get_fraction:		; Gets significant from number which is represented by bits 52..0
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
 					mov rbx, 1
@@ -20,7 +20,7 @@ get_significant:	; Gets significant from number which is represented by bits 52.
 					shl rax, LEN_SIG_EXT   ; use all 64 bits
 					leave
 					ret
-get_exp:			; Gets exponential from number which is represented by bits 63..53 with added 1023
+get_exp:			; Gets exponent from number which is represented by bits 63..53 with added 1023
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
 					mov rbx, 1
@@ -37,7 +37,7 @@ get_sign:			; Gets sign of number which is represented by bit 64
 					shr rax, LEN_EX + LEN_SIG
 					leave
 					ret
-prepare_significant:
+prepare_fraction:
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
 					mov rbx, 1
