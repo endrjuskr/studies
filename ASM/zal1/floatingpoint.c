@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include <assert.h>
+#include <float.h>
+
+#define DEBUG 1
 
 extern long plus (long arg1, long arg2);
 /*extern long minus (long arg1, long arg2);
@@ -7,8 +11,8 @@ extern long diviide (long arg1, long arg2);
 */
 
 const int s_sign = 63;
-const int s_base = 51;
-const int s_exp = 62;
+const int s_significant = 51;
+const int s_exponent = 62;
 
 long tolong(double l)
 {
@@ -25,57 +29,105 @@ long tolong(double l)
 
 double fromlong(long long l)
 {
-    double result = 0.0;
-    result = -1 * ((l >> s_sign) & 1);
-    if (result == 0)
+    unsigned char * bit_representation = (unsigned char *) &l;
+    /*int i, t = sizeof(double);
+    for(i = t - 1; i >= sizeof(double) / 2; i--)
     {
-        result = 1.0;
+
+        unsigned char tmp = bit_representation[i];
+        bit_representation[i] = bit_representation[t - 1 - i];
+        bit_representation[t - 1 - i] = tmp;
+    }
+    */
+    double * result = (double *)bit_representation;
+    return *result;
+}
+
+double fromlong2(long long l)
+{
+    double sign = 0.0;
+    sign = -1 * ((l >> s_sign) & 1);
+    if (sign == 0)
+    {
+        sign = 1.0;
     }
 
-    double base = 0.0;
+    double significant = 0.0;
     int i;
-    for (i = 0; i <= s_base; i++)
+    for (i = 0; i <= s_significant; i++)
     {
-        base = base / 2;
-        base = base + ((l >> i) & 1);
+        significant = significant / 2;
+        significant = significant + ((l >> i) & 1);
     }
-    base = base / 2;
-    base = base + 1;
-    printf("Base = %lf\n", base);
-    long long e = 0;
-    long long ex = 0.0;
-    for (i = s_exp; i > s_base; i--)
+    significant = significant / 2;
+    significant = significant + 1;
+    
+    if(DEBUG) printf("significant = %lf\n", significant);
+    
+    long long e = 2;
+    long long exponent = 0.0;
+    for (i = s_exponent; i > s_significant; i--)
     {
-        e *= 2;
-        e += ((l >> i) & 1);
+        exponent *= 2;
+        exponent += ((l >> i) & 1);
     }
-    i = e - 1023;
-    e = 2;
-    printf("Exp = %d\n", i);
+
+    i = exponent - 1023;
+    exponent = 0.0;
+    if(DEBUG) printf("Exp = %d\n", i);
+    if (i == -1023)
+    {
+        if(DEBUG) printf ("Zero occured.\n");
+        return sign * 0.0;
+    }
+
     while (i > 0)
     {
         if((i & 1) == 1)
         {
-            ex += e;
+            exponent += e;
         }
+
         e *= 2;
         i >>= 1;
     }
 
-    if (ex == 0)
+    if (exponent == 0)
     {
-        ex = 1.0;
+        exponent = 1.0;
     }
 
-    return result * base * (double)ex;
+    return sign * significant * (double)exponent;
+}
+
+void test(int i, double b, double c)
+{
+    double d;
+    if (DEBUG) printf ("tolong(b) = %ld\n", tolong(b));
+    if (DEBUG) printf ("tolong(c) = %ld\n", tolong(c));
+    printf ("Case %d: %lf, %lf\n",i, b, c);
+    printf("%ld\n", plus(tolong(b), tolong(c)));
+    printf("%lf\n", d = fromlong(plus(tolong(b), tolong(c))));
+    if (DEBUG) printf ("long(b + c) = %ld\n", tolong(b + c));
+    if (DEBUG) printf ("b + c = %lf\n", b + c);
+    assert(d == b + c);
 }
 
 int main()
 {
-    double b;
-    scanf("%lf", &b);
-    printf("Long repr - %ld\n", tolong(b));
-    printf("Back to double - %.20lf\n", fromlong(tolong(b)));
-    printf("%ld\n", plus(tolong(b), tolong(-2.0)));
+    double b, c, d;
+    test(13, -DBL_MAX, 0);
+    test(12, -DBL_MAX, DBL_MAX / 2);
+    test(11, DBL_MAX, DBL_MAX / 2);
+    test(10, DBL_MAX, 0);
+    test(1, 1, 2);
+    test(2, 2, 2);
+    test(3, 1.5, 2);
+    test(4, 0, 2);
+    test(5, 2, 0);
+    test(6, 0, 0);
+    test(7, 2, -2);
+    test(8, -2, 2);
+    test(9, -2, -2);
     return 0;
 }

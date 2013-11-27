@@ -1,4 +1,4 @@
-global get_significant, get_exp, get_sign, LEN_SIG, LEN_EX
+global get_significant, get_exp, get_sign, prepare_significant, LEN_SIG, LEN_EX
 
 LEN_SIGN  equ 1
 LEN_EX    equ 11
@@ -21,15 +21,25 @@ get_exp:			; Gets exponential from number which is represented by bits 63..53 wi
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
 					mov rbx, 1
-					shl rbx, LEN_EX
+					sal rbx, LEN_EX
 					sub rbx, 1          ; get value 2^11 - 1
-					shr rbx, LEN_SIG
+					shl rbx, LEN_SIG
 					and rax, rbx 		; Collect bits 63..53
+					shr rax, LEN_SIG
 					leave
 					ret
 get_sign:			; Gets sign of number which is represented by bit 64
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
-					shr rbx, LEN_EX + LEN_SIG
+					shr rax, LEN_EX + LEN_SIG
+					leave
+					ret
+prepare_significant:
+					enter 0, 0
+					mov rax, [rsp + 16] ; First argument
+					mov rbx, 1
+					shl rbx, LEN_SIG
+					sub rbx, 1 			
+					and rax, rbx 		; Collect only last 52 bits
 					leave
 					ret
