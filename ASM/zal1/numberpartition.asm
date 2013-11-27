@@ -1,8 +1,10 @@
-global get_significant, get_exp, get_sign, prepare_significant, LEN_SIG, LEN_EX
+global get_significant, get_exp, get_sign, prepare_significant, LEN_SIG, LEN_EX, LEN_SIG_EX, LEN_SIG_EXT
 
 LEN_SIGN  equ 1
 LEN_EX    equ 11
 LEN_SIG   equ 52
+LEN_SIG_EX equ 53
+LEN_SIG_EXT equ 1
 
 section .text
 get_significant:	; Gets significant from number which is represented by bits 52..0
@@ -15,6 +17,7 @@ get_significant:	; Gets significant from number which is represented by bits 52.
 					mov rbx, 1
 					shl rbx, LEN_SIG
 					or  rax, rbx    	; Add 1 to number
+					shl rax, LEN_SIG_EXT   ; use all 64 bits
 					leave
 					ret
 get_exp:			; Gets exponential from number which is represented by bits 63..53 with added 1023

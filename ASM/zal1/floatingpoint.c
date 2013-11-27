@@ -43,63 +43,6 @@ double fromlong(long long l)
     return *result;
 }
 
-double fromlong2(long long l)
-{
-    double sign = 0.0;
-    sign = -1 * ((l >> s_sign) & 1);
-    if (sign == 0)
-    {
-        sign = 1.0;
-    }
-
-    double significant = 0.0;
-    int i;
-    for (i = 0; i <= s_significant; i++)
-    {
-        significant = significant / 2;
-        significant = significant + ((l >> i) & 1);
-    }
-    significant = significant / 2;
-    significant = significant + 1;
-    
-    if(DEBUG) printf("significant = %lf\n", significant);
-    
-    long long e = 2;
-    long long exponent = 0.0;
-    for (i = s_exponent; i > s_significant; i--)
-    {
-        exponent *= 2;
-        exponent += ((l >> i) & 1);
-    }
-
-    i = exponent - 1023;
-    exponent = 0.0;
-    if(DEBUG) printf("Exp = %d\n", i);
-    if (i == -1023)
-    {
-        if(DEBUG) printf ("Zero occured.\n");
-        return sign * 0.0;
-    }
-
-    while (i > 0)
-    {
-        if((i & 1) == 1)
-        {
-            exponent += e;
-        }
-
-        e *= 2;
-        i >>= 1;
-    }
-
-    if (exponent == 0)
-    {
-        exponent = 1.0;
-    }
-
-    return sign * significant * (double)exponent;
-}
-
 void test(int i, double b, double c)
 {
     double d;
@@ -146,10 +89,28 @@ int main()
     test(15, DBL_MIN, DBL_MAX);
     test(16, DBL_MIN, -DBL_MIN);
     test(17, DBL_MAX, -2);
-    test(18, DBL_EPSILON, DBL_EPSILON);
-    test(19, DBL_EPSILON, -DBL_EPSILON);
-    test2(20, 2, 2);
-    test2(21, DBL_MAX, DBL_EPSILON);
-    test2(22, DBL_MAX, -DBL_MAX / 2);
+    test(18, DBL_MAX, -DBL_MAX);
+    test(19, DBL_MAX, -DBL_MAX/2);
+    test(20, DBL_MAX, -DBL_MAX/4);
+    test(21, DBL_MAX, -DBL_MAX/8);
+    test(22, DBL_MAX, -DBL_MAX/16);
+    test(23, DBL_MAX, -DBL_MAX/100000);
+    test(24, DBL_MAX, -DBL_MAX/2048);
+    test(25, DBL_MAX, -DBL_MAX/128);
+    test(26, DBL_MAX, -DBL_MAX/127);
+    test(27, DBL_EPSILON, DBL_EPSILON);
+    test(28, DBL_EPSILON, -DBL_EPSILON);
+    test2(29, 2, 2);
+    test2(30, 2, -2);
+    test2(31, -4, -2);
+    test2(32, -111, -DBL_EPSILON);
+    test2(33, -111, DBL_MAX);
+    test2(34, -111, DBL_MIN);
+    test2(35, DBL_MAX, DBL_EPSILON);
+    test2(36, DBL_MAX, DBL_MIN / 2);
+    test2(37, DBL_MAX, DBL_MAX);
+    test2(38, DBL_MAX, -DBL_MAX);
+    test2(39, DBL_MAX, -(DBL_MAX / 2));
+    test2(40, DBL_MAX, (DBL_MAX / 2));
     return 0;
 }
