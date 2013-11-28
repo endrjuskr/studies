@@ -6,8 +6,8 @@
 
 extern long plus (long arg1, long arg2);
 extern long minus (long arg1, long arg2);
-/*extern long times (long arg1, long arg2);
-extern long diviide (long arg1, long arg2);
+extern long times2 (long arg1, long arg2);
+/*extern long diviide (long arg1, long arg2);
 */
 
 const int s_sign = 63;
@@ -30,15 +30,6 @@ long tolong(double l)
 double fromlong(long long l)
 {
     unsigned char * bit_representation = (unsigned char *) &l;
-    /*int i, t = sizeof(double);
-    for(i = t - 1; i >= sizeof(double) / 2; i--)
-    {
-
-        unsigned char tmp = bit_representation[i];
-        bit_representation[i] = bit_representation[t - 1 - i];
-        bit_representation[t - 1 - i] = tmp;
-    }
-    */
     double * result = (double *)bit_representation;
     return *result;
 }
@@ -67,6 +58,20 @@ void test2(int i, double b, double c)
     if (DEBUG) printf ("IEEE long(b - c) = %ld\n", tolong(b - c));
     if (DEBUG) printf ("IEEE b - c = %lf\n", b - c);
     assert(d == b - c);
+}
+
+
+void test3(int i, double b, double c)
+{
+    double d;
+    if (DEBUG) printf ("tolong(b) = %ld\n", tolong(b));
+    if (DEBUG) printf ("tolong(c) = %ld\n", tolong(c));
+    printf ("Case %d: %lf, %lf\n",i, b, c);
+    if (DEBUG) printf("My result long(b * c) = %ld\n", times2(tolong(b), tolong(c)));
+    printf("My result b * c = %lf\n", d = fromlong(times2(tolong(b), tolong(c))));
+    if (DEBUG) printf ("IEEE long(b * c) = %ld\n", tolong(b * c));
+    if (DEBUG) printf ("IEEE b * c = %lf\n", b * c);
+    assert(d == b * c);
 }
 
 int main()
@@ -112,5 +117,25 @@ int main()
     test2(38, DBL_MAX, -DBL_MAX);
     test2(39, DBL_MAX, -(DBL_MAX / 2));
     test2(40, DBL_MAX, (DBL_MAX / 2));
+    test3(41, 2, 2);
+    test3(42, 2, 1);
+    test3(43, -2, 1);
+    test3(44, -2, -10000);
+    test3(45, 0, -20000);
+    test3(46, 1, DBL_EPSILON);
+    test3(47, 1, -DBL_EPSILON);
+    test3(48, 0, DBL_EPSILON);
+    test3(49, -DBL_EPSILON, DBL_EPSILON);
+    test3(50, -DBL_MAX, DBL_MAX);
+    test3(51, DBL_MAX, DBL_MAX);
+    test3(52, DBL_MAX, 2);
+    test3(53, -DBL_MAX, 2);
+    test3(54, DBL_MAX, -2);
+    test3(55, DBL_MAX, DBL_EPSILON);
+    test3(56, -DBL_MAX, DBL_EPSILON);
+    test3(57, 42342131, 0);
+    test3(58, 123123123.012312, 1012999);
+    test3(59, -123123, -123.01231256);
+
     return 0;
 }
