@@ -12,7 +12,7 @@ section .bss
 
 section .text
         			global divide
-        			extern get_sign, get_exp, get_fraction, prepare_fraction, LEN_EX, LEN_SIG, LEN_SIG_EX, LEN_SIG_EXT
+        			extern get_sign, get_exp, get_fraction, prepare_fraction, LEN_EXPONENT, LEN_FRACTION, EXT_LEN_FRACTION
 
 divide:				enter 0, 0
 assigna:			mov qword [a], rax				; assigning first number to a
@@ -49,7 +49,7 @@ checkb0:			cmp qword [expb], -1023			; checking if b is zero - exponent = 0, omi
 					xor qword [signa], rax
 					mov qword [exp], 2047
 					mov qword [fractiona], 0
-					jmp ret2						; jump to create result
+					jmp createresult						; jump to create result
 
 checka0:			cmp qword [expa], -1023			; checking if b is zero - exponent = 0, omitting base
 					jne checkbinf					; jump to checking if a is +/-inf when expb != 0
@@ -57,7 +57,7 @@ checka0:			cmp qword [expa], -1023			; checking if b is zero - exponent = 0, omi
 					xor qword [signa], rax
 					mov qword [exp], 0
 					mov qword [fractiona], 0
-					jmp ret2						; jump to create result
+					jmp createresult						; jump to create result
 
 checkbinf:			cmp qword [expb], 1024			; checking if b is +/- inf - expb = 2047, omitting base
 					jne checkainf						; if expb != 2047 then there are two normal number so jumping to compering exponents
@@ -65,7 +65,7 @@ checkbinf:			cmp qword [expb], 1024			; checking if b is +/- inf - expb = 2047, 
 					xor qword [signa], rax
 					mov qword [exp], 0
 					mov qword [fractiona], 0
-					jmp ret2						; jump to create result
+					jmp createresult						; jump to create result
 
 checkainf:			cmp qword [expa], 1024			; checking if b is +/- inf - expb = 2047, omitting base
 					jne calculateexp						; if expb != 2047 then there are two normal number so jumping to compering exponents
@@ -73,7 +73,7 @@ checkainf:			cmp qword [expa], 1024			; checking if b is +/- inf - expb = 2047, 
 					xor qword [signa], rax
 					mov qword [exp], 2047
 					mov qword [fractiona], 0
-					jmp ret2						; jump to create result
+					jmp createresult						; jump to create result
 
 calculateexp:		mov rax, qword [expa]			; comparing two expenents to get the greater one and adjust fractions
 					mov qword [exp], rax
@@ -81,12 +81,12 @@ calculateexp:		mov rax, qword [expa]			; comparing two expenents to get the grea
 					sub qword [exp], rax
 					add qword [exp], 1023
 					mov rax, 1
-					shl rax, LEN_EX
+					shl rax, LEN_EXPONENT
 					sub rax, 1
 					cmp qword [exp], rax
 					jl checkexp0
 					mov qword [exp], 1
-					shl qword [exp], LEN_EX
+					shl qword [exp], LEN_EXPONENT
 					sub qword [exp], 1
 					mov qword [fractiona], 0
 					jmp calculatesign
@@ -116,11 +116,11 @@ compareremain:		shl qword [fractiona], 1
 					je checkingfraction
 					or qword [fractiona], 1
 checkingfraction: 	mov rax, 1 						; checking if fraction is greater than 1.0000....
-					shl rax, LEN_SIG_EX
+					shl rax, EXT_LEN_FRACTION
 					cmp qword [fractiona], rax
 					jl normalizel					; if fraction is less than 1.000... so there is a need of shifting fracion to left (increasing)
 					jg normalizer					; if fraction is greater than 1.000... so there might be a need of shifting fracion to right (decreasing)
-					je rets							; fraction is equal 1.000... so jumping to create result
+					je adjustfraction							; fraction is equal 1.000... so jumping to create result
 
 normalizel:			cmp qword [exp], 0 				; checking if exp is 0 - min value of exponent
 					jne decreaseexp 				; if not then continue computation
@@ -128,11 +128,11 @@ normalizel:			cmp qword [exp], 0 				; checking if exp is 0 - min value of expon
 					jmp calculatesign 						; jumping to create result
 
 decreaseexp:		mov rcx, 1 						; checking if there were enough shiftments - factor start with 1
-					shl rcx, LEN_SIG_EX
+					shl rcx, EXT_LEN_FRACTION
 					mov rdx, rcx
 					and rcx, qword [fractiona]
 					cmp rcx, rdx
-					je rets 						; fraction is normalized so jumping to create result
+					je adjustfraction 						; fraction is normalized so jumping to create result
 
 					sub qword [exp], 1  			; normalizing by one position, so decreasing exp
 					shl qword [fractiona], 1 		; shifting factor to left 
@@ -144,25 +144,25 @@ normalizer:			cmp qword [exp], 2047			; checking if exp is 2047 - max value of e
 					jmp calculatesign 						; jumping to create result
 
 increaseexp:		mov rcx, qword [fractiona] 		; checking if there were enough shiftments - factor start with 1. It might be greater than 1 
-					shr rcx, LEN_SIG_EX 
+					shr rcx, EXT_LEN_FRACTION 
 					cmp rcx, 1
-					je rets 						; fraction is normalized so jumping to create result
+					je adjustfraction 						; fraction is normalized so jumping to create result
 
 					add qword [exp], 1 			 	; normalizing by one position, so increasing exp
 					shr qword [fractiona], 1 		; shifting factor to right 
 					jmp normalizer					; jumping to beginning of the loop
 
-rets:				shr qword [fractiona], LEN_SIG_EXT
+adjustfraction:		shr qword [fractiona], 1
 					push qword [fractiona] 			; removing 1 from fraction so only part to right from . is kept
 					call prepare_fraction 		
 					mov qword [fractiona], rax
 calculatesign:		mov rax, qword [signb]			; calculating sign
 					xor qword [signa], rax
 
-ret2:				mov rax, qword [signa] 			; preparing result by creating 64 number with proper sequence of double precision floating point number parts
-					shl rax, LEN_EX
+createresult:		mov rax, qword [signa] 			; preparing result by creating 64 number with proper sequence of double precision floating point number parts
+					shl rax, LEN_EXPONENT
 					add rax, qword [exp]
-					shl rax, LEN_SIG
+					shl rax, LEN_FRACTION
 					add rax, qword [fractiona]
 
 leavep:				leave 							; leaving function

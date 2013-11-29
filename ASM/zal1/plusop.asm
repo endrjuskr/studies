@@ -13,7 +13,7 @@ section .bss
 
 section .text
         			global plus
-        			extern get_sign, get_exp, get_fraction, prepare_fraction, LEN_EX, LEN_SIG, LEN_SIG_EX, LEN_SIG_EXT
+        			extern get_sign, get_exp, get_fraction, prepare_fraction, LEN_EXPONENT, LEN_FRACTION, EXT_LEN_FRACTION
 plus:
 					enter 0, 0
 assigna:			mov qword [a], rax				; assigning first number to a
@@ -28,10 +28,12 @@ countsignb:			push qword [b]					; counting sign of number b
 
 countgractiona:		push qword [a]					; counting fraction of number a
 					call get_fraction
-					mov qword [fractiona], rax		; assigning fraction of a to fractiona	
+					mov qword [fractiona], rax		; assigning fraction of a to fractiona
+					shl qword [fractiona], 1		; during normalization too big number there is max 1 shift, so let's count this bit and not leave 0 
 countfractionb:		push qword [b]					; counting fraction of number b
 					call get_fraction
 					mov qword [fractionb], rax 		; assigning fraction of b to fractionb
+					shl qword [fractionb], 1		; during normalization too big number there is max 1 shift, so let's count this bit and not leave 0 
 
 countexpa:			push qword [a]					; counting exponent of number a
 					call get_exp
@@ -65,7 +67,7 @@ checkingtwoinf:		mov rax, qword [signa]			; b is also +/-inf so comparing signs
 returnnan:			mov rax, qword [expa]			; signs are different so result will be NaN
 					mov qword [exp], rax			; in case of NaN exp = 2047, omitting base
 					mov qword [fractiona], 1 		; fraction is != 0
-					jmp ret2						; jump to create NaN
+					jmp createresult				; jump to NaN creation
 
 returninf:			mov rax, qword [a]				; result is +/-inf, so there is one inf or two have the same sign
 					jmp leavep 						; jump to the end of function
@@ -119,23 +121,23 @@ diffs:				mov rax, qword [fractionb] 		; acting as substraction
 					sub qword [fractiona], rax
 
 normalize:			mov rax, 1 						; checking if fraction is greater than 1.0000....
-					shl rax, LEN_SIG_EX
+					shl rax, EXT_LEN_FRACTION
 					cmp qword [fractiona], rax
 					jl  normalizel					; if fraction is less than 1.000... so there is a need of shifting fracion to left (increasing)
 					jg  normalizer					; if fraction is greater than 1.000... so there might be a need of shifting fracion to right (decreasing)
-					je rets							; fraction is equal 1.000... so jumping to create result
+					je adjustfraction							; fraction is equal 1.000... so jumping to create result
 
 normalizel:			cmp qword [exp], 0 				; checking if exp is 0 - min value of exponent
 					jne decreaseexp 				; if not then continue computation
 					mov qword [fractiona], 0 		; exp is 0 so result is 0, underflow occured. Setting fraction of result to 0 to express signed zero.
-					jmp ret2 						; jumping to create result
+					jmp createresult 				; jumping to result creation
 
 decreaseexp:		mov rcx, 1 						; checking if there were enough shiftments - factor start with 1
-					shl rcx, LEN_SIG_EX
+					shl rcx, EXT_LEN_FRACTION
 					mov rdx, rcx
 					and rcx, qword [fractiona]
 					cmp rcx, rdx
-					je rets 						; fraction is normalized so jumping to create result
+					je adjustfraction 				; fraction is normalized so jumping to adjusting a fraction
 
 					sub qword [exp], 1  			; normalizing by one position, so decreasing exp
 					shl qword [fractiona], 1 		; shifting factor to left 
@@ -144,26 +146,26 @@ decreaseexp:		mov rcx, 1 						; checking if there were enough shiftments - fact
 normalizer:			cmp qword [exp], 2047			; checking if exp is 2047 - max value of exponent
 					jne increaseexp 				; if not then continue computation 				
 					mov qword [fractiona], 0 		; exp is 2047 so result is inf, overflow occured. Setting fraction of result to 0 to express signed infinity.
-					jmp ret2 						; jumping to create result
+					jmp createresult 				; jumping to result creation
 
 increaseexp:		mov rcx, qword [fractiona] 		; checking if there were enough shiftments - factor start with 1. It might be greater than 1 
-					shr rcx, LEN_SIG_EX 
+					shr rcx, EXT_LEN_FRACTION 
 					cmp rcx, 1
-					je rets 						; fraction is normalized so jumping to create result
+					je adjustfraction 				; fraction is normalized so jumping to adjusting a fraction
 
 					add qword [exp], 1 			 	; normalizing by one position, so increasing exp
 					shr qword [fractiona], 1 		; shifting factor to right 
 					jmp normalizer					; jumping to beginning of the loop
 
-rets:				shr qword [fractiona], LEN_SIG_EXT 	; use only 52 meaningful bits
+adjustfraction:		shr qword [fractiona], 1 		; used extended fraction lenght 53, so now collect only 52 most eaningful bits
 					push qword [fractiona] 			; removing 1 from fraction so only part to right from . is kept
 					call prepare_fraction 		
 					mov qword [fractiona], rax
 
-ret2:				mov rax, qword [signa] 			; preparing result by creating 64 number with proper sequence of double precision floating point number parts
-					shl rax, LEN_EX
+createresult:		mov rax, qword [signa] 			; preparing result by creating 64 number with proper sequence of double precision floating point number parts
+					shl rax, LEN_EXPONENT
 					add rax, qword [exp]
-					shl rax, LEN_SIG
+					shl rax, LEN_FRACTION
 					add rax, qword [fractiona]
 
 leavep:				leave 							; leaving function
