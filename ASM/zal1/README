@@ -1,0 +1,19 @@
+Andrzej Skrodzki 292510
+Programowanie w Asemblerze
+Zadanie zaliczeniowe 1 - Double Precision Floating Point Arythmetic
+
+Pliki:
+1. Makefile
+2. floatingpoint.c
+3. plusop.asm
+4. minusop.asm
+5. timesop.asm
+6. divideop.asm
+7. numberpartition.asm
+8. README
+
+Uwagi do projektu:
+1. NaN jest wylacznie wykorzystywany do zwracania wyniku inf/inf, inf - inf, 0/0.
+2. NaN ma fraction ustawiony na 1.
+3. Liczby ktore nie udalo sie znormalizowac sa zwracane jako 0 w przypadku niedomiaru lub inf w przypadku nadmiaru
+4. Quiet NaN jest zwracany jako inf lub 0, dlatego assert w testach dla takich przypadkow zawodzi.

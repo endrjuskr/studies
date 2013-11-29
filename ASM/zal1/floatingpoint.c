@@ -1,8 +1,15 @@
+/*
+    Andrzej Skrodzki 292510
+    Programowanie w Asemblerze
+    Zadanie zaliczeniowe 1 - Double Precision Floating Point Arythmetic
+    File: floatingpoint.c - Implementacja przeksztalcania liczby double na long i na odwrot + testy dla kazdego operanda
+*/
+
 #include <stdio.h>
 #include <assert.h>
 #include <float.h>
 
-#define DEBUG 1
+#define DEBUG 0 /* Ustawienie na jeden wyswietli wiecej informacji jak zapis liczby double w postaci long integer. */
 
 extern long plus (long arg1, long arg2);
 extern long minus (long arg1, long arg2);
@@ -11,15 +18,9 @@ extern long divide (long arg1, long arg2);
 
 long tolong(double l)
 {
-    long result  = 0;
     unsigned char * bit_representation = (unsigned char *) &l;
-    int i;
-    for(i = sizeof(double) - 1; i >= 0; i--)
-    {
-        result = result * 16 * 16;
-        result += (long)bit_representation[i];
-    }
-    return result;  
+    long * result = (long *)bit_representation;
+    return *result;
 }
 
 double fromlong(long long l)
@@ -164,7 +165,8 @@ int main()
     test3(62, DBL_MAX * 2, -DBL_EPSILON);
     test3(63, DBL_MAX * 2, -DBL_MAX);
     test3(64, DBL_MAX + 2, DBL_MAX * 2);
-    test3(65, DBL_MAX + 2, -DBL_MAX * DBL_MAX);
+    test3(65, DBL_MAX * -2, DBL_MAX * 2);
+    test3(66, DBL_MAX + 2, -DBL_MAX * DBL_MAX);
     
     test4(60, 3, 1);
     test4(61, 1, 2);
@@ -203,5 +205,7 @@ int main()
     test4(91, DBL_MAX + 2, DBL_MAX * 2);
     test4(92, DBL_MAX + 2, -DBL_MAX * DBL_MAX);
     test4(93, DBL_EPSILON, -DBL_MAX);
+    test4(94, DBL_MAX, -DBL_MAX);
+
     return 0;
 }

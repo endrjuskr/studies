@@ -1,7 +1,7 @@
 all: fpc
 
 fpc: np po mo to do floatingpoint.c
-	gcc -g -o fpc numberpartition.o plusop.o minusop.o timesop.o divideop.o floatingpoint.c
+	gcc -o fpc numberpartition.o plusop.o minusop.o timesop.o divideop.o floatingpoint.c
 
 np: numberpartition.asm
 	nasm -g -f elf64 numberpartition.asm

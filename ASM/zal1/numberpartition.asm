@@ -1,10 +1,18 @@
-global get_fraction, get_exp, get_sign, prepare_fraction, LEN_FRACTION, LEN_EXPONENT, EXT_LEN_FRACTION
+; Andrzej Skrodzki 292510
+; Programowanie w Asemblerze
+; Zadanie zaliczeniowe 1 - Double Precision Floating Point Arythmetic
+; File: numberpartition.asm - Implementacja pobierania poszczegolnych czesci liczby wedlug formatu IEEE
+
+global get_fraction, get_exp, get_sign, prepare_fraction, LEN_FRACTION, LEN_EXPONENT, EXT_LEN_FRACTION, MAX_EXP, MIN_EXP, BASE
 
 LEN_FRACTIONN  equ 1
 LEN_EXPONENT    equ 11
 LEN_FRACTION   equ 52
 EXT_LEN_FRACTION equ 53
 EXT_LEN_FRACTIONT equ 1
+MAX_EXP equ 2047
+MIN_EXP equ 0
+BASE equ 1023
 
 section .text
 get_fraction:		; Gets significant from number which is represented by bits 52..0

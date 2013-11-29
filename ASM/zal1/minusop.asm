@@ -1,3 +1,8 @@
+; Andrzej Skrodzki 292510
+; Programowanie w Asemblerze
+; Zadanie zaliczeniowe 1 - Double Precision Floating Point Arythmetic
+; File: minusop.asm - Implementacja odejmowania
+
 section .text
 		global minus
 		extern plus
