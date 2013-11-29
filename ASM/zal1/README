@@ -15,5 +15,5 @@ Pliki:
 Uwagi do projektu:
 1. NaN jest wylacznie wykorzystywany do zwracania wyniku inf/inf, inf - inf, 0/0.
 2. NaN ma fraction ustawiony na 1.
-3. Liczby ktore nie udalo sie znormalizowac sa zwracane jako 0 w przypadku niedomiaru lub inf w przypadku nadmiaru
-4. Quiet NaN jest zwracany jako inf lub 0, dlatego assert w testach dla takich przypadkow zawodzi.
+3. Liczby ktore nie udalo sie znormalizowac sa zwracane jako 0 w przypadku niedomiaru lub inf w przypadku nadmiaru, dlatego assert w testach dla takich przypadkow zawodzi. Bit znaku jest ustawiony w zaleznosci od skladowych
+4. Wszelkie NaN sa zwracane jako signaling NaN.
