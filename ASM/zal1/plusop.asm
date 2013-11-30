@@ -25,25 +25,31 @@ assignb:			mov qword [b], rbx  			; assigning second number to b
 countsigna:			push qword [a]					; counting sign of number a
 					call get_sign
 					mov qword [signa], rax			; assigning sign of a to signa
+					add rsp, 8						; clear stack
 countsignb:			push qword [b]					; counting sign of number b
 					call get_sign
 					mov qword [signb], rax			; assigning sign of b to signb
+					add rsp, 8
 
 countgractiona:		push qword [a]					; counting fraction of number a
 					call get_fraction
 					mov qword [fractiona], rax		; assigning fraction of a to fractiona
 					shl qword [fractiona], 1		; using Guard bit 
+					add rsp, 8
 countfractionb:		push qword [b]					; counting fraction of number b
 					call get_fraction
 					mov qword [fractionb], rax 		; assigning fraction of b to fractionb
 					shl qword [fractionb], 1		; using Guard bit 
+					add rsp, 8
 
 countexpa:			push qword [a]					; counting exponent of number a
 					call get_exp
 					mov qword [expa], rax			; assigning exponent of a to expa
+					add rsp, 8
 countexpb:			push qword [b]					; counting exponent of number b
 					call get_exp
 					mov qword [expb], rax			; assigning exponent of b to expb
+					add rsp, 8
 
 checka0:			cmp qword [expa], MIN_EXP 		; checking if a is zero - exponent = 0, unbiased format
 					jne checkb0						; jump to checking if b is zero when expa != 0
@@ -121,7 +127,13 @@ sames:				mov rax, qword [fractionb]		; there are same signs so act as normal ad
 					jmp normalize 					; jumping to normalizing number
 
 diffs:				mov rax, qword [fractionb] 		; acting as substraction
-					sub qword [fractiona], rax
+					cmp qword [fractiona], rax
+					jge fractionsub					; checking which one is greate. substraction must be from greater number
+					sub rax, qword [fractiona]
+					mov qword [fractiona], rax
+					xor qword [signa], 1 			; get opposite sign
+					jmp normalize
+fractionsub:		sub qword [fractiona], rax
 
 normalize:			mov rax, 1 						; checking if fraction is greater than 1.0000....
 					shl rax, EXT_LEN_FRACTION		; Guard bit is used so fraction is 53 bits long
@@ -164,6 +176,7 @@ adjustfraction:		shr qword [fractiona], 1 		; used guard bit, so now collect onl
 					push qword [fractiona] 			; removing 1 from fraction so only part to right from . is kept
 					call prepare_fraction 		
 					mov qword [fractiona], rax
+					add rsp, 8
 
 createresult:		mov rax, qword [signa] 			; preparing result by creating 64 number with proper sequence of double precision floating point number parts
 					shl rax, LEN_EXPONENT

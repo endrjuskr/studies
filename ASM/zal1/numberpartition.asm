@@ -27,6 +27,7 @@ get_fraction:		; Gets significant from number which is represented by bits 52..0
 					or  rax, rbx    	; Add 1 to number
 					leave
 					ret
+
 get_exp:			; Gets exponent from number which is represented by bits 63..53 with added 1023
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
@@ -38,12 +39,14 @@ get_exp:			; Gets exponent from number which is represented by bits 63..53 with 
 					shr rax, LEN_FRACTION
 					leave
 					ret
+
 get_sign:			; Gets sign of number which is represented by bit 64
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument
 					shr rax, LEN_EXPONENT + LEN_FRACTION
 					leave
 					ret
+					
 prepare_fraction:
 					enter 0, 0
 					mov rax, [rsp + 16] ; First argument

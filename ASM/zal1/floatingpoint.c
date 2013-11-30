@@ -13,7 +13,7 @@
 
 extern long plus (long arg1, long arg2);
 extern long minus (long arg1, long arg2);
-extern long times2 (long arg1, long arg2);
+extern long times (long arg1, long arg2);
 extern long divide (long arg1, long arg2);
 
 long tolong(double l)
@@ -63,8 +63,8 @@ void test3(int i, double b, double c)
     if (DEBUG) printf ("tolong(b) = %ld\n", tolong(b));
     if (DEBUG) printf ("tolong(c) = %ld\n", tolong(c));
     printf ("Case %d: %lf, %lf\n",i, b, c);
-    if (DEBUG) printf("My result long(b * c) = %ld\n", times2(tolong(b), tolong(c)));
-    printf("My result b * c = %lf\n", d = fromlong(times2(tolong(b), tolong(c))));
+    if (DEBUG) printf("My result long(b * c) = %ld\n", times(tolong(b), tolong(c)));
+    printf("My result b * c = %lf\n", d = fromlong(times(tolong(b), tolong(c))));
     if (DEBUG) printf ("IEEE long(b * c) = %ld\n", tolong(b * c));
     if (DEBUG) printf ("IEEE b * c = %lf\n", b * c);
     assert(d == b * c);
@@ -121,6 +121,14 @@ int main()
     test(32, DBL_MAX * 2, -DBL_MAX);
     test(33, DBL_MAX + 2, DBL_MAX * 2);
     test(34, DBL_MAX + 2, -DBL_MAX * DBL_MAX);
+    test(35, 123.1894, -DBL_EPSILON);
+    test(36, -9000000, -DBL_MAX);
+    test(37, 87746.98 * 2, -DBL_EPSILON);
+    test(38, 0.01123, DBL_MAX);
+    test(39, 7689, 123.0034);
+    test(40, 871230, -DBL_MAX * DBL_MAX);
+    test(40, 871230, 9123123234234);
+    test(41, 871230, -9123123234234);
     
     test2(29, 2, 2);
     test2(30, 2, -2);
@@ -140,6 +148,12 @@ int main()
     test2(44, DBL_MAX * 2, -DBL_MAX);
     test2(45, DBL_MAX + 2, DBL_MAX * 2);
     test2(46, DBL_MAX + 2, -DBL_MAX * DBL_MAX);
+    test2(47, 871230, 91232234);
+    test2(48, 871230, 912322123234);
+    test2(49, 871230, -912322123234);
+    test2(50, 912322123234, 871230);
+    test2(51, 912322123234.125, 871230);
+    test2(52, 871230.125, 912322123234);
     
     test3(41, 2, 2);
     test3(42, 2, 1);
@@ -167,6 +181,14 @@ int main()
     test3(64, DBL_MAX + 2, DBL_MAX * 2);
     test3(65, DBL_MAX * -2, DBL_MAX * 2);
     test3(66, DBL_MAX + 2, -DBL_MAX * DBL_MAX);
+    test3(67, 871230, 9123123234234);
+    test3(68, 123.1894, -DBL_EPSILON);
+    test3(69, -9000000, -DBL_MAX);
+    test3(70, 87746.98 * 2, -DBL_EPSILON);
+    test3(71, 0.01123, DBL_MAX);
+    test3(72, 7689, 123.00034);
+    test3(73, 871230, -DBL_MAX * DBL_MAX);
+    test3(74, -DBL_MAX * DBL_MAX, 12324.125);
     
     test4(60, 3, 1);
     test4(61, 1, 2);
@@ -206,6 +228,7 @@ int main()
     test4(92, DBL_MAX + 2, -DBL_MAX * DBL_MAX);
     test4(93, DBL_EPSILON, -DBL_MAX);
     test4(94, DBL_MAX, -DBL_MAX);
+    test4(95, DBL_MAX, -123.123434235);
 
     return 0;
 }

@@ -26,25 +26,31 @@ assignb:			mov qword [b], rbx  					; assigning second number to b
 countsigna:			push qword [a]							; counting sign of number a
 					call get_sign
 					mov qword [signa], rax					; assigning sign of a to signa
+					add rsp, 8								; clear stack	
 countsignb:			push qword [b]							; counting sign of number b
 					call get_sign
 					mov qword [signb], rax					; assigning sign of b to signb
+					add rsp, 8								; clear stack	
 
 countgractiona:		push qword [a]							; counting fraction of number a
 					call get_fraction
-					mov qword [fractiona], rax				; assigning fraction of a to fractiona	
+					mov qword [fractiona], rax				; assigning fraction of a to fractiona
+					add rsp, 8								; clear stack		
 countfractionb:		push qword [b]							; counting fraction of number b
 					call get_fraction
 					mov qword [fractionb], rax 				; assigning fraction of b to fractionb
+					add rsp, 8								; clear stack	
 
 countexpa:			push qword [a]							; counting exponent of number a
 					call get_exp
 					mov qword [expa], rax					; assigning exponent of a to expa
 					sub qword [expa], BASE
+					add rsp, 8								; clear stack	
 countexpb:			push qword [b]							; counting exponent of number b
 					call get_exp
 					mov qword [expb], rax					; assigning exponent of b to expb
 					sub qword [expb], BASE
+					add rsp, 8								; clear stack	
 
 checkb0:			cmp qword [expb], -1023					; checking if b is zero - exponent = -1023, biased format
 					jne checka0								; jump to checking if a is +/-inf when expb != -1023
@@ -172,6 +178,8 @@ adjustfraction:		shr qword [fractiona], 1
 					push qword [fractiona] 			; removing 1 from fraction so only part to right from . is kept
 					call prepare_fraction 		
 					mov qword [fractiona], rax
+					add rsp, 8						; clear stack	
+					
 calculatesign:		mov rax, qword [signb]			; calculating sign
 					xor qword [signa], rax
 
