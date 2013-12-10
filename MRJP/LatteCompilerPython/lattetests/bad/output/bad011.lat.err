@@ -1,0 +1,2 @@
+ERROR
+(Line:2, Character:14) Type Error: Expected type is int, but boolean was received.

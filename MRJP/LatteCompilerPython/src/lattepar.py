@@ -1,8 +1,39 @@
 __author__ = 'andrzejskrodzki'
 
-from LatteParsers import typeparser, expressionparser, statementparser, programparser
-from LatteExceptions import SyntaxException
+from LatteParsers.Statements.IncrStmt import *
+from LatteParsers.Statements.DeclStmt import *
+from LatteParsers.Statements.DecrStmt import *
+from LatteParsers.Statements.CondStmt import *
+from LatteParsers.Statements.CondElseStmt import *
+from LatteParsers.Statements.AssStmt import *
+from LatteParsers.Statements.EmptyStmt import *
+from LatteParsers.Statements.BStmt import *
+from LatteParsers.Statements.RetStmt import *
+from LatteParsers.Statements.SExpStmt import *
+from LatteParsers.Statements.VRetStmt import *
+from LatteParsers.Statements.WhileStmt import *
+from LatteParsers.Programs.Block import *
+from LatteParsers.Programs.FnDef import *
+from LatteParsers.Programs.Program import *
+from LatteParsers.Types.Type import *
+from LatteExceptions import *
+from LatteParsers.Parameters.Arg import *
+from LatteParsers.Parameters.InitItem import *
+from LatteParsers.Parameters.NoInitItem import *
+from LatteParsers.Expressions.EAdd import *
+from LatteParsers.Expressions.EAnd import *
+from LatteParsers.Expressions.EApp import *
+from LatteParsers.Expressions.ENeg import *
+from LatteParsers.Expressions.ENot import *
+from LatteParsers.Expressions.EMul import *
+from LatteParsers.Expressions.ERel import *
+from LatteParsers.Expressions.ELitInt import *
+from LatteParsers.Expressions.ELitBoolean import *
+from LatteParsers.Expressions.EString import *
+from LatteParsers.Expressions.EVar import *
+from LatteParsers.Expressions.EOr import *
 import ply.yacc as yacc
+
 from tokrules import tokens
 
 precedence = (
@@ -19,7 +50,7 @@ precedence = (
 
 def p_program(p):
     'program : listtopdef'
-    p[0] = programparser.Program(p[1])
+    p[0] = Program(p[1])
 
 # List definitions
 
@@ -105,13 +136,12 @@ def p_list_arg(p):
 
 def p_item_noinit(p):
     'item : ID'
-    p[0] = statementparser.NoInitItem(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = NoInitItem(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_item_init(p):
     'item : ID EQUALS expr'
-    p[0] = statementparser.InitItem(p[1], p[3], p.lineno(1), p.lexpos(1))
-
+    p[0] = InitItem(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 # Argument definition
@@ -119,108 +149,108 @@ def p_item_init(p):
 
 def p_arg(p):
     'arg : type ID'
-    p[0] = programparser.Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
+    p[0] = Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
 
 # Function definition
 
 
 def p_fndef(p):
     'topdef : type ID LPAREN listarg RPAREN block'
-    p[0] = programparser.FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
+    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
 
 
 def p_block(p):
     '''block : LBRACE RBRACE
             | LBRACE liststmt RBRACE'''
     if len(p) == 3:
-        p[0] = statementparser.Block([])
+        p[0] = Block([])
     else:
-        p[0] = statementparser.Block(p[2])
+        p[0] = Block(p[2])
 
 # Statement definitions
 
 
 def p_statement_empty(p):
     'stmt : SEMI'
-    p[0] = statementparser.EmptyStmt(p.lineno(1), p.lexpos(1))
+    p[0] = EmptyStmt(p.lineno(1), p.lexpos(1))
 
 
 def p_statement_block(p):
     'stmt : block'
-    p[0] = statementparser.BStmt(p[1], p.lineno(1))
+    p[0] = BStmt(p[1], p.lineno(1))
 
 
 def p_statement_decl(p):
     'stmt : type listitem SEMI'
-    p[0] = statementparser.DeclStmt(p[1], p[2], p.lineno(3), p.lexpos(3))
+    p[0] = DeclStmt(p[1], p[2], p.lineno(3), p.lexpos(3))
 
 
 def p_statement_ass(p):
     'stmt : ID EQUALS expr SEMI'
-    p[0] = statementparser.AssStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
+    p[0] = AssStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_incr(p):
     'stmt : ID PLUSPLUS SEMI'
-    p[0] = statementparser.IncrStmt(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = IncrStmt(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_decr(p):
     'stmt : ID MINUSMINUS SEMI'
-    p[0] = statementparser.DecrStmt(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = DecrStmt(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_ret(p):
     'stmt : RETURN expr SEMI'
-    p[0] = statementparser.RetStmt(p[2], p.lineno(1), p.lexpos(1))
+    p[0] = RetStmt(p[2], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_vret(p):
     'stmt : RETURN SEMI'
-    p[0] = statementparser.VRetStmt(p.lineno(1), p.lexpos(1))
+    p[0] = VRetStmt(p.lineno(1), p.lexpos(1))
 
 
 def p_statement_cond(p):
     'stmt : IF LPAREN expr RPAREN stmt'
-    p[0] = statementparser.CondStmt(p[3], p[5], p.lineno(1), p.lexpos(1))
+    p[0] = CondStmt(p[3], p[5], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_condelse(p):
     'stmt : IF LPAREN expr RPAREN stmt ELSE stmt'
-    p[0] = statementparser.CondElseStmt(p[3], p[5], p[7], p.lineno(1), p.lexpos(1))
+    p[0] = CondElseStmt(p[3], p[5], p[7], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_while(p):
     'stmt : WHILE LPAREN expr RPAREN stmt'
-    p[0] = statementparser.WhileStmt(p[3], p[5], p.lineno(1), p.lexpos(1))
+    p[0] = WhileStmt(p[3], p[5], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_sexp(p):
     'stmt : expr SEMI'
-    p[0] = statementparser.SExpStmt(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = SExpStmt(p[1], p.lineno(1), p.lexpos(1))
 
 # Expression definitions
 
 
 def p_expression_var(p):
     'expr6 : ID'
-    p[0] = expressionparser.EVar(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = EVar(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_int(p):
     'expr6 : NUMBER'
-    p[0] = expressionparser.ELitInt(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = ELitInt(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_boolean(p):
     '''expr6 : TRUE
             | FALSE'''
-    p[0] = expressionparser.ELitBoolean(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = ELitBoolean(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_app(p):
     'expr6 : ID LPAREN listexpr RPAREN'
-    p[0] = expressionparser.EApp(p[1], p[3], p.lineno(1), p.lexpos(1))
+    p[0] = EApp(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_group(p):
@@ -230,12 +260,12 @@ def p_expression_group(p):
 
 def p_expression_string(p):
     'expr6 : SENTENCE'
-    p[0] = expressionparser.EString(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = EString(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_neg(p):
     'expr5 : MINUS expr6  %prec UMINUS'
-    p[0] = expressionparser.ENeg(p[2], p.lineno(1), p.lexpos(2))
+    p[0] = ENeg(p[2], p.lineno(1), p.lexpos(2))
 
 
 def p_expression_not_1(p):
@@ -245,7 +275,7 @@ def p_expression_not_1(p):
 
 def p_expression_not_2(p):
     '''expr5 : NOT expr6'''
-    p[0] = expressionparser.ENot(p[2], p.lineno(1), p.lexpos(2))
+    p[0] = ENot(p[2], p.lineno(1), p.lexpos(2))
 
 
 def p_expression_mul_1(p):
@@ -262,7 +292,7 @@ def p_mulop(p):
 
 def p_expression_mul_2(p):
     '''expr4 : expr4 mulop expr5'''
-    p[0] = expressionparser.EMul(p[1], p[3], p[2], p[1].no_line, p[1].pos)
+    p[0] = EMul(p[1], p[3], p[2], p[1].no_line, p[1].pos)
 
 
 def p_addop(p):
@@ -273,7 +303,7 @@ def p_addop(p):
 
 def p_expression_add_1(p):
     '''expr3 : expr3 addop expr4'''
-    p[0] = expressionparser.EAdd(p[1], p[3], p[2], p[1].no_line, p[1].pos)
+    p[0] = EAdd(p[1], p[3], p[2], p[1].no_line, p[1].pos)
 
 
 def p_expression_add_3(p):
@@ -293,7 +323,7 @@ def p_relop(p):
 
 def p_expression_rel_1(p):
     '''expr2 : expr2 relop expr3'''
-    p[0] = expressionparser.ERel(p[1], p[3], p[2], p[1].no_line, p[1].pos)
+    p[0] = ERel(p[1], p[3], p[2], p[1].no_line, p[1].pos)
 
 
 def p_expression_rel_2(p):
@@ -303,7 +333,7 @@ def p_expression_rel_2(p):
 
 def p_expression_and_1(p):
     '''expr1 : expr2 AND expr1'''
-    p[0] = expressionparser.EAnd(p[1], p[3], p[1].no_line, p[1].pos)
+    p[0] = EAnd(p[1], p[3], p[1].no_line, p[1].pos)
 
 
 def p_expression_and_2(p):
@@ -313,7 +343,7 @@ def p_expression_and_2(p):
 
 def p_expression_or_1(p):
     '''expr : expr1 OR expr'''
-    p[0] = expressionparser.EOr(p[1], p[3], p[1].no_line, p[1].pos)
+    p[0] = EOr(p[1], p[3], p[1].no_line, p[1].pos)
 
 
 def p_expression_or_2(p):
@@ -328,7 +358,7 @@ def p_type(p):
             | STRING
             | VOID
             | BOOLEAN'''
-    p[0] = typeparser.Type(p[1])
+    p[0] = Type.Type(p[1])
 
 # Error definition
 

@@ -1,28 +1,12 @@
 __author__ = 'andrzejskrodzki'
+
+from Type import Type
 from operator import eq
-
-
-class Type():
-    def __init__(self, value):
-        self.type = value
-        self.value = value
-
-    def __eq__(self, other):
-        return self.value == other.value
-
-    def __ne__(self, other):
-        return self.value != other.value
-
-    def __str__(self):
-        return self.value
-
-    def isFunction(self):
-        return False
 
 
 class FunType(Type):
     def __init__(self, returntype, paramstypes):
-        self.type = "funtype"
+        super(FunType, self).__init__("funtype")
         self.returntype = returntype
         self.paramstypes = paramstypes
 

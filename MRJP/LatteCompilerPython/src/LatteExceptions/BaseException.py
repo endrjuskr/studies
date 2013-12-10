@@ -18,4 +18,4 @@ class BaseException(Exception):
     def __str__(self):
         if self.column is None:
             self.column = 0
-        return "(Line:" + str(self.no_line) + ", Character:" + str(self.column) +") " if self.no_line != -1 else ""
+        return "(Line:" + str(self.no_line) + ", Character:" + str(self.column) + ") " if self.no_line != -1 else ""

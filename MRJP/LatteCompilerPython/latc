@@ -1,0 +1,2 @@
+#!/bin/bash
+python /Users/andrzejskrodzki/Studia/studies/MRJP/LatteCompilerPython/src/lattemain.py $1

@@ -1,0 +1,2 @@
+ERROR
+(Line:3, Character:18) Syntax Error: Boolean does not support rel operators except '==' and '!='.

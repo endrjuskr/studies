@@ -1,0 +1,2 @@
+ERROR
+(Line:4, Character:11) Syntax Error: Wrong number of parameters for function foo - expected:1 actual: 2.

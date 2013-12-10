@@ -576,7 +576,7 @@ class Preprocessor(object):
             if t.type == self.t_ID:
                 tokens[i] = copy.copy(t)
                 tokens[i].type = self.t_INTEGER
-                tokens[i].value = self.t_INTEGER_TYPE("0L")
+                tokens[i].value = self.t_INTEGER_Type.Type("0L")
             elif t.type == self.t_INTEGER:
                 tokens[i] = copy.copy(t)
                 # Strip off any trailing suffixes

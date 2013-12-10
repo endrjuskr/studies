@@ -1,0 +1,2 @@
+ERROR
+(Line:11, Character:0) Duplicate Declaration Error: Function t was already declared in the scope.

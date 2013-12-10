@@ -1,0 +1,2 @@
+ERROR
+(Line:4, Character:12) Type Error: Expected type is int, but string was received.

@@ -1,7 +1,7 @@
 __author__ = 'andrzejskrodzki'
 
 from Env import Env
-from LatteExceptions import ReturnException, SyntaxException
+from LatteExceptions import *
 
 
 class TypeCheck:

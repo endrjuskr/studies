@@ -1,0 +1,2 @@
+ERROR
+(Line:3, Character:6) Type Error: Expected type is void, but int was received.

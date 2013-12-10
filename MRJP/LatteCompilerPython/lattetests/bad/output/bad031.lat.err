@@ -1,0 +1,2 @@
+ERROR
+(Line:8, Character:10) Duplicate Declaration Error: Variable k was already declared in the scope.

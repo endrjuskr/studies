@@ -1,6 +1,6 @@
 __author__ = 'andrzejskrodzki'
 
-from LatteParsers.typeparser import Type, FunType
+from LatteParsers.Types import *
 from LatteExceptions import DuplicateDeclarationException, SyntaxException
 
 
@@ -15,11 +15,11 @@ class Env:
             self.add_predifined_methods()
 
     def add_predifined_methods(self):
-        self.current_env["printInt"] = FunType(Type("void"), [Type("int")])
-        self.current_env["readInt"] = FunType(Type("int"), [])
-        self.current_env["printString"] = FunType(Type("void"), [Type("string")])
-        self.current_env["readString"] = FunType(Type("string"), [])
-        self.current_env["error"] = FunType(Type("void"), [])
+        self.current_env["printInt"] = FunType.FunType(Type.Type("void"), [Type.Type("int")])
+        self.current_env["readInt"] = FunType.FunType(Type.Type("int"), [])
+        self.current_env["printString"] = FunType.FunType(Type.Type("void"), [Type.Type("string")])
+        self.current_env["readString"] = FunType.FunType(Type.Type("string"), [])
+        self.current_env["error"] = FunType.FunType(Type.Type("void"), [])
 
     def add_fun(self, fun):
         if self.current_env.has_key(fun.ident):
@@ -34,7 +34,7 @@ class Env:
 
 
     def contain_main(self):
-        return self.current_env.has_key("main") and self.current_env["main"] == FunType(Type("int"), [])
+        return self.current_env.has_key("main") and self.current_env["main"] == FunType.FunType(Type.Type("int"), [])
 
     def invoke_fun(self, ident):
         self.current_fun_type = self.current_env[ident]
