@@ -3,11 +3,7 @@ __author__ = 'Andrzej Skrodzki - as292510'
 from Env import Env
 from LatteExceptions import *
 from LatteParsers.BaseNode import BaseNode
-from ReadStringFun import ReadStringFun
-from ReadIntFun import ReadIntFun
-from ErrorFun import ErrorFun
-from PrintStringFun import PrintStringFun
-from PrintIntFun import PrintIntFun
+from PredefinedFun import *
 
 class Program(BaseNode):
     def __init__(self, topdeflist):
@@ -18,6 +14,7 @@ class Program(BaseNode):
         self.topdeflist.append(ReadStringFun())
         self.topdeflist.append(PrintStringFun())
         self.topdeflist.append(PrintIntFun())
+        self.classname = "MyClass"
 
     def type_check(self):
         for fndef in self.topdeflist:
@@ -35,11 +32,9 @@ class Program(BaseNode):
         fun.type_check(env_prim)
 
 
-    def generate_code(self):
-        s = self.generate_header()
+    def generate_body(self, env=Env()):
         for fn in self.topdeflist:
             s += fn.generate_code()
-        s += self.generate_footer()
         return s
 
     def generate_header(self):

@@ -10,6 +10,7 @@ class CondElseStmt(StmtBase):
         self.expr = expr
         self.stmt1 = stmt1
         self.stmt2 = stmt2
+        self.label_pattern = "condelse_" + self.no_line + "_" + self.pos
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=Type.Type("boolean"))
@@ -23,3 +24,14 @@ class CondElseStmt(StmtBase):
             return self.stmt1.return_check()
         else:
             return self.stmt2.return_check()
+
+
+    def generate_body(self, env):
+        s = self.expr.generate_code(env)
+        s += "ifeq " + self.label_pattern + "_f\n"
+        s += self.stmt1.generate_code(env)
+        s += "goto " + self.label_pattern + "\n"
+        s += self.label_pattern + "_f:\n"
+        s += self.stmt2.generate_code(env)
+        s += self.label_pattern + ":\n"
+        return s

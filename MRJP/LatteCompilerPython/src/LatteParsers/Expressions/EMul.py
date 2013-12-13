@@ -12,7 +12,6 @@ class EMul(TwoArgExpr):
 
 
     def calculate_value(self):
-        #print self.op, self.right, self.left, self.no_line
         if self.left.get_value() is not None and self.right.get_value() is not None:
             if self.op == "/":
                 if self.right.get_value() == 0:
@@ -25,3 +24,15 @@ class EMul(TwoArgExpr):
                     raise SyntaxException.SyntaxException("Modulo by 0", self.no_line, pos=self.pos)
                 self.value = self.left.get_value() % self.right.get_value()
 
+    def generate_body(self, env):
+        s = super(EMul, self).generate_body(env)
+        if self.op == "/":
+            s += "idiv \n"
+        elif self.op == "*":
+            s += "imul"
+        else:
+            s += "dup \n \
+                irem \n \
+                isub \n"
+
+        return s

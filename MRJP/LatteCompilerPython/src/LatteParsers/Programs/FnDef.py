@@ -1,6 +1,7 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
 from LatteParsers.Types.FunType import *
+from LatteParsers.Types.Type import *
 from Env import Env
 from LatteExceptions import *
 from LatteParsers.BaseNode import BaseNode
@@ -18,25 +19,28 @@ class FnDef(BaseNode):
 
     def type_check(self, env):
         self.prepare_env(env)
-        env.current_fun_type = self.funtype
         self.block.type_check(env, reset_variables=False)
-        if self.funtype.returntype.type != "void":
+        if not self.funtype.returntype == Type("void"):
             if not self.block.return_check():
                 raise ReturnException.ReturnException(self.ident, self.no_line)
 
     def prepare_env(self, env):
         for arg in self.arglist:
             env.add_variable(arg.ident, arg.argtype, arg.no_line, arg.pos)
+        env.current_fun_type = self.funtype
 
 
     def calculate_type(self, type, arglist):
         return FunType(type, map(self.get_type, arglist))
 
     def generate_header(self):
-        return ".method public static " + self.ident + self.funtype.generate_code()
+        return ".method public static " + self.ident + " " + self.funtype.generate_code() + "\n"
 
     def generate_body(self):
-        return ""
+        env = Env()
+        self.prepare_env(env)
+        s = self.block.generate_code(env)
+        return ".limit " + env.get_stack_limit() + "\n .local " + env.get_local_limit() + "\n" + s
 
     def generate_footer(self):
-        return ".end method"
+        return ".end method \n"

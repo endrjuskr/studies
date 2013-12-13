@@ -14,3 +14,6 @@ class IncrStmt(StmtBase):
             raise SyntaxException.SyntaxException("Increment can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
                                                   + " for variable " + self.ident + ".", self.no_line)
+
+    def generate_body(self, env):
+        return "iinc " + env.get_variable_value(self.ident) + " 1\n"

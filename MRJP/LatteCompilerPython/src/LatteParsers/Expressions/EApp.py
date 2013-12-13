@@ -10,6 +10,7 @@ class EApp(ZeroArgExpr):
         self.type = "eapp"
         self.funident = funident
         self.exprlist = exprlist
+        self.etype = None
 
     def get_type(self, env):
         if self.etype is None:
@@ -28,5 +29,10 @@ class EApp(ZeroArgExpr):
                                                   + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos)
 
         for i in range(len(self.exprlist)):
-            #print "arg"
             self.exprlist[i].type_check(env, self.etype.paramstypes[i])
+
+    def generate_body(self, env):
+        s = ""
+        for expr in self.exprlist:
+            s += expr.generate_code(env)
+        s += "invokestatic " + env.get_fun_class(self.ident) + "/" + self.ident + " " + self.etype.generate_code()

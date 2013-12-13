@@ -16,3 +16,6 @@ class DecrStmt(StmtBase):
             raise SyntaxException.SyntaxException("Decrement can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
                                                   + " for variable " + self.ident + ".", self.no_line)
+
+    def generate_body(self, env):
+        return "iinc " + env.get_variable_value(self.ident) + " m1\n"

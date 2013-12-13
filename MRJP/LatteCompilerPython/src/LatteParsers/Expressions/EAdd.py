@@ -26,11 +26,14 @@ class EAdd(TwoArgExpr):
                 self.value = self.left.get_value() - self.right.get_value()
 
 
-    def generate_body(self):
-        s = super(EAdd, self).generate_body()
+    def generate_body(self, env):
+        s = super(EAdd, self).generate_body(env)
         if self.etype == Type.Type("string"):
-            pass
-        else:
+            cFun = "concatenateString"
+            s += "invokestatic " + env.get_fun_class(cFun) + "/" + cFun + " " \
+                 + env.get_fun_type(cFun).generate_code(env)
+        elif self.op == "+":
             s += "iadd \n"
-
+        else:
+            s += "isub \n"
         return s

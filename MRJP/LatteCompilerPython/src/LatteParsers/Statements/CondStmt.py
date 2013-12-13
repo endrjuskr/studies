@@ -9,6 +9,7 @@ class CondStmt(StmtBase):
         super(CondStmt, self).__init__("condstmt", no_line, pos)
         self.expr = expr
         self.stmt = stmt
+        self.label_pattern = "cond_" + self.no_line + "_" + self.pos
 
 
     def type_check(self, env):
@@ -20,3 +21,10 @@ class CondStmt(StmtBase):
             return self.stmt.return_check()
         else:
             return False
+
+    def generate_body(self, env):
+        s = self.expr.generate_code(env)
+        s += "ifeq " + self.label_pattern + "\n"
+        s += self.stmt.generate_code(env)
+        s += self.label_pattern + ":\n"
+        return s

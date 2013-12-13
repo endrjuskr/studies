@@ -9,6 +9,7 @@ class ERel(TwoArgExpr):
     def __init__(self, left, right, op, no_line, pos):
         super(ERel, self).__init__(left, right, op, Type.Type("boolean"), None, no_line, pos)
         self.type = "erel"
+        self.label_pattern = "cmp_" + self.line + "_" + self.pos
 
     def arg_type_check(self, rtype):
         if rtype == Type.Type("boolean") and self.op != "==" and self.op != "!=":
@@ -33,20 +34,26 @@ class ERel(TwoArgExpr):
     def generate_body(self, env):
         s = super(ERel, self).generate_body(env)
         if self.op == "==":
-            s += ""
+            s += "if_cmpeq"
         elif self.op == "!=":
-            self.value = self.left.get_value() != self.right.get_value()
+            s += "if_cmpne"
         elif self.op == "<=":
-            self.value = self.left.get_value() <= self.right.get_value()
+            s += "if_cmple"
         elif self.op == ">=":
-            self.value = self.left.get_value() >= self.right.get_value()
+            s += "if_cmpge"
         elif self.op == "<":
-            self.value = self.left.get_value() < self.right.get_value()
+            s += "if_cmplt"
         elif self.op == ">":
-            self.value = self.left.get_value() > self.right.get_value()
+            s += "if_cmpgt"
 
-        s += "cmp" + self.line + "_" + self.pos + "_t:\n"
+        s += self.label_pattern + "_t\n"
+        s += "goto " + self.label_pattern + "_f\n"
+
+        s += self.label_pattern + "_t:\n"
         s += "iconst_1 \n"
-        s += "cmp" + self.line + "_" + self.pos + "_f:\n"
+        s += "goto " + self.label_pattern
+
+        s += self.label_pattern + "_f:\n"
         s += "iconst_0 \n"
+        s += self.label_pattern + ":\n"
         return s

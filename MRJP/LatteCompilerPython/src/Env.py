@@ -14,11 +14,21 @@ class Env:
         self.var_store = var_store
         self.variables_counter = max(self.var_store.values()) + 1
         self.current_fun_type = inside_fun
+        self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString"]
+        self.current_stack_count = 0
+        self.max_stack_count = 0
 
     def add_fun(self, fun):
         if fun.ident in self.fun_env:
             raise DuplicateDeclarationException.DuplicateDeclarationException(fun.ident, True, fun.no_line, 0)
         self.fun_env[fun.ident] = fun.funtype
+
+    def push_stack(self, number):
+        self.current_stack_count += number
+        self.max_stack_count = max(self.current_stack_count, self.max_stack_count)
+
+    def pop_stack(self, number):
+        self.current_stack_count -= number
 
     def contain_function(self, ident):
         return ident in self.fun_env
@@ -93,6 +103,18 @@ class Env:
     def get_variable_value(self, ident):
         assert not ident in self.fun_env
         return self.var_store[ident]
+
+    def get_fun_class(self, ident):
+        if ident in self.predefined_fun:
+            return "Runtime"
+        else:
+            return "MyClass"
+
+    def get_stack_limit(self):
+        return self.max_stack_count
+
+    def get_local_limit(self):
+        return self.variables_counter
 
     def __str__(self):
         output = ""

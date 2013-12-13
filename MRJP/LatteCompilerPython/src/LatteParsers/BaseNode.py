@@ -8,13 +8,13 @@ class BaseNode(object):
         self.pos = pos
         pass
 
-    def generate_code(self):
-        return self.generate_header() + self.generate_body() + self.generate_footer()
+    def generate_code(self, env):
+        return self.generate_header() + self.generate_body(env) + self.generate_footer()
 
     def generate_header(self):
         return ""
 
-    def generate_body(self):
+    def generate_body(self, env):
         return ""
 
     def generate_footer(self):

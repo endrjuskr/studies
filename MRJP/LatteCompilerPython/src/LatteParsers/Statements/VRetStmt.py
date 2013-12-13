@@ -13,3 +13,6 @@ class VRetStmt(StmtBase):
         if env.current_fun_type.returntype != Type.Type("void"):
             raise SyntaxException.SyntaxException("Incorrect return type, expected not void.", self.no_line,
                                                   pos=self.pos)
+
+    def generate_body(self, env):
+        return "return \n"

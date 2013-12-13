@@ -3,6 +3,7 @@ import sys
 import lattepar
 import lattelex
 from LatteExceptions import *
+import subprocess
 
 
 def print_usage():
@@ -21,6 +22,11 @@ if __name__ == "__main__":
     if sys.argv[1] == "help":
         print_usage()
         sys.exit()
+
+    path = sys.argv[1].split('/')
+    program_file = path[len(path) - 1]
+    program_name = program_file.split('.')[0]
+
     try:
         with open(sys.argv[1], 'r') as content_file:
             content = content_file.read()
@@ -32,6 +38,8 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         debug = 1 if sys.argv[2] == "-d" else 0
 
+
+
     lattelexer = lattelex.get_lexer()
     latteparser = lattepar.get_parser()
     try:
@@ -39,8 +47,12 @@ if __name__ == "__main__":
         if result is None:
             raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
         result.type_check()
-        f = open('myprog.j', 'r+')
+        path[len(path) - 1] = program_name + ".j"
+        new_file_path = '/'.join(path)
+        f = open(new_file_path, 'r+')
         f.write(result.generate_code())
+        f.close()
+        subprocess.call("jasmin -d " + '/'.join(path[0:-1]) + " " + new_file_path)
     except BaseException.BaseException as e:
         sys.stderr.write("ERROR\n")
         e.find_column(content)

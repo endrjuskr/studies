@@ -13,3 +13,6 @@ class BStmt(StmtBase):
 
     def return_check(self):
         return self.block.return_check()
+
+    def generate_body(self, env):
+        self.block.generate_code(env)

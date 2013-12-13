@@ -1,3 +1,3 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["Block", "FnDef", "Program", "ErrorFun", "PrintIntFun", "PrintStringFun", "ReadIntFun", "ReadStringFun"]
+__all__ = ["Block", "FnDef", "Program", "PredefinedFun"]
