@@ -12,3 +12,6 @@ class SExpStmt(StmtBase):
     def type_check(self, env):
         # Here we assume that the only expression is invocation of void function.
         self.expr.type_check(env, expected_type=Type.Type("void"))
+
+    def generate_body(self, env):
+        return self.expr.generate_code(env)

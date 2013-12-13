@@ -9,7 +9,7 @@ class WhileStmt(StmtBase):
         super(WhileStmt, self).__init__("whilestmt", no_line, pos)
         self.expr = expr
         self.stmt = stmt
-        self.label_pattern = "while_" + self.no_line + "_" + self.pos
+        self.label_pattern = "while_" + str(self.no_line) + "_" + str(self.pos)
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=Type.Type("boolean"))

@@ -28,5 +28,5 @@ class AssStmt(StmtBase):
         else:
             s += "istore "
 
-        s += env.get_variable_value(self.ident)
+        s += str(env.get_variable_value(self.ident)) + "\n"
         return s

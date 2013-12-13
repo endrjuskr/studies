@@ -1,6 +1,7 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
 from ItemBase import ItemBase
+from LatteParsers.Types.Type import Type
 
 
 class NoInitItem(ItemBase):
@@ -11,8 +12,8 @@ class NoInitItem(ItemBase):
         s = ""
         if self.itemtype == Type("string"):
             s += "ldc \"\" \n"
-            s += "astore " + env.get_variable_value(self.ident) + "\n"
+            s += "astore " + str(env.get_variable_value(self.ident)) + "\n"
         else:
             s += "iconst_0 \n"
-            s += "istore " + env.get_variable_value(self.ident) + "\n"
+            s += "istore " + str(env.get_variable_value(self.ident)) + "\n"
         return s

@@ -35,4 +35,6 @@ class EApp(ZeroArgExpr):
         s = ""
         for expr in self.exprlist:
             s += expr.generate_code(env)
-        s += "invokestatic " + env.get_fun_class(self.ident) + "/" + self.ident + " " + self.etype.generate_code()
+        s += "invokestatic " + env.get_fun_class(self.funident) + "." + self.funident + self.etype.generate_code()
+        s += "\n"
+        return s

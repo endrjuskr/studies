@@ -10,4 +10,4 @@ class ELitInt(ZeroArgExpr):
         self.type = "number"
 
     def generate_body(self, env):
-        return "ldc " + self.value + " \n"
+        return "ldc " + str(self.value) + " \n"

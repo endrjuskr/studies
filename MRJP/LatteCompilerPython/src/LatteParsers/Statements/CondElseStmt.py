@@ -10,7 +10,7 @@ class CondElseStmt(StmtBase):
         self.expr = expr
         self.stmt1 = stmt1
         self.stmt2 = stmt2
-        self.label_pattern = "condelse_" + self.no_line + "_" + self.pos
+        self.label_pattern = "condelse_" + str(self.no_line) + "_" + str(self.pos)
 
     def type_check(self, env):
         self.expr.type_check(env, expected_type=Type.Type("boolean"))

@@ -29,7 +29,7 @@ class EMul(TwoArgExpr):
         if self.op == "/":
             s += "idiv \n"
         elif self.op == "*":
-            s += "imul"
+            s += "imul\n"
         else:
             s += "dup \n \
                 irem \n \

@@ -1,5 +1,5 @@
 from StmtBase import StmtBase
-from LatteExceptions import *
+from LatteExceptions import SyntaxException
 
 
 class IncrStmt(StmtBase):
@@ -11,9 +11,9 @@ class IncrStmt(StmtBase):
         if env.get_variable_type(self.ident) is None:
             raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
         elif env.get_variable_type(self.ident).type != "int":
-            raise SyntaxException.SyntaxException("Increment can be applied only to integers, but got "
+            raise SyntaxException("Increment can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
                                                   + " for variable " + self.ident + ".", self.no_line)
 
     def generate_body(self, env):
-        return "iinc " + env.get_variable_value(self.ident) + " 1\n"
+        return "iinc " + str(env.get_variable_value(self.ident)) + " 1\n"

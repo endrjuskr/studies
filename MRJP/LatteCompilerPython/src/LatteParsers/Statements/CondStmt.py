@@ -9,7 +9,7 @@ class CondStmt(StmtBase):
         super(CondStmt, self).__init__("condstmt", no_line, pos)
         self.expr = expr
         self.stmt = stmt
-        self.label_pattern = "cond_" + self.no_line + "_" + self.pos
+        self.label_pattern = "cond_" + str(self.no_line) + "_" + str(self.pos)
 
 
     def type_check(self, env):

@@ -2,6 +2,7 @@ __author__ = 'Andrzej Skrodzki - as292510'
 
 from FnDef import FnDef
 from LatteParsers.Types.Type import Type
+from LatteParsers.Types.FunType import FunType
 
 class PredefinedFun(FnDef):
     def __init__(self, type, ident, arglist):
@@ -9,6 +10,9 @@ class PredefinedFun(FnDef):
 
     def type_check(self, env):
         pass
+
+    def calculate_type(self, type, arglist):
+        return FunType(type, arglist)
 
     def generate_code(self, env):
         return ""

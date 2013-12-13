@@ -3,6 +3,7 @@ import sys
 import lattepar
 import lattelex
 from LatteExceptions import *
+from Env import Env
 import subprocess
 
 
@@ -49,11 +50,12 @@ if __name__ == "__main__":
         result.type_check()
         path[len(path) - 1] = program_name + ".j"
         new_file_path = '/'.join(path)
-        f = open(new_file_path, 'r+')
-        f.write(result.generate_code())
+        f = open(new_file_path, 'w+')
+        f.write(result.generate_code(Env()))
         f.close()
-        subprocess.call("java -jar lib/jasmin.jar -classpath 'lib/*' -d " + '/'.join(path[0:-1]) + " " + new_file_path)
-    except BaseException.BaseException as e:
+        subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1]) + " " + new_file_path,
+                        shell=True)
+    except LatteBaseException.LatteBaseException as e:
         sys.stderr.write("ERROR\n")
         e.find_column(content)
         sys.stderr.write("{}\n".format(e))

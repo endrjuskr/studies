@@ -15,4 +15,7 @@ class BStmt(StmtBase):
         return self.block.return_check()
 
     def generate_body(self, env):
-        self.block.generate_code(env)
+        env_prim = env.shallow_copy()
+        s = self.block.generate_code(env_prim)
+        env.variables_counter = env_prim.variables_counter
+        return s

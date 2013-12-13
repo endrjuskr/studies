@@ -10,4 +10,4 @@ class ELitBoolean(ZeroArgExpr):
         self.type = "elitboolean"
 
     def generate_body(self, env):
-        return "iconst 1\n" if self.value == True else "iconst 0\n"
+        return "iconst_1\n" if self.value == True else "iconst_0\n"

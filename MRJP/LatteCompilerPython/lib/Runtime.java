@@ -25,7 +25,7 @@ public class Runtime {
 		System.exit(1);
 	}
 	
-	public static String concatenate(String a, String b) {
+	public static String concatenateString(String a, String b) {
 		return a + b;
 	}
 }

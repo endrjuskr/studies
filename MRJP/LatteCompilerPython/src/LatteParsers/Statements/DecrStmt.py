@@ -18,4 +18,4 @@ class DecrStmt(StmtBase):
                                                   + " for variable " + self.ident + ".", self.no_line)
 
     def generate_body(self, env):
-        return "iinc " + env.get_variable_value(self.ident) + " m1\n"
+        return "iinc " + str(env.get_variable_value(self.ident)) + " -1\n"

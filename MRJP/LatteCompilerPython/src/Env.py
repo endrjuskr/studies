@@ -8,15 +8,16 @@ class Env:
     current_env = {}
     current_fun_type = None
 
-    def __init__(self, var_env={}, fun_env={}, var_store={}, inside_fun=None):
-        self.var_env = var_env
-        self.fun_env = fun_env
-        self.var_store = var_store
-        self.variables_counter = max(self.var_store.values()) + 1
+    def __init__(self, var_env=None, fun_env=None, var_store=None, inside_fun=None, in_main=False):
+        self.var_env = {} if var_env is None else var_env
+        self.fun_env = {} if fun_env is None else fun_env
+        self.var_store = {} if var_store is None else var_store
+        self.variables_counter = 0 if len(self.var_store.values()) == 0 else max(self.var_store.values()) + 1
         self.current_fun_type = inside_fun
-        self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString"]
+        self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
         self.current_stack_count = 0
         self.max_stack_count = 0
+        self.in_main = in_main
 
     def add_fun(self, fun):
         if fun.ident in self.fun_env:
@@ -59,7 +60,7 @@ class Env:
             new_var_store[key] = value
 
         return Env(var_env=new_var_env, fun_env=new_fun_env, var_store=new_var_store,
-                   inside_fun=self.current_fun_type)
+                   inside_fun=self.current_fun_type, in_main=self.in_main)
 
     def deep_copy(self):
         new_var_env = {}
@@ -93,7 +94,7 @@ class Env:
                 raise DuplicateDeclarationException.DuplicateDeclarationException(ident, False, no_line, pos)
             else:
                 self.var_env[ident] = (type, count + 1)
-                self.variables_counter[ident] = self.variables_counter
+                self.var_store[ident] = self.variables_counter
                 self.variables_counter += 1
 
     def get_variable_type(self, ident):
@@ -111,10 +112,10 @@ class Env:
             return "MyClass"
 
     def get_stack_limit(self):
-        return self.max_stack_count
+        return 100 # self.max_stack_count
 
     def get_local_limit(self):
-        return self.variables_counter
+        return self.variables_counter + 1
 
     def __str__(self):
         output = ""

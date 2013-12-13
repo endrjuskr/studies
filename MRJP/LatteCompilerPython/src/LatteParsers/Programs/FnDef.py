@@ -28,19 +28,23 @@ class FnDef(BaseNode):
         for arg in self.arglist:
             env.add_variable(arg.ident, arg.argtype, arg.no_line, arg.pos)
         env.current_fun_type = self.funtype
+        env.in_main = self.ident == "main"
 
 
     def calculate_type(self, type, arglist):
         return FunType(type, map(self.get_type, arglist))
 
     def generate_header(self):
-        return ".method public static " + self.ident + " " + self.funtype.generate_code() + "\n"
+        return ".method public static " + self.ident + self.funtype.generate_code() + "\n" if  \
+            self.ident != "main" else ".method public static main([Ljava/lang/String;)V \n"
 
-    def generate_body(self):
-        env = Env()
+    def generate_body(self, env):
         self.prepare_env(env)
         s = self.block.generate_code(env)
-        return ".limit " + env.get_stack_limit() + "\n .local " + env.get_local_limit() + "\n" + s
+        s = ".limit stack " + str(env.get_stack_limit()) + "\n.limit locals " + str(env.get_local_limit()) + "\n" + s
+        if s.strip().endswith(":"):
+            s += "iconst_0 \npop \n"
+        return s
 
     def generate_footer(self):
         return ".end method \n"

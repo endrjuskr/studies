@@ -30,8 +30,8 @@ class EAdd(TwoArgExpr):
         s = super(EAdd, self).generate_body(env)
         if self.etype == Type.Type("string"):
             cFun = "concatenateString"
-            s += "invokestatic " + env.get_fun_class(cFun) + "/" + cFun + " " \
-                 + env.get_fun_type(cFun).generate_code(env)
+            s += "invokestatic " + env.get_fun_class(cFun) + "." + cFun \
+                 + env.get_fun_type(cFun).generate_code() + "\n"
         elif self.op == "+":
             s += "iadd \n"
         else:

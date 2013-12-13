@@ -16,6 +16,8 @@ class RetStmt(StmtBase):
         return True
 
     def generate_body(self, env):
+        if env.in_main:
+            return "return\n"
         s = self.expr.generate_code(env)
         if env.current_fun_type.returntype == Type("string"):
             s += "areturn \n"

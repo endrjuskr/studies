@@ -2,6 +2,7 @@ __author__ = 'Andrzej Skrodzki - as292510'
 
 from ZeroArgExpr import ZeroArgExpr
 from LatteExceptions import *
+from LatteParsers.Types.Type import Type
 
 
 class EVar(ZeroArgExpr):
@@ -20,7 +21,7 @@ class EVar(ZeroArgExpr):
         return None
 
     def generate_body(self, env):
-        if self.etype == Type.Type("string"):
-            return "aload " + env.get_variable_value(self.ident)
+        if self.etype == Type("string"):
+            return "aload " + str(env.get_variable_value(self.value)) + "\n"
         else:
-            return "iload " + env.get_variable_value(self.ident)
+            return "iload " + str(env.get_variable_value(self.value)) + "\n"

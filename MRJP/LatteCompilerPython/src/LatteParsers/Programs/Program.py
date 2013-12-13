@@ -14,34 +14,41 @@ class Program(BaseNode):
         self.topdeflist.append(ReadStringFun())
         self.topdeflist.append(PrintStringFun())
         self.topdeflist.append(PrintIntFun())
+        self.topdeflist.append(ConcatenateStringFun())
         self.classname = "MyClass"
 
     def type_check(self):
+        env = Env()
         for fndef in self.topdeflist:
-            self.env.add_fun(fndef)
+            env.add_fun(fndef)
 
-        if not self.env.contain_main():
+        if not env.contain_main():
             raise SyntaxException.SyntaxException("Main funtion is not declared.", self.noline)
 
         for fndef in self.topdeflist:
-            self.fun_check(fndef)
+            self.fun_check(fndef, env)
 
 
-    def fun_check(self, fun):
-        env_prim = self.env.copy()
+    def fun_check(self, fun, env):
+        env_prim = env.shallow_copy()
         fun.type_check(env_prim)
 
 
-    def generate_body(self, env=Env()):
+    def generate_body(self, env):
+        for fndef in self.topdeflist:
+            env.add_fun(fndef)
+
+        s = ""
         for fn in self.topdeflist:
-            s += fn.generate_code()
+            env_prim = env.shallow_copy()
+            s += fn.generate_code(env_prim)
         return s
 
     def generate_header(self):
-        return ".class public " + self.classname + + " \
-                .super java/lang/Object \
-                .method public <init>()V \
-                aload_0 \
-                invokespecial java/lang/Object/<init>()V \
-                return \
-                .end method"
+        return ".class public " + self.classname + \
+                "\n.super java/lang/Object \n \
+                .method public <init>()V \n \
+                aload_0 \n \
+                invokespecial java/lang/Object/<init>()V \n \
+                return \n \
+                .end method \n"
