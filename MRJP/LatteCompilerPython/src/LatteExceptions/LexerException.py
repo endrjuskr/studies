@@ -1,9 +1,9 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
-from LatteExceptions import BaseException
+from LatteBaseException import LatteBaseException
 
 
-class LexerException(BaseException.BaseException):
+class LexerException(LatteBaseException):
     def __init__(self, inner_exception, no_line, pos=0):
         super(LexerException, self).__init__(no_line, pos)
         self.inner_exception = inner_exception

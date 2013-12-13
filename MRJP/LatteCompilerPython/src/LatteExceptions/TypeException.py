@@ -1,9 +1,9 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
-from LatteExceptions import BaseException
+from LatteBaseException import LatteBaseException
 
 
-class TypeException(BaseException.BaseException):
+class TypeException(LatteBaseException):
     def __init__(self, expected_type, received_type, no_line, pos):
         super(TypeException, self).__init__(no_line, pos)
         self.expected_type = expected_type

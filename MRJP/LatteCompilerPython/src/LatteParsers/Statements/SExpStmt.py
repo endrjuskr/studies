@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from StmtBase import StmtBase
 from LatteParsers.Types import *
@@ -12,4 +12,3 @@ class SExpStmt(StmtBase):
     def type_check(self, env):
         # Here we assume that the only expression is invocation of void function.
         self.expr.type_check(env, expected_type=Type.Type("void"))
-        return env

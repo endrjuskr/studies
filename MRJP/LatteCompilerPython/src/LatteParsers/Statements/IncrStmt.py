@@ -14,4 +14,3 @@ class IncrStmt(StmtBase):
             raise SyntaxException.SyntaxException("Increment can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
                                                   + " for variable " + self.ident + ".", self.no_line)
-        return env

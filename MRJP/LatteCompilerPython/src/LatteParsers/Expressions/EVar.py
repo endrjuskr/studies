@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from ZeroArgExpr import ZeroArgExpr
 from LatteExceptions import *
@@ -18,3 +18,9 @@ class EVar(ZeroArgExpr):
 
     def get_value(self):
         return None
+
+    def generate_body(self, env):
+        if self.etype == Type.Type("string"):
+            return "aload " + env.get_variable_value(self.ident)
+        else:
+            return "iload " + env.get_variable_value(self.ident)

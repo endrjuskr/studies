@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from TwoArgExpr import TwoArgExpr
 from LatteParsers.Types import *
@@ -24,3 +24,13 @@ class EAdd(TwoArgExpr):
                 self.value = self.left.get_value() + self.right.get_value()
             elif self.op == "-":
                 self.value = self.left.get_value() - self.right.get_value()
+
+
+    def generate_body(self):
+        s = super(EAdd, self).generate_body()
+        if self.etype == Type.Type("string"):
+            pass
+        else:
+            s += "iadd \n"
+
+        return s

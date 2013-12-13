@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from Type import Type
 from operator import eq
@@ -19,3 +19,11 @@ class FunType(Type):
 
     def isFunction(self):
         return True
+
+    def generate_code(self):
+        s = "("
+        for t in self.paramstypes:
+            s += t.generate_code()
+
+        s += ")" + self.returntype.generate_code()
+        return s

@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from TwoArgExpr import TwoArgExpr
 from LatteParsers.Types import *
@@ -29,3 +29,24 @@ class ERel(TwoArgExpr):
                 self.value = self.left.get_value() < self.right.get_value()
             elif self.op == ">":
                 self.value = self.left.get_value() > self.right.get_value()
+
+    def generate_body(self, env):
+        s = super(ERel, self).generate_body(env)
+        if self.op == "==":
+            s += ""
+        elif self.op == "!=":
+            self.value = self.left.get_value() != self.right.get_value()
+        elif self.op == "<=":
+            self.value = self.left.get_value() <= self.right.get_value()
+        elif self.op == ">=":
+            self.value = self.left.get_value() >= self.right.get_value()
+        elif self.op == "<":
+            self.value = self.left.get_value() < self.right.get_value()
+        elif self.op == ">":
+            self.value = self.left.get_value() > self.right.get_value()
+
+        s += "cmp" + self.line + "_" + self.pos + "_t:\n"
+        s += "iconst_1 \n"
+        s += "cmp" + self.line + "_" + self.pos + "_f:\n"
+        s += "iconst_0 \n"
+        return s

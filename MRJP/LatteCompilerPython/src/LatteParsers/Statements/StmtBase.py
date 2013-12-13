@@ -1,14 +1,14 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
+from LatteParsers.BaseNode import BaseNode
 
-class StmtBase(object):
+class StmtBase(BaseNode):
     def __init__(self, type, no_line, pos):
-        self.type = type
-        self.no_line = no_line
-        self.pos = pos
+        super(StmtBase, self).__init__(type, no_line, pos)
+
 
     def type_check(self, env):
-        return env
+        pass
 
     def return_check(self):
         return False

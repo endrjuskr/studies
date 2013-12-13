@@ -1,10 +1,9 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
+from LatteParsers.BaseNode import BaseNode
 
-class Arg:
+class Arg(BaseNode):
     def __init__(self, type, ident, no_line, pos):
-        self.type = "arg"
+        super(Arg, self).__init__("arg", no_line, pos)
         self.argtype = type
         self.ident = ident
-        self.no_line = no_line
-        self.pos = pos

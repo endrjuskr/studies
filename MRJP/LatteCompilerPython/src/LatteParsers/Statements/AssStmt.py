@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from StmtBase import StmtBase
 from LatteExceptions import *
@@ -14,7 +14,6 @@ class AssStmt(StmtBase):
         if not env.contain_variable(self.ident):
             raise NotDeclaredException.NotDeclaredException(self.ident, False, self.no_line, self.pos)
         self.expr.type_check(env, expected_type=env.get_variable_type(self.ident))
-        return env
 
     def return_check(self):
         return False

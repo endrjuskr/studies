@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from TwoArgExpr import TwoArgExpr
 from LatteParsers.Types import *

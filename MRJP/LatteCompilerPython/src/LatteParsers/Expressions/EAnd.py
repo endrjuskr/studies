@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from TwoArgExpr import TwoArgExpr
 from LatteParsers.Types import *
@@ -15,3 +15,8 @@ class EAnd(TwoArgExpr):
             self.value = self.left.get_value()
         else:
             self.value = self.right.get_value()
+
+    def generate_body(self, env):
+        s = super(EAnd, self).generate_body(env)
+        s += "iand \n"
+        return s

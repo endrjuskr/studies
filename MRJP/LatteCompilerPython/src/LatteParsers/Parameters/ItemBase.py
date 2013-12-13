@@ -1,13 +1,12 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
+from LatteParsers.BaseNode import BaseNode
 
-class ItemBase(object):
+class ItemBase(BaseNode):
     def __init__(self, ident, no_line, pos, type):
+        super(ItemBase, self).__init__(type, no_line, pos)
         self.ident = ident
         self.itemtype = "unknown"
-        self.no_line = no_line
-        self.pos = pos
-        self.type = type
 
     def type_check(self, env):
         pass

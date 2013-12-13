@@ -1,3 +1,3 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["Arg", "InitItem", "ItemBase", "NoInitItem"]

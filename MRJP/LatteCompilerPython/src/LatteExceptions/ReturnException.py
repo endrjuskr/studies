@@ -1,9 +1,9 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
-from LatteExceptions import BaseException
+from LatteBaseException import LatteBaseException
 
 
-class ReturnException(BaseException.BaseException):
+class ReturnException(LatteBaseException):
     def __init__(self, fun_ident, no_line):
         super(ReturnException, self).__init__(no_line, 0)
         self.fun_ident = fun_ident

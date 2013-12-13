@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from LatteParsers.Types import *
 from LatteExceptions import DuplicateDeclarationException, SyntaxException
@@ -8,73 +8,101 @@ class Env:
     current_env = {}
     current_fun_type = None
 
-    def __init__(self, new_env={}, inside_fun=None):
-        self.current_env = new_env
+    def __init__(self, var_env={}, fun_env={}, var_store={}, inside_fun=None):
+        self.var_env = var_env
+        self.fun_env = fun_env
+        self.var_store = var_store
+        self.variables_counter = max(self.var_store.values()) + 1
         self.current_fun_type = inside_fun
-        if len(self.current_env) == 0:
-            self.add_predifined_methods()
-
-    def add_predifined_methods(self):
-        self.current_env["printInt"] = FunType.FunType(Type.Type("void"), [Type.Type("int")])
-        self.current_env["readInt"] = FunType.FunType(Type.Type("int"), [])
-        self.current_env["printString"] = FunType.FunType(Type.Type("void"), [Type.Type("string")])
-        self.current_env["readString"] = FunType.FunType(Type.Type("string"), [])
-        self.current_env["error"] = FunType.FunType(Type.Type("void"), [])
 
     def add_fun(self, fun):
-        if self.current_env.has_key(fun.ident):
+        if fun.ident in self.fun_env:
             raise DuplicateDeclarationException.DuplicateDeclarationException(fun.ident, True, fun.no_line, 0)
-        self.current_env[fun.ident] = fun.funtype
+        self.fun_env[fun.ident] = fun.funtype
 
-    def contain_funtion(self, ident):
-        return self.current_env.has_key(ident) and hasattr(self.current_env[ident], "isFunction")
+    def contain_function(self, ident):
+        return ident in self.fun_env
 
     def contain_variable(self, ident):
-        return self.current_env.has_key(ident) and not hasattr(self.current_env[ident], "isFunction")
-
+        return ident in self.var_env
 
     def contain_main(self):
-        return self.current_env.has_key("main") and self.current_env["main"] == FunType.FunType(Type.Type("int"), [])
-
-    def invoke_fun(self, ident):
-        self.current_fun_type = self.current_env[ident]
+        return "main" in self.fun_env and self.fun_env["main"] == FunType.FunType(Type.Type("int"), [])
 
     def get_fun_type(self, ident):
-        assert hasattr(self.current_env[ident], "isFunction")
-        return self.current_env[ident]
+        assert not ident in self.var_env
+        return self.fun_env[ident]
 
-    def copy(self):
-        new_env = {}
-        for key, value in self.current_env.iteritems():
-            if hasattr(value, "isFunction"):
-                new_env[key] = value
-            else:
-                (t, _) = value
-                new_env[key] = (t, 0)
-        return Env(new_env=new_env, inside_fun=self.current_fun_type)
+    def shallow_copy(self):
+        new_var_env = {}
+        for key, value in self.var_env.iteritems():
+            (t, _) = value
+            # Resetting all variables' counters so they can be overwritten
+            new_var_env[key] = (t, 0)
+
+        new_fun_env = {}
+        for key, value in self.fun_env.iteritems():
+            new_fun_env[key] = value
+
+        new_var_store = {}
+        for key, value in self.var_store.iteritems():
+            new_var_store[key] = value
+
+        return Env(var_env=new_var_env, fun_env=new_fun_env, var_store=new_var_store,
+                   inside_fun=self.current_fun_type)
+
+    def deep_copy(self):
+        new_var_env = {}
+        for key, value in self.var_env.iteritems():
+            new_var_env[key] = value
+
+        new_fun_env = {}
+        for key, value in self.fun_env.iteritems():
+            new_fun_env[key] = value
+
+        new_var_store = {}
+        for key, value in self.var_store.iteritems():
+            new_var_store[key] = value
+
+        return Env(var_env=new_var_env, fun_env=new_fun_env, var_store=new_var_store,
+                   inside_fun=self.current_fun_type)
 
     def add_variable(self, ident, type, no_line, pos, fun_param=True):
-        if not self.current_env.has_key(ident):
-            self.current_env[ident] = (type, 1)
-        elif hasattr(self.current_env[ident], "isFunction"):
+        if ident in self.fun_env:
             raise SyntaxException.SyntaxException("Trying override function " + ident + ".", no_line)
+        elif not ident in self.var_env:
+            self.var_env[ident] = (type, 1)
+            self.var_store[ident] = self.variables_counter
+            self.variables_counter += 1
         elif fun_param:
             raise SyntaxException.SyntaxException("More than one argument with the name " + ident +
                                                   ".", no_line, pos=pos)
         else:
-            (_, count) = self.current_env[ident]
+            (_, count) = self.var_env[ident]
             if count > 0:
                 raise DuplicateDeclarationException.DuplicateDeclarationException(ident, False, no_line, pos)
             else:
-                self.current_env[ident] = (type, count + 1)
+                self.var_env[ident] = (type, count + 1)
+                self.variables_counter[ident] = self.variables_counter
+                self.variables_counter += 1
 
     def get_variable_type(self, ident):
-        assert not hasattr(self.current_env[ident], "isFunction")
-        return self.current_env[ident][0]
+        assert not ident in self.fun_env
+        return self.var_env[ident][0]
+
+    def get_variable_value(self, ident):
+        assert not ident in self.fun_env
+        return self.var_store[ident]
 
     def __str__(self):
         output = ""
-        for key, value in self.current_env.iteritems():
+        for key, value in self.var_env.iteritems():
+            output += str(key) + " - " + str(value) + "\n"
+
+        for key, value in self.fun_env.iteritems():
+            output += str(key) + " - " + str(value) + "\n"
+
+        for key, value in self.var_store.iteritems():
             output += str(key) + " - " + str(value) + "\n"
 
         return output

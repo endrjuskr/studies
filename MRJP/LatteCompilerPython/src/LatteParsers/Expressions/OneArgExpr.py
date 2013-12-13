@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from ExprBase import ExprBase
 from LatteExceptions import *
@@ -18,3 +18,7 @@ class OneArgExpr(ExprBase):
     def calculate_value(self):
         if self.expr.value is not None:
             self.value = - self.expr.value
+
+    def generate_body(self, env):
+        s = self.expr.generate_code(env)
+        return s

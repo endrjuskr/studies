@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 # module: tokrules.py
 # This module just contains the lexing rules 
 

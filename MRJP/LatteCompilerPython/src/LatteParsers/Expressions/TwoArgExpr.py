@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from ExprBase import ExprBase
 from LatteExceptions import *
@@ -28,3 +28,7 @@ class TwoArgExpr(ExprBase):
     def arg_type_check(self, rtype):
         pass
 
+    def generate_body(self, env):
+        s = self.left.generate_code(env)
+        s += self.right.generate_code(env)
+        return s

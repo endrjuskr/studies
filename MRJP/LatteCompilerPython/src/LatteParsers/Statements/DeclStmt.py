@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from StmtBase import StmtBase
 
@@ -18,4 +18,3 @@ class DeclStmt(StmtBase):
         for item in self.itemlist:
             item.type_check(env)
             env.add_variable(item.ident, item.itemtype, item.no_line, item.pos, fun_param=False)
-        return env

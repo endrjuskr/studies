@@ -1,10 +1,10 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
+from LatteParsers.BaseNode import BaseNode
 
-class ExprBase(object):
+class ExprBase(BaseNode):
     def __init__(self, etype, no_line, pos):
-        self.no_line = no_line
-        self.pos = pos
+        super(ExprBase, self).__init__("expr", no_line, pos)
         self.value = None
         self.etype = etype
 

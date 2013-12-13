@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from StmtBase import StmtBase
 
@@ -9,7 +9,7 @@ class BStmt(StmtBase):
         self.block = block
 
     def type_check(self, env):
-        return self.block.type_check(env)
+        self.block.type_check(env)
 
     def return_check(self):
         return self.block.return_check()

@@ -1,8 +1,7 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 import sys
 import lattepar
 import lattelex
-import lattetypechecker
 from LatteExceptions import *
 
 
@@ -39,8 +38,9 @@ if __name__ == "__main__":
         result = latteparser.parse(content, lexer=lattelexer)
         if result is None:
             raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
-        lattechecker = lattetypechecker.TypeCheck(result)
-        lattechecker.full_check()
+        result.type_check()
+        f = open('myprog.j', 'r+')
+        f.write(result.generate_code())
     except BaseException.BaseException as e:
         sys.stderr.write("ERROR\n")
         e.find_column(content)

@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from StmtBase import StmtBase
 from LatteExceptions import *
@@ -16,4 +16,3 @@ class DecrStmt(StmtBase):
             raise SyntaxException.SyntaxException("Decrement can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
                                                   + " for variable " + self.ident + ".", self.no_line)
-        return env

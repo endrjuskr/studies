@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from ZeroArgExpr import ZeroArgExpr
 from LatteExceptions import *
@@ -13,7 +13,7 @@ class EApp(ZeroArgExpr):
 
     def get_type(self, env):
         if self.etype is None:
-            if not env.contain_funtion(self.funident):
+            if not env.contain_function(self.funident):
                 raise NotDeclaredException.NotDeclaredException(self.funident, True, self.no_line, self.pos)
             self.etype = env.get_fun_type(self.funident)
             self.check_arg_list(env)

@@ -1,4 +1,4 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 from StmtBase import StmtBase
 from LatteParsers.Types import *
@@ -15,7 +15,6 @@ class CondElseStmt(StmtBase):
         self.expr.type_check(env, expected_type=Type.Type("boolean"))
         self.stmt1.type_check(env)
         self.stmt2.type_check(env)
-        return env
 
     def return_check(self):
         if self.expr.value is None:

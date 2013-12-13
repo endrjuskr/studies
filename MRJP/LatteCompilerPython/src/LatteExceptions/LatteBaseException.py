@@ -1,7 +1,7 @@
-__author__ = 'andrzejskrodzki'
+__author__ = 'Andrzej Skrodzki - as292510'
 
 
-class BaseException(Exception):
+class LatteBaseException(Exception):
     def __init__(self, no_line, pos):
         self.no_line = no_line
         self.pos = pos

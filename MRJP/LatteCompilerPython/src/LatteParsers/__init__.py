@@ -1,3 +1,3 @@
-__author__ = 'andrs'
+__author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["Expressions", "Parameters", "Programs", "Statements", "Types"]
+__all__ = ["Expressions", "Parameters", "Programs", "Statements", "Types", "BaseNode"]
