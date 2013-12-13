@@ -52,7 +52,7 @@ if __name__ == "__main__":
         f = open(new_file_path, 'r+')
         f.write(result.generate_code())
         f.close()
-        subprocess.call("jasmin -d " + '/'.join(path[0:-1]) + " " + new_file_path)
+        subprocess.call("java -jar lib/jasmin.jar -classpath 'lib/*' -d " + '/'.join(path[0:-1]) + " " + new_file_path)
     except BaseException.BaseException as e:
         sys.stderr.write("ERROR\n")
         e.find_column(content)
