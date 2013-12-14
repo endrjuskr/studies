@@ -6,6 +6,7 @@
 *.pyc
 *.class
 *.gz
+*.j
 
 # Compiled Dynamic libraries
 *.so
