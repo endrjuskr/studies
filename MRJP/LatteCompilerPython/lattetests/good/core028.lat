@@ -1,0 +1,14 @@
+# Test comment one
+// Test comment two
+/* Test comment one
+
+*/
+int main()
+{
+    int x;
+    if (x == 0) int y;
+    if (x == 0) int y; else int y;
+    while (x == 0) x++;
+    int y;
+    return 0;
+}

@@ -30,16 +30,30 @@ class CondElseStmt(StmtBase):
 
     def generate_body(self, env):
         if self.expr.get_value() is True:
-            return self.stmt1.generate_code(env)
+            env_prim = env.shallow_copy()
+            s = self.stmt1.generate_code(env_prim)
+            env.max_variable_counter = max(env.max_variable_counter, env_prim.get_local_limit())
+            env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
+            return s
         elif self.expr.get_value() is False:
-            return self.stmt2.generate_code(env)
+            env_prim = env.shallow_copy()
+            s = self.stmt2.generate_code(env_prim)
+            env.max_variable_counter = max(env.max_variable_counter, env_prim.get_local_limit())
+            env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
+            return s
         else:
+            env_prim = env.shallow_copy()
+            env_prim2 = env.shallow_copy()
             s = self.expr.generate_code(env)
             s += "ifeq " + self.label_pattern + "_f\n"
             env.pop_stack(1)
-            s += self.stmt1.generate_code(env)
+            s += self.stmt1.generate_code(env_prim)
             s += "goto " + self.label_pattern + "\n"
             s += self.label_pattern + "_f:\n"
-            s += self.stmt2.generate_code(env)
+            s += self.stmt2.generate_code(env_prim2)
             s += self.label_pattern + ":\n"
+            env.max_variable_counter = max(env.max_variable_counter, env_prim.get_local_limit())
+            env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
+            env.max_variable_counter = max(env.max_variable_counter, env_prim2.get_local_limit())
+            env.max_stack_count = max(env.max_stack_count, env_prim2.max_stack_count)
             return s
