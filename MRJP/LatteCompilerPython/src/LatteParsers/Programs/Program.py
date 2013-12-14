@@ -1,7 +1,7 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
 from Env import Env
-from LatteExceptions import *
+from LatteExceptions.SyntaxException import SyntaxException
 from LatteParsers.BaseNode import BaseNode
 from PredefinedFun import *
 
@@ -22,11 +22,11 @@ class Program(BaseNode):
         for fndef in self.topdeflist:
             env.add_fun(fndef)
 
-        if not env.contain_main():
-            raise SyntaxException.SyntaxException("Main funtion is not declared.", self.noline)
-
         for fndef in self.topdeflist:
             self.fun_check(fndef, env)
+
+        if env.contain_main() is False:
+            raise SyntaxException("Main funtion is not declared.", self.no_line)
 
 
     def fun_check(self, fun, env):

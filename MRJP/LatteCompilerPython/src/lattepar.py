@@ -13,10 +13,7 @@ from LatteParsers.Statements.SExpStmt import *
 from LatteParsers.Statements.VRetStmt import *
 from LatteParsers.Statements.WhileStmt import *
 from LatteParsers.Programs.Block import *
-from LatteParsers.Programs.FnDef import *
 from LatteParsers.Programs.Program import *
-from LatteParsers.Types.Type import *
-from LatteExceptions import *
 from LatteParsers.Parameters.Arg import *
 from LatteParsers.Parameters.InitItem import *
 from LatteParsers.Parameters.NoInitItem import *
