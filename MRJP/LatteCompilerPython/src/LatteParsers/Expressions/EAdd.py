@@ -36,4 +36,5 @@ class EAdd(TwoArgExpr):
             s += "iadd \n"
         else:
             s += "isub \n"
+        env.pop_stack(1)
         return s

@@ -32,5 +32,5 @@ class EMul(TwoArgExpr):
             s += "imul\n"
         else:
             s += "irem\n"
-
+        env.pop_stack(2)
         return s

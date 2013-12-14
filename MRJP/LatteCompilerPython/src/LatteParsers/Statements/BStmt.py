@@ -18,4 +18,5 @@ class BStmt(StmtBase):
         env_prim = env.shallow_copy()
         s = self.block.generate_code(env_prim)
         env.variables_counter = env_prim.variables_counter
+        env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
         return s

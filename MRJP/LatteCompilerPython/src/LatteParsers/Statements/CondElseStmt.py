@@ -34,6 +34,7 @@ class CondElseStmt(StmtBase):
         else:
             s = self.expr.generate_code(env)
             s += "ifeq " + self.label_pattern + "_f\n"
+            env.pop_stack(1)
             s += self.stmt1.generate_code(env)
             s += "goto " + self.label_pattern + "\n"
             s += self.label_pattern + "_f:\n"

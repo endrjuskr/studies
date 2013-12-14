@@ -8,16 +8,18 @@ class Env:
     current_env = {}
     current_fun_type = None
 
-    def __init__(self, var_env=None, fun_env=None, var_store=None, inside_fun=None, in_main=False):
+    def __init__(self, var_env=None, fun_env=None, var_store=None, inside_fun=None, in_main=False,
+                 current_stack=0, class_name="MyClass"):
         self.var_env = {} if var_env is None else var_env
         self.fun_env = {} if fun_env is None else fun_env
         self.var_store = {} if var_store is None else var_store
         self.variables_counter = 0 if len(self.var_store.values()) == 0 else max(self.var_store.values()) + 1
         self.current_fun_type = inside_fun
         self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
-        self.current_stack_count = 0
-        self.max_stack_count = 0
+        self.current_stack_count = current_stack
+        self.max_stack_count = current_stack
         self.in_main = in_main
+        self.class_name = class_name
 
     def add_fun(self, fun):
         if fun.ident in self.fun_env:
@@ -60,7 +62,8 @@ class Env:
             new_var_store[key] = value
 
         return Env(var_env=new_var_env, fun_env=new_fun_env, var_store=new_var_store,
-                   inside_fun=self.current_fun_type, in_main=self.in_main)
+                   inside_fun=self.current_fun_type, in_main=self.in_main,
+                   current_stack=self.current_stack_count, class_name=self.class_name)
 
     def deep_copy(self):
         new_var_env = {}
@@ -76,7 +79,8 @@ class Env:
             new_var_store[key] = value
 
         return Env(var_env=new_var_env, fun_env=new_fun_env, var_store=new_var_store,
-                   inside_fun=self.current_fun_type)
+                   inside_fun=self.current_fun_type, in_main=self.in_main,
+                   current_stack=self.current_stack_count, class_name=self.class_name)
 
     def add_variable(self, ident, type, no_line, pos, fun_param=True):
         if ident in self.fun_env:
@@ -109,7 +113,7 @@ class Env:
         if ident in self.predefined_fun:
             return "Runtime"
         else:
-            return "MyClass"
+            return self.class_name
 
     def get_stack_limit(self):
         return 100 # self.max_stack_count

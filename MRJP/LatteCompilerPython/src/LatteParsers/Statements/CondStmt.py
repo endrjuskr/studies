@@ -25,6 +25,7 @@ class CondStmt(StmtBase):
     def generate_body(self, env):
         s = self.expr.generate_code(env)
         s += "ifeq " + self.label_pattern + "\n"
+        env.pop_stack(1)
         s += self.stmt.generate_code(env)
         s += self.label_pattern + ":\n"
         return s

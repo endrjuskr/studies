@@ -24,4 +24,5 @@ class EAnd(TwoArgExpr):
         s += self.right.generate_code(env)
         s += "iand \n"
         s += self.label_pattern + ":\n"
+        env.pop_stack(1)
         return s

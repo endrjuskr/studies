@@ -29,4 +29,5 @@ class AssStmt(StmtBase):
             s += "istore "
 
         s += str(env.get_variable_value(self.ident)) + "\n"
+        env.pop_stack(1)
         return s

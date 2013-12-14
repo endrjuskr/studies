@@ -44,6 +44,9 @@ class Program(BaseNode):
             s += fn.generate_code(env_prim)
         return s
 
+    def set_class_name(self, name):
+        self.classname = name
+
     def generate_header(self):
         return ".class public " + self.classname + \
                 "\n.super java/lang/Object \n \

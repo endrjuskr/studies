@@ -1,5 +1,7 @@
 int main()
 {
     printString("Hello World!");
+    error();
+    printString("Hello World!");
     return 0;
 }

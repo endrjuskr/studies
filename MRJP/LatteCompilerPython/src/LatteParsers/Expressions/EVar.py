@@ -21,6 +21,7 @@ class EVar(ZeroArgExpr):
         return None
 
     def generate_body(self, env):
+        env.push_stack(1)
         if self.etype == Type("string"):
             return "aload " + str(env.get_variable_value(self.value)) + "\n"
         else:

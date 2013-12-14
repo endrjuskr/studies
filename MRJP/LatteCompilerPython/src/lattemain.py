@@ -47,11 +47,12 @@ if __name__ == "__main__":
         result = latteparser.parse(content, lexer=lattelexer)
         if result is None:
             raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
+        result.set_class_name(program_name)
         result.type_check()
         path[len(path) - 1] = program_name + ".j"
         new_file_path = '/'.join(path)
         f = open(new_file_path, 'w+')
-        f.write(result.generate_code(Env()))
+        f.write(result.generate_code(Env(class_name=program_name)))
         f.close()
         subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1]) + " " + new_file_path,
                         shell=True)

@@ -10,4 +10,5 @@ class EString(ZeroArgExpr):
         self.type = "estring"
 
     def generate_body(self, env):
+        env.push_stack(1)
         return "ldc " + self.value + " \n"

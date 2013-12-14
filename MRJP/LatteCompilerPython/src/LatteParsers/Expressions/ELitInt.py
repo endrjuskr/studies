@@ -10,4 +10,5 @@ class ELitInt(ZeroArgExpr):
         self.type = "number"
 
     def generate_body(self, env):
+        env.push_stack(1)
         return "ldc " + str(self.value) + " \n"

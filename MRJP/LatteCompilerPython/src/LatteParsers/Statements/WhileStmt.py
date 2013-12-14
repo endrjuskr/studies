@@ -22,6 +22,7 @@ class WhileStmt(StmtBase):
         s = self.label_pattern + "_w:\n"
         s += self.expr.generate_code(env)
         s += "ifeq " + self.label_pattern + "\n"
+        env.pop_stack(1)
         s += self.stmt.generate_code(env)
         s += "goto " + self.label_pattern + "_w\n"
         s += self.label_pattern + ":\n"
