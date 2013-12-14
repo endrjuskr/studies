@@ -18,20 +18,25 @@ class CondElseStmt(StmtBase):
         self.stmt2.type_check(env)
 
     def return_check(self):
-        if self.expr.value is None:
+        if self.expr.get_value() is None:
             return self.stmt1.return_check() and self.stmt2.return_check()
-        elif self.expr.value:
+        elif self.expr.get_value():
             return self.stmt1.return_check()
         else:
             return self.stmt2.return_check()
 
 
     def generate_body(self, env):
-        s = self.expr.generate_code(env)
-        s += "ifeq " + self.label_pattern + "_f\n"
-        s += self.stmt1.generate_code(env)
-        s += "goto " + self.label_pattern + "\n"
-        s += self.label_pattern + "_f:\n"
-        s += self.stmt2.generate_code(env)
-        s += self.label_pattern + ":\n"
-        return s
+        if self.expr.get_value() is True:
+            return self.stmt1.generate_code(env)
+        elif self.expr.get_value() is False:
+            return self.stmt2.generate_code(env)
+        else:
+            s = self.expr.generate_code(env)
+            s += "ifeq " + self.label_pattern + "_f\n"
+            s += self.stmt1.generate_code(env)
+            s += "goto " + self.label_pattern + "\n"
+            s += self.label_pattern + "_f:\n"
+            s += self.stmt2.generate_code(env)
+            s += self.label_pattern + ":\n"
+            return s

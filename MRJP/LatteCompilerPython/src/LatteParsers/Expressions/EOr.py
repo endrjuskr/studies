@@ -9,6 +9,7 @@ class EOr(TwoArgExpr):
         super(EOr, self).__init__(left, right, "||", Type.Type("boolean"), Type.Type("boolean"), no_line,
                                   pos)
         self.type = "eor"
+        self.label_pattern = "or_" + str(self.no_line) + "_" + str(self.pos)
 
     def calculate_value(self):
         if self.left.get_value() is True:
@@ -17,6 +18,10 @@ class EOr(TwoArgExpr):
             self.value = self.right.get_value()
 
     def generate_body(self, env):
-        s = super(EOr, self).generate_body(env)
+        s = self.left.generate_code(env)
+        s += "dup\n"
+        s += "ifne " + self.label_pattern + "\n"
+        s += self.right.generate_code(env)
         s += "ior \n"
+        s += self.label_pattern + ":\n"
         return s

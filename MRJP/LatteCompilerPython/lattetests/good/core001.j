@@ -119,8 +119,7 @@ invokestatic MyClass.rfac(I)I
 imul
 ireturn 
 condelse_36_493:
-iconst_0 
-pop 
+return
 .end method 
 .method public static mfac(I)I
 .limit stack 100
@@ -148,8 +147,7 @@ invokestatic MyClass.nfac(I)I
 imul
 ireturn 
 condelse_43_571:
-iconst_0 
-pop 
+return
 .end method 
 .method public static nfac(I)I
 .limit stack 100
@@ -177,8 +175,7 @@ condelse_50_649_f:
 ldc 1 
 ireturn 
 condelse_50_649:
-iconst_0 
-pop 
+return
 .end method 
 .method public static ifac(I)I
 .limit stack 100

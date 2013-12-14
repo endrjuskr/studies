@@ -23,7 +23,7 @@ class Type(object):
         self.dict["int"] = "I"
         self.dict["string"] = "Ljava/lang/String;"
         self.dict["void"] = "V"
-        self.dict["boolean"] = "Z"
+        self.dict["boolean"] = "I"
 
     def generate_code(self):
         return self.dict[self.type]

@@ -17,7 +17,7 @@ class CondStmt(StmtBase):
         self.stmt.type_check(env)
 
     def return_check(self):
-        if self.expr.value is True:
+        if self.expr.get_value() is True:
             return self.stmt.return_check()
         else:
             return False

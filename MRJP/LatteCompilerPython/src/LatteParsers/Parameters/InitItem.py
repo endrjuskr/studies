@@ -14,6 +14,7 @@ class InitItem(ItemBase):
 
     def generate_body(self, env):
         s = self.expr.generate_body(env)
+        env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
         if self.itemtype == Type("string"):
             s += "astore " + str(env.get_variable_value(self.ident)) + "\n"
         else:

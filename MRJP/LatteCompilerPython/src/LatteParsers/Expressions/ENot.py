@@ -11,6 +11,6 @@ class ENot(OneArgExpr):
 
     def generate_body(self, env):
         s = super(ENot, self).generate_body(env)
-        s += "dup \n"
-        s += "ixor \n"
+        s += "iconst_1\n"
+        s += "ixor\n"
         return s

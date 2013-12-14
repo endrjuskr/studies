@@ -11,5 +11,5 @@ class ENeg(OneArgExpr):
 
     def generate_body(self, env):
         s = super(ENeg, self).generate_body(env)
-        s += "ineg \n"
+        s += "ineg\n"
         return s

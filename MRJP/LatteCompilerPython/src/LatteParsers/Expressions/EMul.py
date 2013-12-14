@@ -27,12 +27,10 @@ class EMul(TwoArgExpr):
     def generate_body(self, env):
         s = super(EMul, self).generate_body(env)
         if self.op == "/":
-            s += "idiv \n"
+            s += "idiv\n"
         elif self.op == "*":
             s += "imul\n"
         else:
-            s += "dup \n \
-                irem \n \
-                isub \n"
+            s += "irem\n"
 
         return s

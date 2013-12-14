@@ -29,6 +29,8 @@ class FnDef(BaseNode):
             env.add_variable(arg.ident, arg.argtype, arg.no_line, arg.pos)
         env.current_fun_type = self.funtype
         env.in_main = self.ident == "main"
+        if self.ident == "main":
+            env.variables_counter += 1
 
 
     def calculate_type(self, type, arglist):
@@ -41,9 +43,11 @@ class FnDef(BaseNode):
     def generate_body(self, env):
         self.prepare_env(env)
         s = self.block.generate_code(env)
+        if len(s.strip()) == 0:
+            s += "return\n"
         s = ".limit stack " + str(env.get_stack_limit()) + "\n.limit locals " + str(env.get_local_limit()) + "\n" + s
         if s.strip().endswith(":"):
-            s += "iconst_0 \npop \n"
+            s += "return\n"
         return s
 
     def generate_footer(self):

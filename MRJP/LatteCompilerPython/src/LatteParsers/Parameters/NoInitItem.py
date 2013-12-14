@@ -10,10 +10,12 @@ class NoInitItem(ItemBase):
 
     def generate_body(self, env):
         s = ""
+        env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
         if self.itemtype == Type("string"):
             s += "ldc \"\" \n"
             s += "astore " + str(env.get_variable_value(self.ident)) + "\n"
         else:
             s += "iconst_0 \n"
             s += "istore " + str(env.get_variable_value(self.ident)) + "\n"
+
         return s
