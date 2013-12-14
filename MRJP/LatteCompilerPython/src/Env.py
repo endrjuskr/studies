@@ -116,7 +116,7 @@ class Env:
             return self.class_name
 
     def get_stack_limit(self):
-        return 100 # self.max_stack_count
+        return self.max_stack_count
 
     def get_local_limit(self):
         return self.variables_counter + 1
