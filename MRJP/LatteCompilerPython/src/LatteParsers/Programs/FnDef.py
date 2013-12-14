@@ -29,8 +29,6 @@ class FnDef(BaseNode):
             env.add_variable(arg.ident, arg.argtype, arg.no_line, arg.pos)
         env.current_fun_type = self.funtype
         env.in_main = self.ident == "main"
-        if self.ident == "main":
-            env.variables_counter += 1
 
 
     def calculate_type(self, type, arglist):
@@ -42,6 +40,8 @@ class FnDef(BaseNode):
 
     def generate_body(self, env):
         self.prepare_env(env)
+        if self.ident == "main":
+            env.add_variable("arg", Type("string"), 0, 0)
         s = self.block.generate_code(env)
         if len(s.strip()) == 0:
             s += "return\n"

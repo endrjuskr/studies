@@ -13,9 +13,11 @@ class CondElseStmt(StmtBase):
         self.label_pattern = "condelse_" + str(self.no_line) + "_" + str(self.pos)
 
     def type_check(self, env):
+        env_prim = env.shallow_copy()
+        env_prim2 = env.shallow_copy()
         self.expr.type_check(env, expected_type=Type.Type("boolean"))
-        self.stmt1.type_check(env)
-        self.stmt2.type_check(env)
+        self.stmt1.type_check(env_prim)
+        self.stmt2.type_check(env_prim2)
 
     def return_check(self):
         if self.expr.get_value() is None:

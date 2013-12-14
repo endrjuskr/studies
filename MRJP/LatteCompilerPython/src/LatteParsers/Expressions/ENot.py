@@ -11,6 +11,8 @@ class ENot(OneArgExpr):
 
     def generate_body(self, env):
         s = super(ENot, self).generate_body(env)
+        env.push_stack(1)
         s += "iconst_1\n"
         s += "ixor\n"
+        env.pop_stack(1)
         return s

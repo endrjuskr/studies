@@ -13,8 +13,9 @@ class CondStmt(StmtBase):
 
 
     def type_check(self, env):
+        env_prim = env.shallow_copy()
         self.expr.type_check(env, expected_type=Type.Type("boolean"))
-        self.stmt.type_check(env)
+        self.stmt.type_check(env_prim)
 
     def return_check(self):
         if self.expr.get_value() is True:

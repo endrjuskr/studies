@@ -14,6 +14,7 @@ class Env:
         self.fun_env = {} if fun_env is None else fun_env
         self.var_store = {} if var_store is None else var_store
         self.variables_counter = 0 if len(self.var_store.values()) == 0 else max(self.var_store.values()) + 1
+        self.max_variable_counter = 0
         self.current_fun_type = inside_fun
         self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
         self.current_stack_count = current_stack
@@ -119,7 +120,7 @@ class Env:
         return self.max_stack_count
 
     def get_local_limit(self):
-        return self.variables_counter + 1
+        return max(self.variables_counter, self.max_variable_counter)
 
     def __str__(self):
         output = ""
