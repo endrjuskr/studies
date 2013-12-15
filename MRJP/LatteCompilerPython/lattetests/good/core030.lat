@@ -1,0 +1,13 @@
+# Test comment one
+// Test comment two
+/* Test comment one
+
+*/
+int main()
+{
+    int x = readInt(), y = readInt();
+    string t = readString();
+    printInt(x+y);
+    printString(t + " asd " + "test");
+    return 0;
+}

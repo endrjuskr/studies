@@ -7,6 +7,7 @@ for i in $( cd lattetests/good && ls *.lat); do
     fi
     echo "" >> lattetests/good/"${i%%.*}".input
     java -classpath "lattetests/good/:lib/" "${i%%.*}" < lattetests/good/"${i%%.*}".input > lattetests/good/"${i%%.*}".test.output
+    # To see error code add - ; echo $?
     diff lattetests/good/"${i%%.*}".output lattetests/good/"${i%%.*}".test.output
     rm *.err
     rm lattetests/good/*.test.output

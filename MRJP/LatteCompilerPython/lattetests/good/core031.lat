@@ -1,0 +1,25 @@
+# Test comment one
+// Test comment two
+/* Test comment one
+
+*/
+void changeInt(int x)
+{
+    x++;
+}
+
+void changeString(string x)
+{
+    x = x + "adasd";
+}
+
+int main()
+{
+    int x = 2;
+    string t = "test";
+    changeInt(x);
+    printInt(x);
+    changeString(t);
+    printString(t);
+    return 0;
+}

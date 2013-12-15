@@ -41,13 +41,10 @@ class FnDef(BaseNode):
     def generate_body(self, env):
         self.prepare_env(env)
         if self.ident == "main":
-            env.add_variable("arg", Type("string"), 0, 0)
+            env.add_variable("args", Type("string"), 0, 0)
         s = self.block.generate_code(env)
-        if len(s.strip()) == 0:
-            s += "return\n"
+        s += "return\n"
         s = ".limit stack " + str(env.get_stack_limit()) + "\n.limit locals " + str(env.get_local_limit()) + "\n" + s
-        if s.strip().endswith(":"):
-            s += "return\n"
         return s
 
     def generate_footer(self):
