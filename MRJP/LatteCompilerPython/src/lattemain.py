@@ -49,6 +49,8 @@ if __name__ == "__main__":
             raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
         result.set_class_name(program_name)
         result.type_check()
+        # At this point lexer and syntax analysis is done so program is accepted.
+        sys.stderr.write("OK\n")
         path[len(path) - 1] = program_name + ".j"
         new_file_path = '/'.join(path)
         f = open(new_file_path, 'w+')
@@ -63,5 +65,4 @@ if __name__ == "__main__":
         sys.stdout.write("{}\n".format(e))
         sys.exit(-2)
 
-    sys.stderr.write("OK\n")
     sys.exit()
