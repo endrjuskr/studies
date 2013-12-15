@@ -1,4 +1,4 @@
-bad044.latint main()
+int main()
 {
     int x;
     if (x == 0) int y; else int z;
