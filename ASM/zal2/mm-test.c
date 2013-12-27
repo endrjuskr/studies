@@ -25,22 +25,11 @@ void aligned_free(void *ptr) {
     free(((void**)ptr)[-1]);
 }
 
-void naive_mm (int size, float *a, float *b, float *c) {
-  int i, j, k;
-
-  for (i = 0; i < size; i++)
-    for (j = 0; j < size; j++) {
-      *(c + i * size + j) = 0.0;
-      for (k = 0; k < size; k++)
-        *(c + i * size + j) +=  *(a + i * size + k) * *(b + k * size + j);
-    }
-}
-
 int close_power_2(int size)
 {
-  int i = 1;
+  int i = 4;
   while (i < size)
-    i <<= 2;
+    i = i << 1;
   return i;
 }
 
@@ -134,24 +123,12 @@ int main (int argc, char *argv[]) {
   /* Wielokrotne mnożenie */
   gettimeofday(&t1, NULL);
   for (i = 0; i < M; i++)
-    naive_mm(N_ext, B, A, C);
-  gettimeofday(&t2, NULL);
-
-  printf("Time for the naive matrix multiplication is %d milliseconds\n",
-         (t2.tv_sec - t1.tv_sec) * 1000 + 
-         (t2.tv_usec - t1.tv_usec) / 1000);
-
-  /* Wielokrotne mnożenie */
-  /*
-  gettimeofday(&t1, NULL);
-  for (i = 0; i < M; i++)
-    optimal_mm(N, B, A, C);
+    optimal_mm(N_ext, B, A, C);
   gettimeofday(&t2, NULL);
 
   printf("Time for the optimal matrix multiplication is %d milliseconds\n",
          (t2.tv_sec - t1.tv_sec) * 1000 + 
          (t2.tv_usec - t1.tv_usec) / 1000);
-  */
 
 #ifdef CHECK
   if ((fd = fopen("tmp333", "w")) == NULL) {
