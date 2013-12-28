@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-#define CHECK 1
+/* #define CHECK 1 */
 
 struct timeval t1, t2;
 
@@ -29,7 +29,7 @@ int close_power_2(int size)
 {
   int i = 4;
   while (i < size)
-    i = i << 1;
+    i = i + 4;
   return i;
 }
 
