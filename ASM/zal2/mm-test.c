@@ -4,14 +4,14 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-#define CHECK 1
+/*#define CHECK 1 */
 /*#define CHECK_A 1 */
 
 struct timeval t1, t2;
 
 /* Naiwne mnożenie macierzy kwadratowych A i B, wynik w C */
 
-extern void optimal_mm(int size, float *a, float *b, float *c); 
+extern void naive_mm(int size, float *a, float *b, float *c); 
 
 #define ALIGN 16
 
@@ -26,7 +26,7 @@ void aligned_free(void *ptr) {
     free(((void**)ptr)[-1]);
 }
 
-int close_power_2(int size)
+int close_4(int size)
 {
   int i = 4;
   while (i < size)
@@ -53,9 +53,8 @@ int main (int argc, char *argv[]) {
   N = atoi(argv[1]);
   M = atoi(argv[2]);
 
-  N_ext = close_power_2(N);
-  printf ("extended size = %d\n", N_ext);
-
+  N_ext = close_4(N);
+  
   /* Alokacja i inicjowanie macierzy (alligned) */
   A = aligned_malloc(N_ext * N_ext * sizeof(float));
   B = aligned_malloc(N_ext * N_ext * sizeof(float));
@@ -63,7 +62,7 @@ int main (int argc, char *argv[]) {
   
 
 #ifdef CHECK
-  if ((fd = fopen("tmp1", "r")) == NULL) {
+  if ((fd = fopen("tmp111", "r")) == NULL) {
      printf("Cannot open tmp111\n");
      exit(0);
   }
@@ -71,7 +70,7 @@ int main (int argc, char *argv[]) {
   for (i = 0; i < N; i++)
   {
     for (j = 0; j < N; j++)
-      fscanf(fd, " %f", (A + i * N_ext + j));
+      fscanf(fd, "%f", (A + i * N_ext + j));
 
     for (j = N; j < N_ext; j++)
       *(A + i * N_ext + j) = 0.0;
@@ -82,7 +81,7 @@ int main (int argc, char *argv[]) {
 
   fclose(fd);
 
-  if ((fd = fopen("tmp2", "r")) == NULL) {
+  if ((fd = fopen("tmp222", "r")) == NULL) {
      printf("Cannot open tmp222\n");
      exit(0);
   }
@@ -122,24 +121,24 @@ int main (int argc, char *argv[]) {
       *(A + i * N_ext + j) = 0.0;
     }
 
-#ifdef CHECK_A
-  if ((fd = fopen("tmp1", "w")) == NULL) {
+#ifdef CHECK_A 
+  if ((fd = fopen("tmp111", "w")) == NULL) {
      printf("Cannot open tmp111\n");
      exit(0);
   }
   for (i = 0; i < N; i++) {
     for (j = 0; j < N; j++)
-      fprintf(fd, "%f ", *(A + i * N_ext + j));
+      fprintf(fd, "%lf ", *(A + i * N_ext + j));
     fprintf(fd, "\n");
   }
   fclose(fd);
-  if ((fd = fopen("tmp2", "w")) == NULL) {
+  if ((fd = fopen("tmp222", "w")) == NULL) {
      printf("Cannot open tmp111\n");
      exit(0);
   }
   for (i = 0; i < N; i++) {
     for (j = 0; j < N; j++)
-      fprintf(fd, "%f ", *(B + i * N_ext + j));
+      fprintf(fd, "%lf ", *(B + i * N_ext + j));
     fprintf(fd, "\n");
   }
   fclose(fd);
@@ -158,7 +157,7 @@ int main (int argc, char *argv[]) {
          (t2.tv_usec - t1.tv_usec) / 1000);
 
 #ifdef CHECK
-  if ((fd = fopen("tmp3", "w")) == NULL) {
+  if ((fd = fopen("tmp333", "w")) == NULL) {
      printf("Cannot open tmp333\n");
      exit(0);
   }
@@ -172,7 +171,7 @@ int main (int argc, char *argv[]) {
 #endif
 
 #ifdef CHECK_A
-  if ((fd = fopen("tmp3", "w")) == NULL) {
+  if ((fd = fopen("tmp333", "w")) == NULL) {
      printf("Cannot open tmp333\n");
      exit(0);
   }
