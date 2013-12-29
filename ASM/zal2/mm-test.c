@@ -4,7 +4,8 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-/*#define CHECK 1*/
+#define CHECK 1
+/*#define CHECK_A 1 */
 
 struct timeval t1, t2;
 
@@ -38,6 +39,9 @@ int main (int argc, char *argv[]) {
   float *A, *B, *C;
   int N, N_ext, M, i, j, errno;
 #ifdef CHECK
+  FILE *fd;
+#endif
+#ifdef CHECK_A
   FILE *fd;
 #endif
 
@@ -118,6 +122,29 @@ int main (int argc, char *argv[]) {
       *(A + i * N_ext + j) = 0.0;
     }
 
+#ifdef CHECK_A
+  if ((fd = fopen("tmp1", "w")) == NULL) {
+     printf("Cannot open tmp111\n");
+     exit(0);
+  }
+  for (i = 0; i < N; i++) {
+    for (j = 0; j < N; j++)
+      fprintf(fd, "%f ", *(A + i * N_ext + j));
+    fprintf(fd, "\n");
+  }
+  fclose(fd);
+  if ((fd = fopen("tmp2", "w")) == NULL) {
+     printf("Cannot open tmp111\n");
+     exit(0);
+  }
+  for (i = 0; i < N; i++) {
+    for (j = 0; j < N; j++)
+      fprintf(fd, "%f ", *(B + i * N_ext + j));
+    fprintf(fd, "\n");
+  }
+  fclose(fd);
+#endif
+
 #endif
 
   /* Wielokrotne mnożenie */
@@ -131,6 +158,20 @@ int main (int argc, char *argv[]) {
          (t2.tv_usec - t1.tv_usec) / 1000);
 
 #ifdef CHECK
+  if ((fd = fopen("tmp3", "w")) == NULL) {
+     printf("Cannot open tmp333\n");
+     exit(0);
+  }
+
+  for (i = 0; i < N; i++) {
+    for (j = 0; j < N; j++)
+      fprintf(fd, "%6.2lf ", *(C + i * N_ext + j));
+    fprintf(fd, "\n");
+  }
+  fclose(fd);
+#endif
+
+#ifdef CHECK_A
   if ((fd = fopen("tmp3", "w")) == NULL) {
      printf("Cannot open tmp333\n");
      exit(0);

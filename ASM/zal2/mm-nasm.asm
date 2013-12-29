@@ -35,6 +35,18 @@ read_a_addr:
 read_c_addr:
 	mov qword [addr_c], rcx  ; czwarty argument
 
+	mov rcx, 0
+	mov rax, qword [size]
+	imul rax, qword [esize]
+clear_c:
+	cmp rax, rcx
+	je main_fun
+	mov rbx, qword[addr_c]
+	add rbx, rcx
+	add rcx, 4
+	mov [rbx], dword 0
+	jmp clear_c
+main_fun:
 	mov rcx, 0 					; rcx indicates which 4x4 matrix we are calculating
 for:
 	mov rax, qword [matrix_c]
@@ -94,6 +106,7 @@ for_small:
 
 	movups xmm0, [rsp]
 	movups xmm1, [rsp+16]
+	add rsp, 32
 	haddps xmm0, xmm0
 	haddps xmm1, xmm1
 	movlhps xmm0, xmm1
