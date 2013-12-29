@@ -4,118 +4,165 @@
 ; File: mm-nasm.asm - mnozenie macierzy 
 
 section .bss
-	size:	resd 1
-	addr_a: resd 1
-	addr_b: resd 1
-	addr_c: resd 1
-	wynik: 	resd 1
-	wyn:	resd 1
-	col_offset: resd 1
-	counter: resd 1
-	tmp:	resb 16
-
-section .data
-	value1: dd 0, 0, 0, 0
+	size:	resq 1
+	matrix_c: resq 1
+	esize: resq 1
+	addr_a: resq 1
+	addr_b: resq 1
+	addr_c: resq 1
+	cur_addr_a: resq 1
+	cur_addr_b: resq 1
+	cur_addr_c: resq 1
+	counter: resq 1
 
 section .text
 	global optimal_mm
 
 optimal_mm:
 	enter 0,0
-	mov ebx, [esp + 8]
-	mov dword [size], ebx ; matrix size
+read_size:
+	mov qword [size], rax ; matrix size
+calculate_matrix_count:
+	shr rax, 2
+	mov qword [matrix_c], rax
+calculate_row_size:
+	shl rax, 4
+	mov qword [esize], rax
+read_b_addr:
+	mov qword [addr_b], rsi ; drugi argument
+read_a_addr:
+	mov qword [addr_a], rdx ; trzeci argument
+read_c_addr:
+	mov qword [addr_c], rcx  ; czwarty argument
 
-	mov ebx, [esp + 12]
-	mov dword [addr_b], ebx ; drugi argument
-
-	mov ebx, [esp + 16]
-	mov dword [addr_a], ebx ; trzeci argument
-
-	mov ebx, [esp + 20]
-	mov dword [addr_c], ebx  ; czwarty argument
-
-	mov dword [counter], 0
+	mov rcx, 0 					; rcx indicates which 4x4 matrix we are calculating
 for:
-	mov eax, dword [size]
-	imul eax, dword [size]
-	cmp eax, dword [counter]
+	mov rax, qword [matrix_c]
+	imul rax, qword [matrix_c]
+	cmp rax, rcx
 	je end 						; after filling whole matrix (size * size) jump to end
 
-clear_cell:
-	mov eax, dword [addr_c]
-	mov ecx, dword [addr_c]
-	mov ebx, dword [counter]
-	shl ebx, 2
-	add eax, ebx
+calculate_current_matrix:
+	mov rax, rcx
+	mov rdx, 0
+	mov rbx, qword [matrix_c]
+	div rbx						; eax determines which row, edx which column
 
-	mov ebx, 0
-	mov [eax], ebx
+	mov rbx, qword [addr_b]
+	shl rax, 2
+	imul rax, qword [esize]
+	add rbx, rax
+	mov qword [cur_addr_b], rbx
+
+	mov rbx, qword [addr_a]
+	shl rdx, 4
+	add rbx, rdx
+	mov qword [cur_addr_a], rbx
+
+	mov rax, qword [addr_c]
+	mov rbx, rcx
+	shl rbx, 4
+	add rax, rbx
+	mov qword [cur_addr_c], rax
+
+	mov rdi, 0
+for_col:
+	cmp rdi, qword [esize]
+	je end_col
+
+
+	mov qword [counter], 0
+for_small:
+	cmp qword [counter], 16
+	je check_col
 	
-	mov eax, dword [size]
-	shl eax, 2
-	mov dword [col_offset], eax
+	mov rbx, rdi
+	imul rbx, qword [size]
+	add rbx, qword [counter]
+	add rbx, qword [cur_addr_a]
 
-	movups xmm2, [value1]
-
-add_vec:
-	sub dword [col_offset], 16
-
-	mov eax, dword [counter]
-	mov edx, 0
-	mov ebx, dword [size]
-	div ebx						; eax determines which row, edx which column
+	mov eax, dword [rbx]
+	push rax
+	add rbx, qword [esize]
+	mov eax, dword [rbx]
+	push rax
+	add rbx, qword [esize]
+	mov eax, dword [rbx]
+	push rax
+	add rbx, qword [esize]
+	mov eax, dword [rbx]
+	push rax
 	
-	mov ebx, dword [addr_b]
-	shl eax, 2
-	imul eax, dword [size]
-	add ebx, eax
-	add ebx, dword [col_offset]
-	movaps xmm0, [ebx]
-
-	mov ebx, dword [addr_a]
-	mov ecx, dword [col_offset]
-	imul ecx, dword [size]
-	add ebx, ecx
-	imul edx, 4
-	add ebx, edx
-	mov eax, [ebx]
-	mov [tmp], eax
-
-	mov eax, dword [size]
-	shl eax, 2
-	add ebx, eax
-	mov edx, [ebx]
-	mov [tmp + 4], edx
+	movups xmm0, [rsp]
+	movups xmm1, [rsp+16]
+	haddps xmm0, xmm0
+	haddps xmm1, xmm1
+	movlhps xmm0, xmm1
 	
-	add ebx, eax
-	mov edx, [ebx]
-	mov [tmp + 8], edx
+	shufps xmm0, xmm0, 1Bh
 	
-	add ebx, eax
-	mov edx, [ebx]
-	mov [tmp + 12], edx
-	
-	movups xmm1, [tmp]
-	mulps  xmm0, xmm1
-	addps  xmm2, xmm0
+	mov rbx, qword [cur_addr_b]
+	add rbx, rdi
 
-	mov eax, dword [col_offset]
-	cmp eax, 0
-	jne add_vec
+	movaps xmm1, [rbx]
+	add rbx, qword [esize]
+	movaps xmm2, [rbx]
+	add rbx, qword [esize]
+	movaps xmm3, [rbx]
+	add rbx, qword [esize]
+	movaps xmm4, [rbx]
 
-	mov eax, dword [addr_c]
-	mov ebx, dword [counter]
-	shl ebx, 2
-	add eax, ebx
+	mulps  xmm1, xmm0
+	mulps  xmm2, xmm0
+	mulps  xmm3, xmm0
+	mulps  xmm4, xmm0
+
+	haddps xmm1, xmm1
+	haddps xmm1, xmm1
 
 	haddps xmm2, xmm2
 	haddps xmm2, xmm2
-	
-	movss dword [wynik], xmm2
-	mov ebx, dword [wynik]
-	mov [eax], ebx
 
-	add dword [counter], 1
+	haddps xmm3, xmm3
+	haddps xmm3, xmm3
+
+	haddps xmm4, xmm4
+	haddps xmm4, xmm4
+
+	mov rax, qword [cur_addr_c]
+	add rax, qword [counter]
+
+	movss xmm5, [rax]
+	addss xmm1, xmm5
+	movss [rax], xmm1
+
+	add rax, qword [esize]
+
+	movss xmm5, [rax]
+	addss xmm2, xmm5
+	movss [rax], xmm2
+
+	add rax, qword [esize]
+
+	movss xmm5, [rax]
+	addss xmm3, xmm5
+	movss [rax], xmm3
+
+	add rax, qword [esize]
+
+	movss xmm5, [rax]
+	addss xmm4, xmm5
+	movss [rax], xmm4
+
+	add qword [counter], 4
+	jmp for_small
+
+check_col:
+	add rdi, 16
+	jmp for_col
+
+end_col:
+	add rcx, 1
 	jmp for
 end:
 	leave

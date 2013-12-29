@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-/* #define CHECK 1 */
+#define CHECK 1
 
 struct timeval t1, t2;
 
@@ -59,7 +59,7 @@ int main (int argc, char *argv[]) {
   
 
 #ifdef CHECK
-  if ((fd = fopen("tmp111", "r")) == NULL) {
+  if ((fd = fopen("tmp1", "r")) == NULL) {
      printf("Cannot open tmp111\n");
      exit(0);
   }
@@ -78,7 +78,7 @@ int main (int argc, char *argv[]) {
 
   fclose(fd);
 
-  if ((fd = fopen("tmp222", "r")) == NULL) {
+  if ((fd = fopen("tmp2", "r")) == NULL) {
      printf("Cannot open tmp222\n");
      exit(0);
   }
@@ -131,7 +131,7 @@ int main (int argc, char *argv[]) {
          (t2.tv_usec - t1.tv_usec) / 1000);
 
 #ifdef CHECK
-  if ((fd = fopen("tmp333", "w")) == NULL) {
+  if ((fd = fopen("tmp3", "w")) == NULL) {
      printf("Cannot open tmp333\n");
      exit(0);
   }
