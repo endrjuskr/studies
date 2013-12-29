@@ -1,0 +1,19 @@
+Andrzej Skrodzki 292510
+Programowanie w Asemblerze
+Zadanie zaliczeniowe 2 - Optymalizacja "rownolegla"
+
+Rozwiazanie sklada sie z nastepujacych plikow:
+- mm-nasm.asm - glowna czesc rozwiazania, zawiera zmieniona funkcje naive_mm
+- pliki testowe (tmp111, tmp222)
+- Makefile, ktory tworzy mm-test uzywajacy optymalnego mnozenia i mm-test-org, ktory uzywa oryginalnej funkcji
+- plik README
+
+Szczegoly rozwiazania:
+W celu 4-krotnego przyspieszenia zostaly uzyte rejestry SSE, SS2 i SSE3.
+Rowniez adresy sa wyrownane aby przyspieszyc wczytywanie z pamieci.
+Rozmiar macierzy zostal rozszerzony do wielokrotnosci 4.
+Wykorzystany algorytm mnozenia to mnozenie blokowe, czyli podzial macierzy na mniejsze macierze 4x4 i nastepnie mnozenie odpowiednich.
+Rejestr rcx wskazuje aktualna mala macierz (4x4) w C, ktory aktualnie obliczamy.
+Rejestr rdi wskazuje przesuniecie, czyli jesli C_i_j = A_1_i * B_j_1 + A_2_i * B_j_2 + A_3_i * B_j_3 + A_4_i * B_j_4 to wskazuje on kolejno 1, 2, 3, 4.
+Aby pobrac czesci kolumny uzywany jest stos.
+W celu lekkie przyspieszenie dla jednej kolumny wykonuje sie od razu mnozenia dla 4 wierszy.
