@@ -149,7 +149,7 @@ int main (int argc, char *argv[]) {
   /* Wielokrotne mnożenie */
   gettimeofday(&t1, NULL);
   for (i = 0; i < M; i++)
-    optimal_mm(N_ext, B, A, C);
+    naive_mm(N_ext, B, A, C);
   gettimeofday(&t2, NULL);
 
   printf("Time for the optimal matrix multiplication is %d milliseconds\n",
