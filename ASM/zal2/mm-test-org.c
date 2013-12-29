@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-/*#define CHECK 1 */
+#define CHECK 1 
 
 struct timeval t1, t2;
 
