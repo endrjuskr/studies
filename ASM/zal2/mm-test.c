@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-#define CHECK 1
+/*#define CHECK 1*/
 
 struct timeval t1, t2;
 

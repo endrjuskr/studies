@@ -39,7 +39,7 @@ read_c_addr:
 for:
 	mov rax, qword [matrix_c]
 	imul rax, qword [matrix_c]
-	cmp rax, rcx
+	cmp rcx, rax
 	je end 						; after filling whole matrix (size * size) jump to end
 
 calculate_current_matrix:
@@ -59,11 +59,10 @@ calculate_current_matrix:
 	add rbx, rdx
 	mov qword [cur_addr_a], rbx
 
-	mov rax, qword [addr_c]
-	mov rbx, rcx
-	shl rbx, 4
-	add rax, rbx
-	mov qword [cur_addr_c], rax
+	mov rbx, qword [addr_c]
+	add rbx, rax
+	add rbx, rdx
+	mov qword [cur_addr_c], rbx
 
 	mov rdi, 0
 for_col:
@@ -92,7 +91,7 @@ for_small:
 	add rbx, qword [esize]
 	mov eax, dword [rbx]
 	push rax
-	
+
 	movups xmm0, [rsp]
 	movups xmm1, [rsp+16]
 	haddps xmm0, xmm0
@@ -111,6 +110,9 @@ for_small:
 	movaps xmm3, [rbx]
 	add rbx, qword [esize]
 	movaps xmm4, [rbx]
+
+	movaps xmm6, xmm1
+	movups xmm7, xmm0
 
 	mulps  xmm1, xmm0
 	mulps  xmm2, xmm0

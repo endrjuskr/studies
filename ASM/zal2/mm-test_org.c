@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#define CHECK 1
+/*#define CHECK 1*/
 
 struct timeval t1, t2;
 
@@ -16,7 +16,9 @@ void naive_mm (int size, float *a, float *b, float *c) {
     for (j = 0; j < size; j++) {
       *(c + i * size + j) = 0.0;
       for (k = 0; k < size; k++)
+      {
         *(c + i * size + j) +=  *(a + i * size + k) * *(b + k * size + j);
+      }
     }
 }
 
@@ -48,7 +50,7 @@ int main (int argc, char *argv[]) {
    
   for (i = 0; i < N; i++)
     for (j = 0; j < N; j++)
-      fscanf(fd, " %lf", (A + i * N + j));
+      fscanf(fd, "%f", (A + i * N + j));
   fclose(fd);
 
   if ((fd = fopen("tmp222", "r")) == NULL) {
@@ -58,7 +60,7 @@ int main (int argc, char *argv[]) {
    
   for (i = 0; i < N; i++)
     for (j = 0; j < N; j++)
-      fscanf(fd, " %lf", (B + i * N + j));
+      fscanf(fd, " %f", (B + i * N + j));
   fclose(fd);
 #else
   srand48(100);
