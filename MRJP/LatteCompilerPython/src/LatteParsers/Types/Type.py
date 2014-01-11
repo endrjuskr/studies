@@ -25,6 +25,6 @@ class Type(object):
         self.dict["void"] = "V"
         self.dict["boolean"] = "I"
 
-    def generate_code(self):
+    def generate_code_jvm(self):
         return self.dict[self.type]
 

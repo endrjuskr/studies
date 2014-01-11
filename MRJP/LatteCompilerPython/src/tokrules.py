@@ -15,7 +15,11 @@ reserved = (
     'BOOLEAN',
     'VOID',
     'TRUE',
-    'FALSE')
+    'FALSE',
+    'NEW',
+    'FOR',
+    'STRUCT',
+    'CLASS')
 
 
 # Token names.
@@ -23,10 +27,10 @@ tokens = reserved + (
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MOD',
     'OR', 'AND', 'NOT',
     'LT', 'LE', 'GT', 'GE', 'EQ', 'NE',
-    'EQUALS',
+    'EQUALS', 'DOT', 'COLON',
     'PLUSPLUS', 'MINUSMINUS',
     'LPAREN', 'RPAREN', 'LBRACE', 'RBRACE', 'COMMA', 'SEMI',
-    'NUMBER', 'SENTENCE', 'ID')
+    'NUMBER', 'SENTENCE', 'ID', 'LARRAY', 'RARRAY')
 
 
 # A string containing ignored characters (spaces and tabs)
@@ -55,13 +59,16 @@ t_LBRACE = r'\{'
 t_RBRACE = r'\}'
 t_COMMA = r','
 t_SEMI = r';'
+t_LARRAY = r'\['
+t_RARRAY = r'\]'
+t_DOT = r'.'
+t_COLON = r':'
 
 
 def t_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
     return t
-
 
 reserved_map = {}
 for r in reserved:

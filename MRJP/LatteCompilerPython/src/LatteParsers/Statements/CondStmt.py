@@ -25,10 +25,10 @@ class CondStmt(StmtBase):
 
     def generate_body(self, env):
         env_prim = env.shallow_copy()
-        s = self.expr.generate_code(env)
+        s = self.expr.generate_code_jvm(env)
         s += "ifeq " + self.label_pattern + "\n"
         env.pop_stack(1)
-        s += self.stmt.generate_code(env_prim)
+        s += self.stmt.generate_code_jvm(env_prim)
         s += self.label_pattern + ":\n"
         env.max_variable_counter = max(env.max_variable_counter, env_prim.get_local_limit())
         env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)

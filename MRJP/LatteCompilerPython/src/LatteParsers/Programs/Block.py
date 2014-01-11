@@ -25,5 +25,5 @@ class Block(BaseNode):
     def generate_body(self, env):
         s = ""
         for stmt in self.stmt_list:
-            s += stmt.generate_code(env)
+            s += stmt.generate_code_jvm(env)
         return s

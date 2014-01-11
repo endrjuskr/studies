@@ -14,7 +14,7 @@ class PredefinedFun(FnDef):
     def calculate_type(self, type, arglist):
         return FunType(type, arglist)
 
-    def generate_code(self, env):
+    def generate_code_jvm(self, env):
         return ""
 
 class ErrorFun(PredefinedFun):

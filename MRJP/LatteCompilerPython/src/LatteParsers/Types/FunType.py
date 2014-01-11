@@ -20,10 +20,10 @@ class FunType(Type):
     def isFunction(self):
         return True
 
-    def generate_code(self):
+    def generate_code_jvm(self):
         s = "("
         for t in self.paramstypes:
-            s += t.generate_code()
+            s += t.generate_code_jvm()
 
-        s += ")" + self.returntype.generate_code()
+        s += ")" + self.returntype.generate_code_jvm()
         return s

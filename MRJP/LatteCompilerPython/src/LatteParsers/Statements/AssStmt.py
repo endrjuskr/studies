@@ -22,7 +22,7 @@ class AssStmt(StmtBase):
         return False
 
     def generate_body(self, env):
-        s = self.expr.generate_code(env)
+        s = self.expr.generate_code_jvm(env)
         if self.idtype == Type("string"):
             s += "astore "
         else:
@@ -31,3 +31,5 @@ class AssStmt(StmtBase):
         s += str(env.get_variable_value(self.ident)) + "\n"
         env.pop_stack(1)
         return s
+
+    def generate_code_asm(self, env):

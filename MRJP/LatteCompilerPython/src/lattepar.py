@@ -229,6 +229,16 @@ def p_statement_sexp(p):
 # Expression definitions
 
 
+def p_expression_init_array(p):
+    'expr6 : NEW type LARRAY NUMBER RARRAY'
+    p[0] = EArrayInit()
+
+
+def p_expression_array(p):
+    'expr6 : ID LARRAY NUMBER RARRAY'
+    p[0] = EArray
+
+
 def p_expression_var(p):
     'expr6 : ID'
     p[0] = EVar(p[1], p.lineno(1), p.lexpos(1))
@@ -351,7 +361,10 @@ def p_expression_or_2(p):
 
 
 def p_type(p):
-    '''type : INT
+    '''type : INT LARRAY RARRAY
+            | BOOLEAN LARRAY RARRAY
+            | STRING LARRAY RARRAY
+            | INT
             | STRING
             | VOID
             | BOOLEAN'''

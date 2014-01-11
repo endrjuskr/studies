@@ -20,5 +20,5 @@ class OneArgExpr(ExprBase):
             self.value = - self.expr.value
 
     def generate_body(self, env):
-        s = self.expr.generate_code(env)
+        s = self.expr.generate_code_jvm(env)
         return s

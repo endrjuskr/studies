@@ -16,7 +16,7 @@ class RetStmt(StmtBase):
         return True
 
     def generate_body(self, env):
-        s = self.expr.generate_code(env)
+        s = self.expr.generate_code_jvm(env)
         if env.in_main:
             s += "invokestatic java/lang/System/exit(I)V\n"
             s += "return\n"

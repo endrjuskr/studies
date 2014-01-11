@@ -8,7 +8,7 @@ class BaseNode(object):
         self.pos = pos
         pass
 
-    def generate_code(self, env):
+    def generate_code_jvm_jvm(self, env):
         return self.generate_header() + self.generate_body(env) + self.generate_footer()
 
     def generate_header(self):
@@ -19,3 +19,6 @@ class BaseNode(object):
 
     def generate_footer(self):
         return ""
+
+    def generate_code_asm(self, env):
+        pass

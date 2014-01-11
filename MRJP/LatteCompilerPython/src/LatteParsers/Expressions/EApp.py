@@ -34,7 +34,7 @@ class EApp(ZeroArgExpr):
     def generate_body(self, env):
         s = ""
         for expr in self.exprlist:
-            s += expr.generate_code(env)
-        s += "invokestatic " + env.get_fun_class(self.funident) + "." + self.funident + self.etype.generate_code()
+            s += expr.generate_code_jvm(env)
+        s += "invokestatic " + env.get_fun_class(self.funident) + "." + self.funident + self.etype.generate_code_jvm()
         s += "\n"
         return s

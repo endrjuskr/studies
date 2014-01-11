@@ -41,7 +41,7 @@ class Program(BaseNode):
         s = ""
         for fn in self.topdeflist:
             env_prim = env.shallow_copy()
-            s += fn.generate_code(env_prim)
+            s += fn.generate_code_jvm(env_prim)
         return s
 
     def set_class_name(self, name):

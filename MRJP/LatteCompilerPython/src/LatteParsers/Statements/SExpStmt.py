@@ -14,4 +14,4 @@ class SExpStmt(StmtBase):
         self.expr.type_check(env, expected_type=Type.Type("void"))
 
     def generate_body(self, env):
-        return self.expr.generate_code(env)
+        return self.expr.generate_code_jvm(env)

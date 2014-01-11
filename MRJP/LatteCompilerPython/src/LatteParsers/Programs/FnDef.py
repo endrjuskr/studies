@@ -35,14 +35,14 @@ class FnDef(BaseNode):
         return FunType(type, map(self.get_type, arglist))
 
     def generate_header(self):
-        return ".method public static " + self.ident + self.funtype.generate_code() + "\n" if  \
+        return ".method public static " + self.ident + self.funtype.generate_code_jvm() + "\n" if  \
             self.ident != "main" else ".method public static main([Ljava/lang/String;)V \n"
 
     def generate_body(self, env):
         self.prepare_env(env)
         if self.ident == "main":
             env.add_variable("args", Type("string"), 0, 0)
-        s = self.block.generate_code(env)
+        s = self.block.generate_code_jvm(env)
         s += "return\n"
         s = ".limit stack " + str(env.get_stack_limit()) + "\n.limit locals " + str(env.get_local_limit()) + "\n" + s
         return s

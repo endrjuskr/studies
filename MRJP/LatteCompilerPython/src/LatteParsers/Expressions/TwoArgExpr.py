@@ -29,6 +29,6 @@ class TwoArgExpr(ExprBase):
         pass
 
     def generate_body(self, env):
-        s = self.left.generate_code(env)
-        s += self.right.generate_code(env)
+        s = self.left.generate_code_jvm(env)
+        s += self.right.generate_code_jvm(env)
         return s

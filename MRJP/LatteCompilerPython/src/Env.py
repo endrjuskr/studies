@@ -5,22 +5,29 @@ from LatteExceptions import DuplicateDeclarationException, SyntaxException
 
 
 class Env:
-    current_env = {}
-    current_fun_type = None
-
-    def __init__(self, var_env=None, fun_env=None, var_store=None, inside_fun=None, in_main=False,
-                 current_stack=0, class_name="MyClass"):
-        self.var_env = {} if var_env is None else var_env
-        self.fun_env = {} if fun_env is None else fun_env
-        self.var_store = {} if var_store is None else var_store
-        self.variables_counter = 0 if len(self.var_store.values()) == 0 else max(self.var_store.values()) + 1
-        self.max_variable_counter = 0
-        self.current_fun_type = inside_fun
+    def __init__(self, orig=None):
         self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
-        self.current_stack_count = current_stack
-        self.max_stack_count = current_stack
-        self.in_main = in_main
-        self.class_name = class_name
+        if orig is None:
+            self.var_env = {}
+            self.fun_env = {}
+            self.var_store = {}
+            self.var_decl = []
+            self.reg_env = {}
+            self.variables_counter = 0
+            self.max_variable_counter = 0
+        else:
+            self.var_env = orig.var_env
+            self.fun_env = orig.fun_env
+            self.var_store = orig.var_store
+            self.var_decl = orig.var_decl
+            self.reg_env = orig.reg_env
+            self.variables_counter = orig.variables_counter
+            self.max_variable_counter = 0 if len(self.var_store.values()) == 0 else max(self.var_store.values()) + 1
+            self.current_fun_type = orig.current_fun_type
+            self.current_stack_count = orig.current_stack_count
+            self.max_stack_count = orig.current_stack_count
+            self.in_main = orig.in_main
+            self.class_name = orig.class_name
 
     def add_fun(self, fun):
         if fun.ident in self.fun_env:
@@ -54,16 +61,14 @@ class Env:
             # Resetting all variables' counters so they can be overwritten
             new_var_env[key] = (t, 0)
 
-        new_fun_env = {}
-        for key, value in self.fun_env.iteritems():
-            new_fun_env[key] = value
+        new_var_env = map(lambda (t, _): (t,0 ), self.var_env)
 
-        new_var_store = {}
-        for key, value in self.var_store.iteritems():
-            new_var_store[key] = value
+        new_fun_env = self.fun_env.copy()
+        new_var_store = self.var_store.copy()
+        new_reg_env = self.reg_env.copy()
 
         return Env(var_env=new_var_env, fun_env=new_fun_env, var_store=new_var_store,
-                   inside_fun=self.current_fun_type, in_main=self.in_main,
+                   reg_env=new_reg_env, inside_fun=self.current_fun_type, in_main=self.in_main,
                    current_stack=self.current_stack_count, class_name=self.class_name)
 
     def deep_copy(self):
@@ -79,8 +84,12 @@ class Env:
         for key, value in self.var_store.iteritems():
             new_var_store[key] = value
 
+        new_reg_env = {}
+        for key, value in self.reg_env.iteritems():
+            new_reg_env[key] = value
+
         return Env(var_env=new_var_env, fun_env=new_fun_env, var_store=new_var_store,
-                   inside_fun=self.current_fun_type, in_main=self.in_main,
+                   reg_env=new_reg_env, inside_fun=self.current_fun_type, in_main=self.in_main,
                    current_stack=self.current_stack_count, class_name=self.class_name)
 
     def add_variable(self, ident, type, no_line, pos, fun_param=True):
@@ -134,3 +143,6 @@ class Env:
             output += str(key) + " - " + str(value) + "\n"
 
         return output
+
+    def get_id_asm(self):
+

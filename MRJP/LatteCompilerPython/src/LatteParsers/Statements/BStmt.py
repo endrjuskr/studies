@@ -16,7 +16,7 @@ class BStmt(StmtBase):
 
     def generate_body(self, env):
         env_prim = env.shallow_copy()
-        s = self.block.generate_code(env_prim)
+        s = self.block.generate_code_jvm(env_prim)
         env.max_variable_counter = max(env.max_variable_counter, env_prim.get_local_limit())
         env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
         return s

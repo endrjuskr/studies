@@ -54,7 +54,7 @@ if __name__ == "__main__":
         path[len(path) - 1] = program_name + ".j"
         new_file_path = '/'.join(path)
         f = open(new_file_path, 'w+')
-        f.write(result.generate_code(Env(class_name=program_name)))
+        f.write(result.generate_code_jvm(Env(class_name=program_name)))
         f.close()
         subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1]) + " " + new_file_path,
                         shell=True)

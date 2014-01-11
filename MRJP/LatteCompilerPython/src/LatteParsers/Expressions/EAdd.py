@@ -31,7 +31,7 @@ class EAdd(TwoArgExpr):
         if self.etype == Type.Type("string"):
             cFun = "concatenateString"
             s += "invokestatic " + env.get_fun_class(cFun) + "." + cFun \
-                 + env.get_fun_type(cFun).generate_code() + "\n"
+                 + env.get_fun_type(cFun).generate_code_jvm_jvm() + "\n"
         elif self.op == "+":
             s += "iadd \n"
         else:

@@ -22,5 +22,5 @@ class DeclStmt(StmtBase):
     def generate_body(self, env):
         s = ""
         for item in self.itemlist:
-            s += item.generate_code(env)
+            s += item.generate_code_jvm(env)
         return s

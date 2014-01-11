@@ -18,10 +18,10 @@ class EAnd(TwoArgExpr):
             self.value = self.right.get_value()
 
     def generate_body(self, env):
-        s = self.left.generate_code(env)
+        s = self.left.generate_code_jvm_jvm(env)
         s += "dup\n"
         s += "ifeq " + self.label_pattern + "\n"
-        s += self.right.generate_code(env)
+        s += self.right.generate_code_jvm(env)
         s += "iand \n"
         s += self.label_pattern + ":\n"
         env.pop_stack(1)

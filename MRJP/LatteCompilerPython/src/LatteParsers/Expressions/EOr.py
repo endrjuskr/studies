@@ -18,12 +18,12 @@ class EOr(TwoArgExpr):
             self.value = self.right.get_value()
 
     def generate_body(self, env):
-        s = self.left.generate_code(env)
+        s = self.left.generate_code_jvm(env)
         s += "dup\n"
         env.push_stack(1)
         s += "ifne " + self.label_pattern + "\n"
         env.pop_stack(1)
-        s += self.right.generate_code(env)
+        s += self.right.generate_code_jvm(env)
         s += "ior \n"
         env.pop_stack(1)
         s += self.label_pattern + ":\n"
