@@ -1,2 +1,2 @@
 #!/bin/bash
-python srcpath/src/lattemain.py $1
+python -m src.lattemain $1

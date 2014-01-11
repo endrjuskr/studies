@@ -2,7 +2,7 @@ __author__ = 'Andrzej Skrodzki - as292510'
 # module: tokrules.py
 # This module just contains the lexing rules 
 
-from LatteExceptions import LexerException
+from .LatteExceptions import LexerException
 
 # Reserved words
 reserved = (
@@ -61,7 +61,7 @@ t_COMMA = r','
 t_SEMI = r';'
 t_LARRAY = r'\['
 t_RARRAY = r'\]'
-t_DOT = r'.'
+t_DOT = r'\.'
 t_COLON = r':'
 
 
@@ -97,4 +97,4 @@ def t_newline(t):
 
 # Error handling rule 
 def t_error(t):
-    raise LexerException.LexerException("Illegal character '%s'" % t.value[0], t.lexer.lineno)
+    raise LexerException("Illegal character '%s'" % t.value[0], t.lexer.lineno)

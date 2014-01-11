@@ -1,37 +1,16 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-from LatteParsers.Statements.IncrStmt import *
-from LatteParsers.Statements.DeclStmt import *
-from LatteParsers.Statements.DecrStmt import *
-from LatteParsers.Statements.CondStmt import *
-from LatteParsers.Statements.CondElseStmt import *
-from LatteParsers.Statements.AssStmt import *
-from LatteParsers.Statements.EmptyStmt import *
-from LatteParsers.Statements.BStmt import *
-from LatteParsers.Statements.RetStmt import *
-from LatteParsers.Statements.SExpStmt import *
-from LatteParsers.Statements.VRetStmt import *
-from LatteParsers.Statements.WhileStmt import *
-from LatteParsers.Programs.Block import *
-from LatteParsers.Programs.Program import *
-from LatteParsers.Parameters.Arg import *
-from LatteParsers.Parameters.InitItem import *
-from LatteParsers.Parameters.NoInitItem import *
-from LatteParsers.Expressions.EAdd import *
-from LatteParsers.Expressions.EAnd import *
-from LatteParsers.Expressions.EApp import *
-from LatteParsers.Expressions.ENeg import *
-from LatteParsers.Expressions.ENot import *
-from LatteParsers.Expressions.EMul import *
-from LatteParsers.Expressions.ERel import *
-from LatteParsers.Expressions.ELitInt import *
-from LatteParsers.Expressions.ELitBoolean import *
-from LatteParsers.Expressions.EString import *
-from LatteParsers.Expressions.EVar import *
-from LatteParsers.Expressions.EOr import *
+from .LatteParsers.LatteTypes import *
+from .LatteParsers.LatteExpressions import *
+from .LatteParsers.LatteParameters import *
+from .LatteParsers.LatteStatements import *
+from .LatteParsers.LatteTopDefinitions import *
+from .LatteExceptions import *
 import ply.yacc as yacc
 
 from tokrules import tokens
+
+exception_list = []
 
 precedence = (
     ('nonassoc', 'GE', 'GT', 'LE', 'LT', 'EQ', 'NE'),
@@ -229,16 +208,6 @@ def p_statement_sexp(p):
 # Expression definitions
 
 
-def p_expression_init_array(p):
-    'expr6 : NEW type LARRAY NUMBER RARRAY'
-    p[0] = EArrayInit()
-
-
-def p_expression_array(p):
-    'expr6 : ID LARRAY NUMBER RARRAY'
-    p[0] = EArray
-
-
 def p_expression_var(p):
     'expr6 : ID'
     p[0] = EVar(p[1], p.lineno(1), p.lexpos(1))
@@ -368,13 +337,22 @@ def p_type(p):
             | STRING
             | VOID
             | BOOLEAN'''
-    p[0] = Type.Type(p[1])
+    p[0] = Type(p[1])
 
 # Error definition
 
 
 def p_error(p):
-    raise SyntaxException.SyntaxException("Wrong expression '" + p.value + "'.", p.lineno, pos=p.lexpos)
+    if p is None:
+        return
+    exception_list.append(SyntaxException("Wrong expression '" + p.value + "'.", p.lineno, pos=p.lexpos))
+    tok = None
+    while 1:
+        tok = yacc.token()
+        if not tok or tok.type == 'SEMI':
+            break
+    yacc.errok()
+    return tok
 
 
 def get_parser():

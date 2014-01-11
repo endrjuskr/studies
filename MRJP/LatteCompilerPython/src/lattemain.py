@@ -1,10 +1,12 @@
 __author__ = 'Andrzej Skrodzki - as292510'
+
 import sys
+import subprocess
+
 import lattepar
 import lattelex
-from LatteExceptions import *
-from Env import Env
-import subprocess
+from .LatteExceptions import *
+from .Env import *
 
 
 def print_usage():
@@ -45,8 +47,14 @@ if __name__ == "__main__":
     latteparser = lattepar.get_parser()
     try:
         result = latteparser.parse(content, lexer=lattelexer)
+        if len(lattepar.exception_list) != 0:
+            sys.stderr.write("ERROR\n")
+            for ex in lattepar.exception_list:
+                ex.find_column(content)
+                sys.stderr.write("{}\n".format(ex))
+            sys.exit(-2)
         if result is None:
-            raise SyntaxException.SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
+            raise SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
         result.set_class_name(program_name)
         result.type_check()
         # At this point lexer and syntax analysis is done so program is accepted.
@@ -58,7 +66,7 @@ if __name__ == "__main__":
         f.close()
         subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1]) + " " + new_file_path,
                         shell=True)
-    except LatteBaseException.LatteBaseException as e:
+    except LatteBaseException as e:
         sys.stderr.write("ERROR\n")
         e.find_column(content)
         sys.stderr.write("{}\n".format(e))

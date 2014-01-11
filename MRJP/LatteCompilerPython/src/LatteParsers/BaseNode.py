@@ -1,5 +1,7 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
+__all__ = ["BaseNode"]
+
 
 class BaseNode(object):
     def __init__(self, type, no_line, pos):
@@ -8,7 +10,7 @@ class BaseNode(object):
         self.pos = pos
         pass
 
-    def generate_code_jvm_jvm(self, env):
+    def generate_code_jvm(self, env):
         return self.generate_header() + self.generate_body(env) + self.generate_footer()
 
     def generate_header(self):

@@ -2,7 +2,7 @@
 echo Running good tests!
 for i in $( cd lattetests/good && ls *.lat); do
 	./latc lattetests/good/$i 2> test.err > test.out
-	if [[ "OK" != $(head -n 1 "test.err") ]]; then
+	if [[ "OK" != $(head -n 8 "test.err" | tail -n 1) ]]; then
         echo error in $i
     fi
     echo "" >> lattetests/good/"${i%%.*}".input
