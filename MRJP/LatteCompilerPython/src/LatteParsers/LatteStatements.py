@@ -1,7 +1,8 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["AssStmt", "BStmt", "CondElseStmt", "CondStmt", "DeclStmt", "DecrStmt",
-           "EmptyStmt", "IncrStmt", "RetStmt", "SExpStmt", "StmtBase", "VRetStmt", "WhileStmt", "ForStmt"]
+__all__ = ["VarAssStmt", "FieldAssStmt", "BStmt", "CondElseStmt", "CondStmt", "DeclStmt", "DecrStmt",
+           "EmptyStmt", "IncrStmt", "RetStmt", "SExpStmt", "StmtBase", "VRetStmt", "WhileStmt", "ForStmt",
+           "FieldDecrStmt", "FieldIncrStmt", "ArrayAssStmt"]
 
 from .LatteTypes import *
 from ..LatteExceptions import *
@@ -29,9 +30,9 @@ class ForStmt(StmtBase):
         self.stmt = stmt
 
 
-class AssStmt(StmtBase):
+class VarAssStmt(StmtBase):
     def __init__(self, ident, expr, no_line, pos):
-        super(AssStmt, self).__init__("assstmt", no_line, pos)
+        super(VarAssStmt, self).__init__("varassstmt", no_line, pos)
         self.ident = ident
         self.expr = expr
         self.idtype = None
@@ -55,6 +56,41 @@ class AssStmt(StmtBase):
         s += str(env.get_variable_value(self.ident)) + "\n"
         env.pop_stack(1)
         return s
+
+class FieldAssStmt(StmtBase):
+    def __init__(self, ident, field, expr, no_line, pos):
+        super(FieldAssStmt, self).__init__("fieldassstmt", no_line, pos)
+        self.ident = ident
+        self.field = field
+        self.expr = expr
+        self.idtype = None
+
+    def type_check(self, env):
+        if not env.contain_variable(self.ident):
+            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+        self.idtype = env.get_variable_type(self.ident)
+        self.expr.type_check(env, expected_type=self.idtype)
+
+    def return_check(self):
+        return False
+
+
+class ArrayAssStmt(StmtBase):
+    def __init__(self, ident, index, expr, no_line, pos):
+        super(ArrayAssStmt, self).__init__("fieldassstmt", no_line, pos)
+        self.ident = ident
+        self.index = index
+        self.expr = expr
+        self.idtype = None
+
+    def type_check(self, env):
+        if not env.contain_variable(self.ident):
+            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+        self.idtype = env.get_variable_type(self.ident)
+        self.expr.type_check(env, expected_type=self.idtype)
+
+    def return_check(self):
+        return False
 
 
 class BStmt(StmtBase):
@@ -201,6 +237,21 @@ class DecrStmt(StmtBase):
     def generate_body(self, env):
         return "iinc " + str(env.get_variable_value(self.ident)) + " -1\n"
 
+
+class FieldDecrStmt(StmtBase):
+    def __init__(self, ident, field, no_line, pos):
+        super(FieldDecrStmt, self).__init__("decrstmt", no_line, pos)
+        self.ident = ident
+        self.field = field
+
+    def type_check(self, env):
+        if env.get_variable_type(self.ident) is None:
+            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+        elif env.get_variable_type(self.ident).type != "int":
+            raise SyntaxException("Decrement can be applied only to integers, but got "
+                                                  + str(env.get_variable_type(self.ident))
+                                                  + " for variable " + self.ident + ".", self.no_line)
+
 class EmptyStmt(StmtBase):
     def __init__(self, no_line, pos):
         super(EmptyStmt, self).__init__("emptystmt", no_line, pos)
@@ -221,6 +272,21 @@ class IncrStmt(StmtBase):
 
     def generate_body(self, env):
         return "iinc " + str(env.get_variable_value(self.ident)) + " 1\n"
+
+
+class FieldIncrStmt(StmtBase):
+    def __init__(self, ident, field, no_line, pos):
+        super(FieldIncrStmt, self).__init__("incrstmt", no_line, pos)
+        self.ident = ident
+        self.field = field
+
+    def type_check(self, env):
+        if env.get_variable_type(self.ident) is None:
+            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+        elif env.get_variable_type(self.ident).type != "int":
+            raise SyntaxException("Increment can be applied only to integers, but got "
+                                                  + str(env.get_variable_type(self.ident))
+                                                  + " for variable " + self.ident + ".", self.no_line)
 
 
 class RetStmt(StmtBase):

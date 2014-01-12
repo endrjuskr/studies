@@ -67,16 +67,6 @@ def p_list_topdef(p):
         p[0].append(p[2])
 
 
-def p_chain_field(p):
-    '''chainfield : ID
-            | chainfield DOT ID'''
-    if len(p) == 2:
-        p[0] = [p[1]]
-    else:
-        p[0] = p[1]
-        p[0].append(p[2])
-
-
 def p_list_stmt(p):
     '''liststmt : stmt
             | liststmt stmt'''
@@ -103,8 +93,7 @@ def p_list_fields(p):
 
 
 def p_list_item(p):
-    '''listitem :
-            | item
+    '''listitem : item
             | listitem COMMA item'''
 
     if len(p) == 1:
@@ -155,6 +144,9 @@ def p_arg(p):
     'arg : type ID'
     p[0] = Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
 
+def p_arg_o(p):
+    'arg : ID ID'
+    p[0] = Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
 
 def p_field_s(p):
     'field : type ID SEMI'
@@ -164,9 +156,13 @@ def p_field_o(p):
     'field : ID ID SEMI'
     p[0] = Field(p[1], p[2], p.lineno(2), p.lexpos(2))
 
-def p_field_o_a(p):
-    'field : ID LARRAY RARRAY ID SEMI'
-    p[0] = Field(p[1], p[4], p.lineno(2), p.lexpos(2))
+def p_field_fn(p):
+    'field : type ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
+
+def p_field_fn_o(p):
+    'field : ID ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
 
 # Function definition
 
@@ -182,11 +178,15 @@ def p_class_extends(p):
 
 
 def p_classdef(p):
-    'topdef : CLASS ID ext LBRACE listfields listtopdef RBRACE'
+    'topdef : CLASS ID ext LBRACE listfields RBRACE'
     p[0] = ClassDef(p[2], p[3], p[5], p[6], p.lineno(2))
 
 def p_fndef(p):
     'topdef : type ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
+
+def p_fndef_o(p):
+    'topdef : ID ID LPAREN listarg RPAREN block'
     p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
 
 
@@ -215,20 +215,44 @@ def p_statement_decl(p):
     'stmt : type listitem SEMI'
     p[0] = DeclStmt(p[1], p[2], p.lineno(3), p.lexpos(3))
 
+def p_statement_decl_o(p):
+    'stmt : ID listitem SEMI'
+    p[0] = DeclStmt(p[1], p[2], p.lineno(3), p.lexpos(3))
 
-def p_statement_ass(p):
-    '''stmt : var EQUALS expr SEMI '''
-    p[0] = AssStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
+
+def p_statement_var_ass(p):
+    '''stmt : ID EQUALS expr SEMI '''
+    p[0] = VarAssStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
+
+
+def p_statement_field_ass(p):
+    '''stmt : ID DOT ID EQUALS expr SEMI '''
+    p[0] = FieldAssStmt(p[1], p[3], p[5], p.lineno(1), p.lexpos(1))
+
+
+def p_statement_array_ass(p):
+    '''stmt : ID LARRAY expr RARRAY EQUALS expr SEMI '''
+    p[0] = ArrayAssStmt(p[1], p[3], p[5], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_incr(p):
-    'stmt : var PLUSPLUS SEMI'
+    'stmt : ID PLUSPLUS SEMI'
     p[0] = IncrStmt(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_decr(p):
-    'stmt : var MINUSMINUS SEMI'
+    'stmt : ID MINUSMINUS SEMI'
     p[0] = DecrStmt(p[1], p.lineno(1), p.lexpos(1))
+
+
+def p_statement_field_incr(p):
+    'stmt : ID DOT ID PLUSPLUS SEMI'
+    p[0] = FieldIncrStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
+
+
+def p_statement_field_decr(p):
+    'stmt : ID DOT ID MINUSMINUS SEMI'
+    p[0] = FieldDecrStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_ret(p):
@@ -261,31 +285,14 @@ def p_statement_sexp(p):
     p[0] = SExpStmt(p[1], p.lineno(1), p.lexpos(1))
 
 def p_statement_for(p):
-    'stmt : FOR LPAREN type_s ID COL var RPAREN stmt'
+    'stmt : FOR LPAREN type_s ID COL ID RPAREN stmt'
     p[0] = ForStmt(p[4], p[3], p[6], p[7], p.lineno(1), p.lexpos(1))
 
-
-def p_variable_3(p):
-    '''var2 : chainfield'''
-    p[0] = p[1]
-
-def p_variable_2(p):
-    'var : var2'
-    p[0] = p[1]
-
-def p_variable_array(p):
-    'var : var2 LARRAY expr RARRAY'
-    p[0] = EArrayApp(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 # Expression definitions
 
 def p_expression_array_init(p):
     'expr6 : NEW type_s LARRAY expr RARRAY'
-    p[0] = EArrayInit(p[2], p[4], p.lineno(1), p.lexpos(1))
-
-
-def p_expression_array_init_obj(p):
-    'expr6 : NEW ID LARRAY expr RARRAY'
     p[0] = EArrayInit(p[2], p[4], p.lineno(1), p.lexpos(1))
 
 
@@ -295,8 +302,17 @@ def p_expression_object_init(p):
 
 
 def p_expression_var(p):
-    'expr6 : var'
+    'expr6 : ID'
     p[0] = EVar(p[1], p.lineno(1), p.lexpos(1))
+
+def p_expression_field(p):
+    'expr6 : ID DOT ID'
+    p[0] = EObjectField(p[1], p[3], p.lineno(1), p.lexpos(1))
+
+
+def p_expression_array(p):
+    'expr6 : ID LARRAY expr RARRAY'
+    p[0] = EArrayApp(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_int(p):
@@ -316,8 +332,13 @@ def p_expression_boolean(p):
 
 
 def p_expression_app(p):
-    'expr6 : var LPAREN listexpr RPAREN'
-    p[0] = EApp(p[1], p[3], p.lineno(1), p.lexpos(1))
+    'expr6 : ID LPAREN listexpr RPAREN'
+    p[0] = EApp(p[1], p[3], p.lineno(2), p.lexpos(2))
+
+
+def p_expression_object_app(p):
+    'expr6 : ID DOT ID LPAREN listexpr RPAREN'
+    p[0] = EObjectApp(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_expression_group(p):
@@ -332,7 +353,7 @@ def p_expression_string(p):
 
 def p_expression_neg(p):
     'expr5 : MINUS expr6  %prec UMINUS'
-    p[0] = ENeg(p[2], p.lineno(1), p.lexpos(2))
+    p[0] = ENeg(p[2], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_not_1(p):
@@ -342,7 +363,7 @@ def p_expression_not_1(p):
 
 def p_expression_not_2(p):
     '''expr5 : NOT expr6'''
-    p[0] = ENot(p[2], p.lineno(1), p.lexpos(2))
+    p[0] = ENot(p[2], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_mul_1(p):
@@ -451,4 +472,4 @@ def p_error(p):
 
 
 def get_parser():
-    return yacc.yacc()
+    return yacc.yacc(write_tables=0, debug=0, outputdir="src")

@@ -1,7 +1,8 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["EAdd", "EAnd", "EApp", "ELitBoolean", "ELitInt", "EMul", "ENeg", "ENot", "EOr", "ERel", "EString", "EVar",
-           "ExprBase", "OneArgExpr", "TwoArgExpr", "ZeroArgExpr", "EArrayInit", "EArrayApp", "EObjectInit", "ELitNull"]
+           "ExprBase", "OneArgExpr", "TwoArgExpr", "ZeroArgExpr", "EArrayInit", "EArrayApp", "EObjectInit",
+           "ELitNull", "EObjectField", "EObjectApp"]
 
 from .BaseNode import *
 from ..LatteExceptions import *
@@ -217,6 +218,26 @@ class ELitInt(ZeroArgExpr):
     def __init__(self, value, no_line, pos):
         super(ELitInt, self).__init__(value, Type("int"), no_line, pos)
         self.type = "number"
+
+    def generate_body(self, env):
+        env.push_stack(1)
+        return "ldc " + str(self.value) + " \n"
+
+
+class EObjectField(ZeroArgExpr):
+    def __init__(self, obj, field, no_line, pos):
+        super(EObjectField, self).__init__(None, None, no_line, pos)
+        self.type = "objectfield"
+        self.obj = obj
+        self.field = field
+
+
+class EObjectApp(ZeroArgExpr):
+    def __init__(self, obj, method, no_line, pos):
+        super(EObjectApp, self).__init__(None, None, no_line, pos)
+        self.type = "objectapp"
+        self.obj = obj
+        self.method = method
 
     def generate_body(self, env):
         env.push_stack(1)
