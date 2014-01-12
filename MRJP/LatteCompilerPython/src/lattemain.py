@@ -54,7 +54,7 @@ if __name__ == "__main__":
         if result is None:
             raise SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
         result.set_class_name(program_name)
-        #result.type_check()
+        result.type_check()
         # At this point lexer and syntax analysis is done so program is accepted.
         sys.stderr.write("OK\n")
         exit(0)

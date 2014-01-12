@@ -11,10 +11,11 @@ class Arg(BaseNode):
         self.argtype = type
         self.ident = ident
 
+
 class Field(BaseNode):
     def __init__(self, type, ident, no_line, pos):
         super(Field, self).__init__("field", no_line, pos)
-        self.argtype = type
+        self.field_type = type
         self.ident = ident
 
 

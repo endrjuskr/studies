@@ -1,6 +1,6 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["FunType", "Type", "ArrayType", "ClassType"]
+__all__ = ["FunType", "Type", "ArrayType"]
 
 from operator import eq
 
@@ -20,7 +20,7 @@ class Type(object):
     def __str__(self):
         return self.type
 
-    def is_function(self):
+    def is_array(self):
         return False
 
     def fill_matches(self):
@@ -34,15 +34,15 @@ class Type(object):
 
 
 class ArrayType(Type):
-    def __init__(self, array_type, length):
-        super(ArrayType, self).__init__("array")
+    def __init__(self, array_type):
+        super(ArrayType, self).__init__(array_type.type + "a")
         self.array_type = array_type
-        self.length = length
 
+    def get_type(self):
+        return self.array_type
 
-class ClassType(Type):
-    def __init__(self, class_type):
-        super(ClassType, self).__init__(class_type)
+    def is_array(self):
+        return True
 
 
 class FunType(Type):
@@ -57,9 +57,6 @@ class FunType(Type):
 
     def __str__(self):
         return "(" + str(self.return_type) + ", " + str(self.params_types) + ")"
-
-    def is_function(self):
-        return True
 
     def generate_code_jvm(self):
         s = "("

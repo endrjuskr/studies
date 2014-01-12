@@ -87,13 +87,13 @@ class TwoArgExpr(ExprBase):
         s += self.left.generate_code_asm(env)
 
 
-
 class ZeroArgExpr(ExprBase):
     def __init__(self, value, etype, no_line, pos):
         super(ZeroArgExpr, self).__init__(etype, no_line, pos)
         self.value = value
 
     def type_check(self, env, expected_type=None):
+        print(self.pos)
         if expected_type is not None and expected_type != self.get_type(env):
             raise TypeException(expected_type, self.get_type(env), self.no_line, self.pos)
 
@@ -184,6 +184,7 @@ class EApp(ZeroArgExpr):
                                   + str(len(self.etype.params_types)) + " actual: "
                                   + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos)
 
+        print(self.no_line)
         for i in range(len(self.exprlist)):
             self.exprlist[i].type_check(env, self.etype.params_types[i])
 
@@ -208,10 +209,8 @@ class ELitBoolean(ZeroArgExpr):
 
 class ELitNull(ZeroArgExpr):
     def __init__(self, type, no_line, pos):
-        #TODO: moze tu byc tablica jako type
         super(ELitNull, self).__init__(None, Type(type), no_line, pos)
         self.type = "elitnull"
-
 
 
 class ELitInt(ZeroArgExpr):
@@ -231,17 +230,55 @@ class EObjectField(ZeroArgExpr):
         self.obj = obj
         self.field = field
 
+    def get_type(self, env):
+        if not env.contain_variable(self.obj):
+            raise NotDeclaredException(self.obj, False, self.no_line, self.pos)
+        print(self.obj)
+        object_type = env.get_variable_type(self.obj)
+        print(object_type)
+        if object_type.is_array():
+            if self.field != "length":
+                raise NotDeclaredException("array." + self.field, True, self.no_line, self.pos)
+            return Type("int")
+
+        if not env.contain_class(object_type.type):
+            raise BaseException(self.obj + " is not an object")
+
+        field_type = env.get_field_type(object_type.type, self.field)
+        if field_type is None:
+            raise BaseException(object_type + "." + self.field + " does not exist")
+        return field_type
+
 
 class EObjectApp(ZeroArgExpr):
-    def __init__(self, obj, method, no_line, pos):
+    def __init__(self, object_name, method_name, exprlist, no_line, pos):
         super(EObjectApp, self).__init__(None, None, no_line, pos)
         self.type = "objectapp"
-        self.obj = obj
-        self.method = method
+        self.object_name = object_name
+        self.method_name = method_name
+        self.exprlist = exprlist
+        self.object_class = None
 
-    def generate_body(self, env):
-        env.push_stack(1)
-        return "ldc " + str(self.value) + " \n"
+    def get_type(self, env):
+        if not env.contain_variable(self.object_name):
+            raise NotDeclaredException(self.object_name, True, self.no_line, self.pos)
+        self.object_class = env.get_variable_type()
+        if not env.contain_class(self.object_class.type):
+            raise Exception("There is no class called " + self.object_class.type)
+        if not env.contain_method(self.object_class.type, self.method_name):
+            raise NotDeclaredException(self.object_class.type + "." + self.method_name, True, self.no_line, self.pos)
+        self.etype = env.get_method_type(self.object_class.type, self.method_name)
+        self.check_arg_list(env)
+
+    def check_arg_list(self, env):
+        if len(self.exprlist) != len(self.etype.params_types):
+            raise SyntaxException("Wrong number of parameters for function "
+                                  + self.object_class.type + "." + self.method_name + " - expected:"
+                                  + str(len(self.etype.params_types)) + " actual: "
+                                  + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos)
+
+        for i in range(len(self.exprlist)):
+            self.exprlist[i].type_check(env, self.etype.params_types[i])
 
 
 class EMul(TwoArgExpr):
@@ -415,13 +452,11 @@ class EVar(ZeroArgExpr):
 
 class EArrayInit(ZeroArgExpr):
     def __init__(self, type, array_length, no_line, pos):
-        super(EArrayInit, self).__init__(None, ArrayType(type, array_length), no_line, pos)
+        super(EArrayInit, self).__init__(None, ArrayType(type), no_line, pos)
+        self.array_length = array_length
 
     def get_type(self, env):
-        if self.etype is None:
-            if not env.contain_variable(self.value):
-                raise NotDeclaredException(self.value, False, self.no_line, self.pos)
-            self.etype = env.get_variable_type(self.value)
+        self.array_length.type_check(env, expected_type=Type("int"))
         return self.etype
 
 
@@ -430,14 +465,18 @@ class EArrayApp(ZeroArgExpr):
         super(EArrayApp, self).__init__(ident, None, no_line, pos)
         self.index = index
 
+    def get_type(self, env):
+        if not env.contain_variable(self.value):
+            raise NotDeclaredException(self.value, False, self.no_line, self.pos)
+        array_type = env.get_array_type(self.value)
+        if array_type is None:
+            raise BaseException(self.value + " is not an array.")
+        return array_type
+
+    def get_value(self):
+        return None
+
 
 class EObjectInit(ZeroArgExpr):
-    def __init__(self, class_name, no_line, pos):
-        super(EObjectInit, self).__init__(None, ClassType(class_name), no_line, pos)
-
-    def get_type(self, env):
-        if self.etype is None:
-            if not env.contain_variable(self.value):
-                raise NotDeclaredException(self.value, False, self.no_line, self.pos)
-            self.etype = env.get_variable_type(self.value)
-        return self.etype
+    def __init__(self, class_type, no_line, pos):
+        super(EObjectInit, self).__init__(None, class_type, no_line, pos)

@@ -16,6 +16,7 @@ class Env:
             self.current_stack_count = 0
             self.in_main = False
             self.var_env = {}
+            self.class_env = {}
             self.fun_env = {}
             self.var_store = {}
             self.variables_counter = 0
@@ -24,6 +25,7 @@ class Env:
         else:
             self.var_env = orig.var_env.copy()
             self.fun_env = orig.fun_env.copy()
+            self.class_env = orig.class_env.copy()
             self.var_store = orig.var_store.copy()
             self.var_decl = [] if reset_declarations else list(orig.var_decl)
             self.variables_counter = orig.variables_counter
@@ -39,6 +41,11 @@ class Env:
             raise DuplicateDeclarationException(fun.ident, True, fun.no_line, 0)
         self.fun_env[fun.ident] = fun.funtype
 
+    def add_class(self, class_def):
+        if class_def.ident in self.class_env:
+            raise DuplicateDeclarationException(class_def.ident, True, class_def.no_line, 0)
+        self.class_env[class_def.ident] = class_def
+
     def push_stack(self, number):
         self.current_stack_count += number
         self.max_stack_count = max(self.current_stack_count, self.max_stack_count)
@@ -51,6 +58,15 @@ class Env:
 
     def contain_variable(self, ident):
         return ident in self.var_env
+
+    def contain_class(self, ident):
+        return ident in self.class_env
+
+    def contain_field(self, ident, field):
+        return ident in self.class_env and self.class_env[ident].contain_field(field)
+
+    def contain_method(self, ident, method):
+        return ident in self.class_env and self.class_env[ident].contain_method(method)
 
     def contain_main(self):
         return "main" in self.fun_env and self.fun_env["main"] == FunType(Type("int"), [])
@@ -76,6 +92,17 @@ class Env:
     def get_variable_type(self, ident):
         assert not ident in self.fun_env
         return self.var_env[ident]
+
+    def get_array_type(self, ident):
+        assert not ident in self.fun_env
+        return None if not self.var_env[ident].is_array() else self.var_env[ident].get_type()
+
+    def get_method_type(self, ident, method):
+        return self.class_env[ident].get_method_type(method)
+
+    def get_field_type(self, ident, field):
+        assert not ident in self.fun_env
+        return self.class_env[ident].get_field_type(field)
 
     def get_variable_value(self, ident):
         assert not ident in self.fun_env

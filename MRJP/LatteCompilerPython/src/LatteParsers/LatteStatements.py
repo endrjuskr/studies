@@ -25,9 +25,25 @@ class ForStmt(StmtBase):
     def __init__(self, var_ident, type, collection, stmt, no_line, pos):
         super(ForStmt, self).__init__("assstmt", no_line, pos)
         self.var_ident = var_ident
-        self.type = Type(type)
+        self.type = type
         self.collection = collection
         self.stmt = stmt
+
+    def type_check(self, env):
+        if not env.contain_variable(self.collection):
+            raise NotDeclaredException(self.collection, False, self.no_line, self.pos)
+        self.idtype = env.get_array_type(self.collection)
+        if self.idtype is None:
+            raise BaseException(self.collection + " is not an array.")
+        if self.idtype != self.type:
+            raise TypeException(self.idtype, self.type, self.no_line, self.pos)
+
+        env_prim = Env(env)
+        env_prim.add_variable(self.var_ident, self.type, self.no_line, self.pos, False)
+        self.stmt.type_check(env_prim)
+
+    def return_check(self):
+        return self.stmt.return_check()
 
 
 class VarAssStmt(StmtBase):
@@ -41,6 +57,8 @@ class VarAssStmt(StmtBase):
         if not env.contain_variable(self.ident):
             raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
         self.idtype = env.get_variable_type(self.ident)
+        print("Asdasds")
+        print(self.no_line)
         self.expr.type_check(env, expected_type=self.idtype)
 
     def return_check(self):
@@ -57,6 +75,7 @@ class VarAssStmt(StmtBase):
         env.pop_stack(1)
         return s
 
+
 class FieldAssStmt(StmtBase):
     def __init__(self, ident, field, expr, no_line, pos):
         super(FieldAssStmt, self).__init__("fieldassstmt", no_line, pos)
@@ -68,7 +87,12 @@ class FieldAssStmt(StmtBase):
     def type_check(self, env):
         if not env.contain_variable(self.ident):
             raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
-        self.idtype = env.get_variable_type(self.ident)
+        variable_class = env.get_variable_type(self.ident)
+        if not env.contain_class(variable_class.type):
+            raise NotDeclaredException(variable_class.type, False, self.no_line, self.pos)
+        if not env.contain_field(variable_class.type, self.field):
+            raise NotDeclaredException(variable_class.type + "." + self.field, False, self.no_line, self.pos)
+        self.idtype = env.get_field_type(variable_class.type, self.field)
         self.expr.type_check(env, expected_type=self.idtype)
 
     def return_check(self):
@@ -86,7 +110,11 @@ class ArrayAssStmt(StmtBase):
     def type_check(self, env):
         if not env.contain_variable(self.ident):
             raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
-        self.idtype = env.get_variable_type(self.ident)
+
+        self.index.type_check(env, expected_type=Type("int"))
+        self.idtype = env.get_array_type(self.ident)
+        if self.idtype is None:
+            raise BaseException(self.ident + " is not an array.")
         self.expr.type_check(env, expected_type=self.idtype)
 
     def return_check(self):
@@ -134,7 +162,6 @@ class CondElseStmt(StmtBase):
             return self.stmt1.return_check()
         else:
             return self.stmt2.return_check()
-
 
     def generate_body(self, env):
         if self.expr.get_value() is True:
@@ -247,7 +274,7 @@ class FieldDecrStmt(StmtBase):
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
             raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
-        elif env.get_variable_type(self.ident).type != "int":
+        elif env.get_field_type(self.ident, self.field).type != "int":
             raise SyntaxException("Decrement can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
                                                   + " for variable " + self.ident + ".", self.no_line)
@@ -283,8 +310,8 @@ class FieldIncrStmt(StmtBase):
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
             raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
-        elif env.get_variable_type(self.ident).type != "int":
-            raise SyntaxException("Increment can be applied only to integers, but got "
+        elif env.get_field_type(self.ident, self.field).type != "int":
+            raise SyntaxException("Decrement can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
                                                   + " for variable " + self.ident + ".", self.no_line)
 
@@ -319,6 +346,7 @@ class SExpStmt(StmtBase):
         self.expr = expr
 
     def type_check(self, env):
+        print(self.no_line)
         # Here we assume that the only expression is invocation of void function.
         self.expr.type_check(env, expected_type=Type("void"))
 

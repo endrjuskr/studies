@@ -40,7 +40,6 @@ for i in $( cd lattetests/extensions/arrays1 && ls *.lat); do
 done
 echo Done!
 
-
 echo Running extensions/struct tests!
 for i in $( cd lattetests/extensions/struct && ls *.lat); do
 	./latc_x86_64 lattetests/extensions/struct/$i 2> test.err > test.out
@@ -48,6 +47,7 @@ for i in $( cd lattetests/extensions/struct && ls *.lat); do
         echo error in $i
         cat test.err
     fi
+    cat test.out
     echo "" >> lattetests/extensions/struct/"${i%%.*}".input
     #./lattetests/extensions/struct/a.out < lattetests/extensions/struct/"${i%%.*}".input > lattetests/extensions/struct/"${i%%.*}".test.output
 
@@ -58,46 +58,5 @@ for i in $( cd lattetests/extensions/struct && ls *.lat); do
     rm -f lattetests/extensions/struct/*.test.output
     rm -f lattetests/extensions/struct/*.s
     rm -f lattetests/extensions/struct/*.out
-done
-echo Done!
-
-echo Running extensions/objects1 tests!
-for i in $( cd lattetests/extensions/objects1 && ls *.lat); do
-	./latc_x86_64 lattetests/extensions/objects1/$i 2> test.err > test.out
-	if [[ "OK" != $(head -n 1 "test.err") ]]; then
-        echo error in $i
-        cat test.err
-    fi
-    echo "" >> lattetests/extensions/objects1/"${i%%.*}".input
-    #./lattetests/extensions/objects1/a.out < lattetests/extensions/objects1/"${i%%.*}".input > lattetests/extensions/objects1/"${i%%.*}".test.output
-
-    # To see error code add - ; echo $?
-    #diff lattetests/extensions/objects1/"${i%%.*}".output lattetests/extensions/objects1/"${i%%.*}".test.output
-    rm -f *.err
-    rm -f *.out
-    rm -f lattetests/extensions/objects1/*.test.output
-    rm -f lattetests/extensions/objects1/*.s
-    rm -f lattetests/extensions/objects1/*.out
-done
-echo Done!
-
-
-echo Running extensions/objects2 tests!
-for i in $( cd lattetests/extensions/objects2 && ls *.lat); do
-	./latc_x86_64 lattetests/extensions/objects2/$i 2> test.err > test.out
-	if [[ "OK" != $(head -n 1 "test.err") ]]; then
-        echo error in $i
-        cat test.err
-    fi
-    echo "" >> lattetests/extensions/objects2/"${i%%.*}".input
-    #./lattetests/extensions/objects2/a.out < lattetests/extensions/objects2/"${i%%.*}".input > lattetests/extensions/objects2/"${i%%.*}".test.output
-
-    # To see error code add - ; echo $?
-    #diff lattetests/extensions/objects2/"${i%%.*}".output lattetests/extensions/objects2/"${i%%.*}".test.output
-    rm -f *.err
-    rm -f test.out
-    rm -f lattetests/extensions/objects2/*.test.output
-    rm -f lattetests/extensions/objects2/*.s
-    rm -f lattetests/extensions/objects2/*.out
 done
 echo Done!

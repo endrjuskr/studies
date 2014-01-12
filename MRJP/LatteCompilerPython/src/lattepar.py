@@ -80,10 +80,14 @@ def p_list_stmt(p):
         p[0].append(p[2])
 
 def p_list_fields(p):
-    '''listfields : field
+    '''listfields :
+            | field
             | listfields field'''
 
-    if len(p) == 2:
+    if len(p) == 1:
+        # empty list
+        p[0] = []
+    elif len(p) == 2:
         # last statement
         p[0] = [p[1]]
     else:
@@ -146,7 +150,7 @@ def p_arg(p):
 
 def p_arg_o(p):
     'arg : ID ID'
-    p[0] = Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
+    p[0] = Arg(Type(p[1]), p[2], p.lineno(2), p.lexpos(2))
 
 def p_field_s(p):
     'field : type ID SEMI'
@@ -154,15 +158,7 @@ def p_field_s(p):
 
 def p_field_o(p):
     'field : ID ID SEMI'
-    p[0] = Field(p[1], p[2], p.lineno(2), p.lexpos(2))
-
-def p_field_fn(p):
-    'field : type ID LPAREN listarg RPAREN block'
-    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
-
-def p_field_fn_o(p):
-    'field : ID ID LPAREN listarg RPAREN block'
-    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
+    p[0] = Field(Type(p[1]), p[2], p.lineno(2), p.lexpos(2))
 
 # Function definition
 
@@ -178,7 +174,7 @@ def p_class_extends(p):
 
 
 def p_classdef(p):
-    'topdef : CLASS ID ext LBRACE listfields RBRACE'
+    'topdef : CLASS ID ext LBRACE listfields listtopdef RBRACE'
     p[0] = ClassDef(p[2], p[3], p[5], p[6], p.lineno(2))
 
 def p_fndef(p):
@@ -187,7 +183,7 @@ def p_fndef(p):
 
 def p_fndef_o(p):
     'topdef : ID ID LPAREN listarg RPAREN block'
-    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
+    p[0] = FnDef(Type(p[1]), p[2], p[4], p[6], p.lineno(2))
 
 
 def p_block(p):
@@ -217,7 +213,7 @@ def p_statement_decl(p):
 
 def p_statement_decl_o(p):
     'stmt : ID listitem SEMI'
-    p[0] = DeclStmt(p[1], p[2], p.lineno(3), p.lexpos(3))
+    p[0] = DeclStmt(Type(p[1]), p[2], p.lineno(3), p.lexpos(3))
 
 
 def p_statement_var_ass(p):
@@ -232,7 +228,7 @@ def p_statement_field_ass(p):
 
 def p_statement_array_ass(p):
     '''stmt : ID LARRAY expr RARRAY EQUALS expr SEMI '''
-    p[0] = ArrayAssStmt(p[1], p[3], p[5], p.lineno(1), p.lexpos(1))
+    p[0] = ArrayAssStmt(p[1], p[3], p[6], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_incr(p):
@@ -286,7 +282,7 @@ def p_statement_sexp(p):
 
 def p_statement_for(p):
     'stmt : FOR LPAREN type_s ID COL ID RPAREN stmt'
-    p[0] = ForStmt(p[4], p[3], p[6], p[7], p.lineno(1), p.lexpos(1))
+    p[0] = ForStmt(p[4], p[3], p[6], p[8], p.lineno(1), p.lexpos(1))
 
 
 # Expression definitions
@@ -298,7 +294,7 @@ def p_expression_array_init(p):
 
 def p_expression_object_init(p):
     'expr6 : NEW ID'
-    p[0] = EObjectInit(p[2], p.lineno(1), p.lexpos(1))
+    p[0] = EObjectInit(Type(p[2]), p.lineno(1), p.lexpos(1))
 
 
 def p_expression_var(p):
@@ -338,7 +334,7 @@ def p_expression_app(p):
 
 def p_expression_object_app(p):
     'expr6 : ID DOT ID LPAREN listexpr RPAREN'
-    p[0] = EObjectApp(p[1], p[3], p.lineno(2), p.lexpos(2))
+    p[0] = EObjectApp(p[1], p[3], p[5], p.lineno(2), p.lexpos(2))
 
 
 def p_expression_group(p):
@@ -453,7 +449,7 @@ def p_type_1(p):
 
 def p_type_a(p):
     '''type : type_s LARRAY RARRAY'''
-    p[0] = ArrayType(p[1], 0)
+    p[0] = ArrayType(p[1])
 
 # Error definition
 

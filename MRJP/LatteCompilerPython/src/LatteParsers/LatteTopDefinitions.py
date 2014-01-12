@@ -35,9 +35,27 @@ class ClassDef(BaseNode):
     def __init__(self, ident, extlist, fieldlist, methodslist, no_line):
         super(ClassDef, self).__init__("classdef", no_line, 0)
         self.ident = ident
-        self.fieldlist = fieldlist
-        self.methodslist = methodslist
+        self.fieldlist = dict(zip(map(lambda x: x.ident, fieldlist), fieldlist))
+        self.methodslist = dict(zip(map(lambda x: x.ident, methodslist), methodslist))
         self.extlist = extlist
+
+    def type_check(self):
+        env = Env()
+        for field in self.fieldlist.values():
+            env.add_variable(field.ident, field.field_type, field.no_line, field.pos, False)
+
+    def contain_field(self, field):
+        return field in self.fieldlist
+
+    def contain_method(self, method):
+        return method in self.methodslist
+
+    def get_field_type(self, field):
+        return self.fieldlist[field].field_type
+
+    def get_method_type(self, method):
+        return self.methodslist[method].funtype
+
 
 class FnDef(BaseNode):
     def __init__(self, type, ident, arglist, block, no_line):
@@ -62,7 +80,6 @@ class FnDef(BaseNode):
             env.add_variable(arg.ident, arg.argtype, arg.no_line, arg.pos)
         env.current_fun_type = self.funtype
         env.in_main = self.ident == "main"
-
 
     def calculate_type(self, type, arglist):
         return FunType(type, map(self.get_type, arglist))
@@ -128,7 +145,6 @@ class ConcatenateStringFun(PredefinedFun):
         super(ConcatenateStringFun, self).__init__(Type("string"), "concatenateString",
                                                    [Type("string"), Type("string")])
 
-
 class Program(BaseNode):
     def __init__(self, topdeflist):
         super(Program, self).__init__("program", -1, 0)
@@ -143,11 +159,21 @@ class Program(BaseNode):
 
     def type_check(self):
         env = Env()
-        for fndef in self.topdeflist:
+        for fndef in filter(lambda x: not hasattr(x, "methodslist"), self.topdeflist):
+            print("fn" + fndef.ident)
             env.add_fun(fndef)
 
-        for fndef in self.topdeflist:
+        for classdef in filter(lambda x: hasattr(x, "methodslist"), self.topdeflist):
+            print("class" + classdef.ident)
+            env.add_class(classdef)
+
+        for fndef in filter(lambda x: not hasattr(x, "methodslist"), self.topdeflist):
+            print("fn" + fndef.ident)
             self.fun_check(fndef, env)
+
+        for classdef in filter(lambda x: hasattr(x, "methodslist"), self.topdeflist):
+            print("class" + classdef.ident)
+            classdef.type_check()
 
         if env.contain_main() is False:
             raise SyntaxException("Main funtion is not declared.", self.no_line)
