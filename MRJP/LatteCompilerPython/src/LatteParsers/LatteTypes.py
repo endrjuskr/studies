@@ -1,6 +1,6 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["FunType", "Type"]
+__all__ = ["FunType", "Type", "ArrayType", "ClassType"]
 
 from operator import eq
 
@@ -34,16 +34,15 @@ class Type(object):
 
 
 class ArrayType(Type):
-    def __init__(self, array_type, size):
-        super(ArrayType, self).__init__("arraytype")
-        self.size = size
+    def __init__(self, array_type, length):
+        super(ArrayType, self).__init__("array")
         self.array_type = array_type
+        self.length = length
 
-    def get_length(self, env):
-        if self.size.get_value() is None:
-            pass
-        else:
-            return self.size.get_value()
+
+class ClassType(Type):
+    def __init__(self, class_type):
+        super(ClassType, self).__init__(class_type)
 
 
 class FunType(Type):

@@ -18,6 +18,7 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'PLUSPLUS', 'MINUSMINUS'),
     ('right', 'UMINUS'),
+    ('nonassoc', 'NULL'),
 )
 
 
@@ -49,10 +50,15 @@ def p_list_expr(p):
 
 
 def p_list_topdef(p):
-    '''listtopdef : topdef
+    '''listtopdef :
+            | topdef
             | listtopdef topdef'''
 
-    if len(p) == 2:
+    if len(p) == 1:
+        # empty list
+        p[0] = []
+
+    elif len(p) == 2:
         # last function definition
         p[0] = [p[1]]
     else:
@@ -61,9 +67,31 @@ def p_list_topdef(p):
         p[0].append(p[2])
 
 
+def p_chain_field(p):
+    '''chainfield : ID
+            | chainfield DOT ID'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1]
+        p[0].append(p[2])
+
+
 def p_list_stmt(p):
     '''liststmt : stmt
             | liststmt stmt'''
+
+    if len(p) == 2:
+        # last statement
+        p[0] = [p[1]]
+    else:
+        # list of statements
+        p[0] = p[1]
+        p[0].append(p[2])
+
+def p_list_fields(p):
+    '''listfields : field
+            | listfields field'''
 
     if len(p) == 2:
         # last statement
@@ -127,8 +155,35 @@ def p_arg(p):
     'arg : type ID'
     p[0] = Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
 
+
+def p_field_s(p):
+    'field : type ID SEMI'
+    p[0] = Field(p[1], p[2], p.lineno(2), p.lexpos(2))
+
+def p_field_o(p):
+    'field : ID ID SEMI'
+    p[0] = Field(p[1], p[2], p.lineno(2), p.lexpos(2))
+
+def p_field_o_a(p):
+    'field : ID LARRAY RARRAY ID SEMI'
+    p[0] = Field(p[1], p[4], p.lineno(2), p.lexpos(2))
+
 # Function definition
 
+
+def p_class_extends(p):
+    '''ext :
+            | EXTENDS ID'''
+    if len(p) == 1:
+        p[0] = []
+
+    elif len(p) == 2:
+        p[0] = [p[1]]
+
+
+def p_classdef(p):
+    'topdef : CLASS ID ext LBRACE listfields listtopdef RBRACE'
+    p[0] = ClassDef(p[2], p[3], p[5], p[6], p.lineno(2))
 
 def p_fndef(p):
     'topdef : type ID LPAREN listarg RPAREN block'
@@ -162,17 +217,17 @@ def p_statement_decl(p):
 
 
 def p_statement_ass(p):
-    'stmt : ID EQUALS expr SEMI'
+    '''stmt : var EQUALS expr SEMI '''
     p[0] = AssStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_incr(p):
-    'stmt : ID PLUSPLUS SEMI'
+    'stmt : var PLUSPLUS SEMI'
     p[0] = IncrStmt(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_statement_decr(p):
-    'stmt : ID MINUSMINUS SEMI'
+    'stmt : var MINUSMINUS SEMI'
     p[0] = DecrStmt(p[1], p.lineno(1), p.lexpos(1))
 
 
@@ -205,17 +260,53 @@ def p_statement_sexp(p):
     'stmt : expr SEMI'
     p[0] = SExpStmt(p[1], p.lineno(1), p.lexpos(1))
 
+def p_statement_for(p):
+    'stmt : FOR LPAREN type_s ID COL var RPAREN stmt'
+    p[0] = ForStmt(p[4], p[3], p[6], p[7], p.lineno(1), p.lexpos(1))
+
+
+def p_variable_3(p):
+    '''var2 : chainfield'''
+    p[0] = p[1]
+
+def p_variable_2(p):
+    'var : var2'
+    p[0] = p[1]
+
+def p_variable_array(p):
+    'var : var2 LARRAY expr RARRAY'
+    p[0] = EArrayApp(p[1], p[3], p.lineno(1), p.lexpos(1))
+
 # Expression definitions
+
+def p_expression_array_init(p):
+    'expr6 : NEW type_s LARRAY expr RARRAY'
+    p[0] = EArrayInit(p[2], p[4], p.lineno(1), p.lexpos(1))
+
+
+def p_expression_array_init_obj(p):
+    'expr6 : NEW ID LARRAY expr RARRAY'
+    p[0] = EArrayInit(p[2], p[4], p.lineno(1), p.lexpos(1))
+
+
+def p_expression_object_init(p):
+    'expr6 : NEW ID'
+    p[0] = EObjectInit(p[2], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_var(p):
-    'expr6 : ID'
+    'expr6 : var'
     p[0] = EVar(p[1], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_int(p):
     'expr6 : NUMBER'
     p[0] = ELitInt(p[1], p.lineno(1), p.lexpos(1))
+
+
+def p_expression_null(p):
+    '''expr6 : LPAREN ID RPAREN NULL '''
+    p[0] = ELitNull(p[2], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_boolean(p):
@@ -225,7 +316,7 @@ def p_expression_boolean(p):
 
 
 def p_expression_app(p):
-    'expr6 : ID LPAREN listexpr RPAREN'
+    'expr6 : var LPAREN listexpr RPAREN'
     p[0] = EApp(p[1], p[3], p.lineno(1), p.lexpos(1))
 
 
@@ -328,16 +419,20 @@ def p_expression_or_2(p):
 
 # Type definition
 
-
-def p_type(p):
-    '''type : INT LARRAY RARRAY
-            | BOOLEAN LARRAY RARRAY
-            | STRING LARRAY RARRAY
-            | INT
+def p_type_s(p):
+    '''type_s : INT
             | STRING
             | VOID
-            | BOOLEAN'''
+            | BOOLEAN '''
     p[0] = Type(p[1])
+
+def p_type_1(p):
+    '''type : type_s'''
+    p[0] = p[1]
+
+def p_type_a(p):
+    '''type : type_s LARRAY RARRAY'''
+    p[0] = ArrayType(p[1], 0)
 
 # Error definition
 
@@ -345,7 +440,7 @@ def p_type(p):
 def p_error(p):
     if p is None:
         return
-    exception_list.append(SyntaxException("Wrong expression '" + p.value + "'.", p.lineno, pos=p.lexpos))
+    exception_list.append(SyntaxException("Wrong expression '" + str(p.value) + "'.", p.lineno, pos=p.lexpos))
     tok = None
     while 1:
         tok = yacc.token()
@@ -356,4 +451,4 @@ def p_error(p):
 
 
 def get_parser():
-    return yacc.yacc(write_tables=0, debug=0)
+    return yacc.yacc()

@@ -1,6 +1,6 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["Block", "FnDef", "Program", "PredefinedFun"]
+__all__ = ["Block", "FnDef", "Program", "PredefinedFun", "ClassDef"]
 
 from ..LatteExceptions import *
 from .LatteTypes import *
@@ -30,6 +30,14 @@ class Block(BaseNode):
             s += stmt.generate_code_jvm(env)
         return s
 
+
+class ClassDef(BaseNode):
+    def __init__(self, ident, extlist, fieldlist, methodslist, no_line):
+        super(ClassDef, self).__init__("classdef", no_line, 0)
+        self.ident = ident
+        self.fieldlist = fieldlist
+        self.methodslist = methodslist
+        self.extlist = extlist
 
 class FnDef(BaseNode):
     def __init__(self, type, ident, arglist, block, no_line):

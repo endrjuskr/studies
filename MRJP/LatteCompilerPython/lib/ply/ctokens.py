@@ -34,7 +34,7 @@ tokens = [
     'LPAREN', 'RPAREN',
     'LBRACKET', 'RBRACKET',
     'LBRACE', 'RBRACE',
-    'COMMA', 'PERIOD', 'SEMI', 'COLON',
+    'COMMA', 'PERIOD', 'SEMI', 'COL',
 
     # Ellipsis (...)
     'ELLIPSIS',
@@ -96,7 +96,7 @@ t_RBRACE           = r'\}'
 t_COMMA            = r','
 t_PERIOD           = r'\.'
 t_SEMI             = r';'
-t_COLON            = r':'
+t_COL            = r':'
 t_ELLIPSIS         = r'\.\.\.'
 
 # Identifiers

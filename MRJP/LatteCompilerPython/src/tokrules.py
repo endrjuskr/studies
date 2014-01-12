@@ -16,10 +16,11 @@ reserved = (
     'VOID',
     'TRUE',
     'FALSE',
+    'NULL',
     'NEW',
     'FOR',
-    'STRUCT',
-    'CLASS')
+    'CLASS',
+    'EXTENDS')
 
 
 # Token names.
@@ -27,7 +28,7 @@ tokens = reserved + (
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MOD',
     'OR', 'AND', 'NOT',
     'LT', 'LE', 'GT', 'GE', 'EQ', 'NE',
-    'EQUALS', 'DOT', 'COLON',
+    'EQUALS', 'DOT', 'COL',
     'PLUSPLUS', 'MINUSMINUS',
     'LPAREN', 'RPAREN', 'LBRACE', 'RBRACE', 'COMMA', 'SEMI',
     'NUMBER', 'SENTENCE', 'ID', 'LARRAY', 'RARRAY')
@@ -62,7 +63,7 @@ t_SEMI = r';'
 t_LARRAY = r'\['
 t_RARRAY = r'\]'
 t_DOT = r'\.'
-t_COLON = r':'
+t_COL = r'\:'
 
 
 def t_NUMBER(t):

@@ -1,6 +1,6 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["Arg", "InitItem", "ItemBase", "NoInitItem"]
+__all__ = ["Arg", "InitItem", "ItemBase", "NoInitItem", "Field"]
 
 from .BaseNode import *
 from .LatteTypes import *
@@ -8,6 +8,12 @@ from .LatteTypes import *
 class Arg(BaseNode):
     def __init__(self, type, ident, no_line, pos):
         super(Arg, self).__init__("arg", no_line, pos)
+        self.argtype = type
+        self.ident = ident
+
+class Field(BaseNode):
+    def __init__(self, type, ident, no_line, pos):
+        super(Field, self).__init__("field", no_line, pos)
         self.argtype = type
         self.ident = ident
 

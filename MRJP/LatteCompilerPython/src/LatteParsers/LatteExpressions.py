@@ -1,7 +1,7 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["EAdd", "EAnd", "EApp", "ELitBoolean", "ELitInt", "EMul", "ENeg", "ENot", "EOr", "ERel", "EString", "EVar",
-           "ExprBase", "OneArgExpr", "TwoArgExpr", "ZeroArgExpr"]
+           "ExprBase", "OneArgExpr", "TwoArgExpr", "ZeroArgExpr", "EArrayInit", "EArrayApp", "EObjectInit", "ELitNull"]
 
 from .BaseNode import *
 from ..LatteExceptions import *
@@ -46,6 +46,9 @@ class OneArgExpr(ExprBase):
         s = self.expr.generate_code_jvm(env)
         return s
 
+    def generate_code_asm(self, env):
+        return self.expr.generate_code_asm(env)
+
 
 class TwoArgExpr(ExprBase):
     def __init__(self, left, right, op, etype, argtype, no_line, pos):
@@ -75,6 +78,13 @@ class TwoArgExpr(ExprBase):
         s = self.left.generate_code_jvm(env)
         s += self.right.generate_code_jvm(env)
         return s
+
+    def generate_code_asm(self, env):
+        s = self.left.generate_code_asm(env)
+        reg = env.get_free_registry()
+        s += "mov " + reg + ", rax"
+        s += self.left.generate_code_asm(env)
+
 
 
 class ZeroArgExpr(ExprBase):
@@ -193,6 +203,14 @@ class ELitBoolean(ZeroArgExpr):
     def generate_body(self, env):
         env.push_stack(1)
         return "iconst_1\n" if self.value else "iconst_0\n"
+
+
+class ELitNull(ZeroArgExpr):
+    def __init__(self, type, no_line, pos):
+        #TODO: moze tu byc tablica jako type
+        super(ELitNull, self).__init__(None, Type(type), no_line, pos)
+        self.type = "elitnull"
+
 
 
 class ELitInt(ZeroArgExpr):
@@ -372,3 +390,33 @@ class EVar(ZeroArgExpr):
             return "aload " + str(env.get_variable_value(self.value)) + "\n"
         else:
             return "iload " + str(env.get_variable_value(self.value)) + "\n"
+
+
+class EArrayInit(ZeroArgExpr):
+    def __init__(self, type, array_length, no_line, pos):
+        super(EArrayInit, self).__init__(None, ArrayType(type, array_length), no_line, pos)
+
+    def get_type(self, env):
+        if self.etype is None:
+            if not env.contain_variable(self.value):
+                raise NotDeclaredException(self.value, False, self.no_line, self.pos)
+            self.etype = env.get_variable_type(self.value)
+        return self.etype
+
+
+class EArrayApp(ZeroArgExpr):
+    def __init__(self, ident, index, no_line, pos):
+        super(EArrayApp, self).__init__(ident, None, no_line, pos)
+        self.index = index
+
+
+class EObjectInit(ZeroArgExpr):
+    def __init__(self, class_name, no_line, pos):
+        super(EObjectInit, self).__init__(None, ClassType(class_name), no_line, pos)
+
+    def get_type(self, env):
+        if self.etype is None:
+            if not env.contain_variable(self.value):
+                raise NotDeclaredException(self.value, False, self.no_line, self.pos)
+            self.etype = env.get_variable_type(self.value)
+        return self.etype

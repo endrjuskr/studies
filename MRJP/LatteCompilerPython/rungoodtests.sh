@@ -1,4 +1,3 @@
-#!/bin/bash          
 echo Running good tests!
 for i in $( cd lattetests/good && ls *.lat); do
 	./latc lattetests/good/$i 2> test.err > test.out
@@ -15,4 +14,5 @@ for i in $( cd lattetests/good && ls *.lat); do
     rm lattetests/good/*.j
     rm lattetests/good/*.class
 done
+
 echo Done!

@@ -37,11 +37,9 @@ if __name__ == "__main__":
     except IOError:
         print "File does not exist - '{}'.".format(sys.argv[1])
         sys.exit(-1)
-    debug = 0
+    asm = 0
     if len(sys.argv) > 2:
-        debug = 1 if sys.argv[2] == "-d" else 0
-
-
+        asm = 1
 
     lattelexer = lattelex.get_lexer()
     latteparser = lattepar.get_parser()
@@ -56,16 +54,23 @@ if __name__ == "__main__":
         if result is None:
             raise SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
         result.set_class_name(program_name)
-        result.type_check()
+        #result.type_check()
         # At this point lexer and syntax analysis is done so program is accepted.
         sys.stderr.write("OK\n")
-        path[len(path) - 1] = program_name + ".j"
+        exit(0)
+        path[len(path) - 1] = program_name + ".j" if asm == 0 else ".asm"
         new_file_path = '/'.join(path)
-        f = open(new_file_path, 'w+')
-        f.write(result.generate_code_jvm(Env(class_name=program_name)))
-        f.close()
-        subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1]) + " " + new_file_path,
-                        shell=True)
+        if asm == 0:
+            f = open(new_file_path, 'w+')
+            f.write(result.generate_code_jvm(Env(class_name=program_name)))
+            f.close()
+            subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1])
+                            + " " + new_file_path, shell=True)
+        else:
+            f = open(new_file_path, 'w+')
+            f.write(result.generate_code_asm(Env(class_name=program_name)))
+            f.close()
+            subprocess.call("nasm -elf64 " + new_file_path, shell=True)
     except LatteBaseException as e:
         sys.stderr.write("ERROR\n")
         e.find_column(content)

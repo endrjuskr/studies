@@ -1,7 +1,7 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["AssStmt", "BStmt", "CondElseStmt", "CondStmt", "DeclStmt", "DecrStmt",
-           "EmptyStmt", "IncrStmt", "RetStmt", "SExpStmt", "StmtBase", "VRetStmt", "WhileStmt"]
+           "EmptyStmt", "IncrStmt", "RetStmt", "SExpStmt", "StmtBase", "VRetStmt", "WhileStmt", "ForStmt"]
 
 from .LatteTypes import *
 from ..LatteExceptions import *
@@ -18,6 +18,15 @@ class StmtBase(BaseNode):
 
     def return_check(self):
         return False
+
+
+class ForStmt(StmtBase):
+    def __init__(self, var_ident, type, collection, stmt, no_line, pos):
+        super(ForStmt, self).__init__("assstmt", no_line, pos)
+        self.var_ident = var_ident
+        self.type = Type(type)
+        self.collection = collection
+        self.stmt = stmt
 
 
 class AssStmt(StmtBase):

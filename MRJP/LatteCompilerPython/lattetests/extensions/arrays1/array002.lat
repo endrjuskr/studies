@@ -42,5 +42,5 @@ int main () {
   for (int x : b)printInt (x);
   printInt(scalProd(a,b));
   return 0 ;
+
 }
- 
