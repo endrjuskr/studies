@@ -57,9 +57,9 @@ if __name__ == "__main__":
         result.type_check()
         # At this point lexer and syntax analysis is done so program is accepted.
         sys.stderr.write("OK\n")
-        exit(0)
-        path[len(path) - 1] = program_name + ".j" if asm == 0 else ".asm"
+        path[len(path) - 1] = program_name + (".j" if asm == 0 else ".s")
         new_file_path = '/'.join(path)
+        print new_file_path
         if asm == 0:
             f = open(new_file_path, 'w+')
             f.write(result.generate_code_jvm(Env(class_name=program_name)))
@@ -70,7 +70,7 @@ if __name__ == "__main__":
             f = open(new_file_path, 'w+')
             f.write(result.generate_code_asm(Env(class_name=program_name)))
             f.close()
-            subprocess.call("nasm -elf64 " + new_file_path, shell=True)
+            subprocess.call("nasm -f elf64 " + new_file_path, shell=True)
     except LatteBaseException as e:
         sys.stderr.write("ERROR\n")
         e.find_column(content)

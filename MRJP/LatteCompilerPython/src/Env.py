@@ -9,7 +9,7 @@ from .LatteParsers.LatteTypes import *
 class Env:
     def __init__(self, orig=None, reset_declarations=True, class_name="MyClass"):
         self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
-        self.possible_registers = ["rax", "rbx", "rcx", "rdx"]
+        self.stack_shift = 0
         if orig is None:
             self.class_name = class_name
             self.current_fun_type = None
@@ -22,6 +22,7 @@ class Env:
             self.variables_counter = 0
             self.max_variable_counter = 0
             self.var_decl = []
+            self.string_dict = {}
         else:
             self.var_env = orig.var_env.copy()
             self.fun_env = orig.fun_env.copy()
@@ -35,6 +36,19 @@ class Env:
             self.max_stack_count = orig.current_stack_count
             self.in_main = orig.in_main
             self.class_name = orig.class_name
+            self.string_dict = orig.string_dict.copy()
+
+    def add_string(self, s):
+        size = len(self.string_dict)
+        label = "string_" + str(size)
+        self.string_dict[label] = s
+        return label
+
+    def increment_stack(self):
+        self.stack_shift += 4
+
+    def decrement_stack(self):
+        self.stack_shift -= 4
 
     def add_fun(self, fun):
         if fun.ident in self.fun_env:
@@ -107,6 +121,10 @@ class Env:
     def get_variable_value(self, ident):
         assert not ident in self.fun_env
         return self.var_store[ident]
+
+    def get_variable_position(self, ident):
+        assert not ident in self.fun_env
+        return (max(self.var_store.values()) - self.var_store[ident] + 1) * 4 + self.stack_shift
 
     def get_fun_class(self, ident):
         if ident in self.predefined_fun:

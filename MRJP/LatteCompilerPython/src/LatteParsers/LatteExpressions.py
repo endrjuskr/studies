@@ -44,11 +44,12 @@ class OneArgExpr(ExprBase):
             self.value = - self.expr.value
 
     def generate_body(self, env):
-        s = self.expr.generate_code_jvm(env)
-        return s
+        return self.expr.generate_code_jvm(env)
 
     def generate_code_asm(self, env):
-        return self.expr.generate_code_asm(env)
+        s = self.expr.generate_code_asm(env)
+        s += "pop rax\n"
+        return s
 
 
 class TwoArgExpr(ExprBase):
@@ -82,10 +83,12 @@ class TwoArgExpr(ExprBase):
 
     def generate_code_asm(self, env):
         s = self.left.generate_code_asm(env)
-        reg = env.get_free_registry()
-        s += "mov " + reg + ", rax"
-        s += self.left.generate_code_asm(env)
-
+        env.increment_stack()
+        s += self.right.generate_code_asm(env)
+        env.decrement_stack()
+        s += "pop rbx\n"
+        s += "pop rax\n"
+        return s
 
 class ZeroArgExpr(ExprBase):
     def __init__(self, value, etype, no_line, pos):
@@ -93,7 +96,6 @@ class ZeroArgExpr(ExprBase):
         self.value = value
 
     def type_check(self, env, expected_type=None):
-        print(self.pos)
         if expected_type is not None and expected_type != self.get_type(env):
             raise TypeException(expected_type, self.get_type(env), self.no_line, self.pos)
 
@@ -135,6 +137,19 @@ class EAdd(TwoArgExpr):
         env.pop_stack(1)
         return s
 
+    def generate_code_asm(self, env):
+        s = super(EAdd, self).generate_code_asm(env)
+        if self.etype == Type("string"):
+            #TODO
+            pass
+        elif self.op == "+":
+            s += "add rax, rbx\n"
+        else:
+            s += "sub rax, rbx\n"
+        s += "push rax\n"
+        return s
+
+
 
 class EAnd(TwoArgExpr):
     def __init__(self, left, right, no_line, pos):
@@ -157,6 +172,12 @@ class EAnd(TwoArgExpr):
         s += "iand \n"
         s += self.label_pattern + ":\n"
         env.pop_stack(1)
+        return s
+
+    def generate_code_asm(self, env):
+        s = super(EAnd, self).generate_code_asm(env)
+        s += "and rax, rbx\n"
+        s += "push rax\n"
         return s
 
 
@@ -184,7 +205,6 @@ class EApp(ZeroArgExpr):
                                   + str(len(self.etype.params_types)) + " actual: "
                                   + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos)
 
-        print(self.no_line)
         for i in range(len(self.exprlist)):
             self.exprlist[i].type_check(env, self.etype.params_types[i])
 
@@ -196,6 +216,17 @@ class EApp(ZeroArgExpr):
         s += "\n"
         return s
 
+    def generate_code_asm(self, env):
+        s = ""
+        for expr in reversed(self.exprlist):
+            s += expr.generate_code_asm(env)
+            env.increment_stack()
+        s += "call " + self.funident + "\n"
+        env.stack_shift -= len(self.exprlist) * 4
+        s += "add rsp, " + str(len(self.exprlist) * 4) + "\n"
+        s += "push rax\n"
+        return s
+
 
 class ELitBoolean(ZeroArgExpr):
     def __init__(self, lit, no_line, pos):
@@ -205,6 +236,11 @@ class ELitBoolean(ZeroArgExpr):
     def generate_body(self, env):
         env.push_stack(1)
         return "iconst_1\n" if self.value else "iconst_0\n"
+
+    def generate_code_asm(self, env):
+        s = "mov rax, " + ("1\n" if self.value else "0\n")
+        s += "push rax\n"
+        return s
 
 
 class ELitNull(ZeroArgExpr):
@@ -222,6 +258,11 @@ class ELitInt(ZeroArgExpr):
         env.push_stack(1)
         return "ldc " + str(self.value) + " \n"
 
+    def generate_code_asm(self, env):
+        s = "mov rax, " + str(self.value) + "\n"
+        s += "push rax\n"
+        return s
+
 
 class EObjectField(ZeroArgExpr):
     def __init__(self, obj, field, no_line, pos):
@@ -233,9 +274,7 @@ class EObjectField(ZeroArgExpr):
     def get_type(self, env):
         if not env.contain_variable(self.obj):
             raise NotDeclaredException(self.obj, False, self.no_line, self.pos)
-        print(self.obj)
         object_type = env.get_variable_type(self.obj)
-        print(object_type)
         if object_type.is_array():
             if self.field != "length":
                 raise NotDeclaredException("array." + self.field, True, self.no_line, self.pos)
@@ -310,6 +349,19 @@ class EMul(TwoArgExpr):
         env.pop_stack(2)
         return s
 
+    def generate_code_asm(self, env):
+        s = super(EMul, self).generate_code_asm(env)
+        s += "mov rdx, 0\n" # wyzerowac
+        if self.op == "/":
+            s += "idiv rbx\n"
+        elif self.op == "*":
+            s += "imul rax, rbx\n"
+        else:
+            s += "idiv rbx\n"
+            s += "mov rax, rdx\n"
+        s += "push rax\n"
+        return s
+
 
 class ENeg(OneArgExpr):
     def __init__(self, expr, no_line, pos):
@@ -319,6 +371,12 @@ class ENeg(OneArgExpr):
     def generate_body(self, env):
         s = super(ENeg, self).generate_body(env)
         s += "ineg\n"
+        return s
+
+    def generate_code_asm(self, env):
+        s = super(ENeg, self).generate_code_asm(env)
+        s += "neg rax\n"
+        s += "push rax\n"
         return s
 
 
@@ -333,6 +391,12 @@ class ENot(OneArgExpr):
         s += "iconst_1\n"
         s += "ixor\n"
         env.pop_stack(1)
+        return s
+
+    def generate_code_asm(self, env):
+        s = super(ENot, self).generate_code_asm(env)
+        s += "not rax\n"
+        s += "push rax\n"
         return s
 
 
@@ -359,6 +423,12 @@ class EOr(TwoArgExpr):
         s += "ior \n"
         env.pop_stack(1)
         s += self.label_pattern + ":\n"
+        return s
+
+    def generate_code_asm(self, env):
+        s = super(EOr, self).generate_code_asm(env)
+        s += "or rax, rbx\n"
+        s += "push rax\n"
         return s
 
 
@@ -416,6 +486,36 @@ class ERel(TwoArgExpr):
         s += self.label_pattern + ":\n"
         return s
 
+    def generate_code_asm(self, env):
+        s = super(ERel, self).generate_code_asm(env)
+        s += "cmp rax, rbx\n"
+        if self.op == "==":
+            s += "je"
+        elif self.op == "!=":
+            s += "jne"
+        elif self.op == "<=":
+            s += "jle"
+        elif self.op == ">=":
+            s += "jge"
+        elif self.op == "<":
+            s += "jl"
+        elif self.op == ">":
+            s += "jg"
+
+        s += " "
+        s += self.label_pattern + "_t\n"
+        s += "goto " + self.label_pattern + "_f\n"
+
+        s += self.label_pattern + "_t:\n"
+        s += "mov rax, 1\n"
+        s += "goto " + self.label_pattern + "\n"
+
+        s += self.label_pattern + "_f:\n"
+        s += "mov rax, 0\n"
+        s += self.label_pattern + ":\n"
+        s += "push rax\n"
+        return s
+
 
 class EString(ZeroArgExpr):
     def __init__(self, value, no_line, pos):
@@ -424,7 +524,11 @@ class EString(ZeroArgExpr):
 
     def generate_body(self, env):
         env.push_stack(1)
-        return "ldc " + self.value + " \n"
+        return "ldc " + self.value + "\n"
+
+    def generate_code_asm(self, env):
+        label = env.add_string(self.value)
+        return "push dword [" + label + "]\n"
 
 
 class EVar(ZeroArgExpr):
@@ -448,6 +552,11 @@ class EVar(ZeroArgExpr):
             return "aload " + str(env.get_variable_value(self.value)) + "\n"
         else:
             return "iload " + str(env.get_variable_value(self.value)) + "\n"
+
+    def generate_code_asm(self, env):
+        s = "mov rax, [rsp - " + str(env.get_variable_position(self.value)) + "]\n"
+        s += "push rax\n"
+        return s
 
 
 class EArrayInit(ZeroArgExpr):

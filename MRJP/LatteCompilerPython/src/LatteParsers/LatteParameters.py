@@ -46,6 +46,10 @@ class InitItem(ItemBase):
             s += "istore " + str(env.get_variable_value(self.ident)) + "\n"
         return s
 
+    def generate_code_asm(self, env):
+        env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
+        return self.expr.generate_body(env)
+
 
 class NoInitItem(ItemBase):
     def __init__(self, ident, no_line, pos):
@@ -61,4 +65,14 @@ class NoInitItem(ItemBase):
             s += "iconst_0 \n"
             s += "istore " + str(env.get_variable_value(self.ident)) + "\n"
 
+        return s
+
+    def generate_code_asm(self, env):
+        s = ""
+        env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
+        if self.itemtype == Type("string"):
+            pass
+        else:
+            s += "mov rax, 0\n"
+            s += "push rax\n"
         return s
