@@ -3,6 +3,7 @@ __author__ = 'Andrzej Skrodzki - as292510'
 # This module just contains the lexing rules 
 
 from .LatteExceptions import LexerException
+import lattepar
 
 # Reserved words
 reserved = (
@@ -98,4 +99,4 @@ def t_newline(t):
 
 # Error handling rule 
 def t_error(t):
-    raise LexerException("Illegal character '%s'" % t.value[0], t.lexer.lineno)
+    lattepar.exception_list.append(LexerException("Illegal character '%s'" % t.value[0], t.lexer.lineno))

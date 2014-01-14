@@ -2,11 +2,13 @@ __author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["EAdd", "EAnd", "EApp", "ELitBoolean", "ELitInt", "EMul", "ENeg", "ENot", "EOr", "ERel", "EString", "EVar",
            "ExprBase", "OneArgExpr", "TwoArgExpr", "ZeroArgExpr", "EArrayInit", "EArrayApp", "EObjectInit",
-           "ELitNull", "EObjectField", "EObjectApp"]
+           "ELitNull", "EObjectField", "EObjectApp", "exception_list_expr"]
 
 from .BaseNode import *
 from ..LatteExceptions import *
 from .LatteTypes import *
+
+exception_list_expr = []
 
 
 class ExprBase(BaseNode):
@@ -35,7 +37,7 @@ class OneArgExpr(ExprBase):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != self.etype:
-            raise TypeException(expected_type, self.etype, self.no_line, self.pos)
+            exception_list_expr.append(TypeException(expected_type, self.etype, self.no_line, self.pos))
         self.expr.type_check(env, self.etype)
         return self.etype
 
@@ -65,11 +67,16 @@ class TwoArgExpr(ExprBase):
         self.arg_type_check(rtype)
         self.right.type_check(env, rtype)
 
+        error_occured = False
         if expected_type is not None and self.etype is not None and expected_type != self.etype:
-            raise TypeException(expected_type, self.etype, self.no_line, self.pos)
+            exception_list_expr.append(TypeException(expected_type, self.etype, self.no_line, self.pos))
+            error_occured = True
         if expected_type is not None and self.etype is None and expected_type != rtype:
-            raise TypeException(expected_type, rtype, self.no_line, self.pos)
-        self.calculate_value()
+            exception_list_expr.append(TypeException(expected_type, rtype, self.no_line, self.pos))
+            error_occured = True
+
+        if not error_occured:
+            self.calculate_value()
 
         return self.etype
 
@@ -97,7 +104,8 @@ class ZeroArgExpr(ExprBase):
 
     def type_check(self, env, expected_type=None):
         if expected_type is not None and expected_type != self.get_type(env):
-            raise TypeException(expected_type, self.get_type(env), self.no_line, self.pos)
+            exception_list_expr.append(TypeException(expected_type, self.get_type(env), self.no_line, self.pos))
+            return expected_type
 
         return self.get_type(env)
 
@@ -112,17 +120,20 @@ class EAdd(TwoArgExpr):
 
     def arg_type_check(self, rtype):
         if rtype == Type("boolean"):
-            raise SyntaxException("Boolean does not support add operators.", self.no_line, pos=self.pos)
+            exception_list_expr.append(SyntaxException("Boolean does not support add operators.", self.no_line, pos=self.pos))
         if rtype == Type("string") and self.op == "-":
-            raise SyntaxException("String does not support - operator.", self.no_line, pos=self.pos)
+            exception_list_expr.append(SyntaxException("String does not support - operator.", self.no_line, pos=self.pos))
         self.etype = rtype
 
     def calculate_value(self):
-        if self.left.get_value() is not None and self.right.get_value() is not None:
-            if self.op == "+":
-                self.value = self.left.get_value() + self.right.get_value()
-            elif self.op == "-":
-                self.value = self.left.get_value() - self.right.get_value()
+        try:
+            if self.left.get_value() is not None and self.right.get_value() is not None:
+                if self.op == "+":
+                    self.value = self.left.get_value() + self.right.get_value()
+                elif self.op == "-":
+                    self.value = self.left.get_value() - self.right.get_value()
+        except TypeError:
+            self.value = None
 
     def generate_body(self, env):
         s = super(EAdd, self).generate_body(env)
@@ -192,20 +203,22 @@ class EApp(ZeroArgExpr):
     def get_type(self, env):
         if self.etype is None:
             if not env.contain_function(self.funident):
-                raise NotDeclaredException(self.funident, True, self.no_line, self.pos)
-            self.etype = env.get_fun_type(self.funident)
-            self.check_arg_list(env)
+                exception_list_expr.append(NotDeclaredException(self.funident, True, self.no_line, self.pos))
+                return Type("void")
+            else:
+                self.etype = env.get_fun_type(self.funident)
+                self.check_arg_list(env)
 
         return self.etype.return_type
 
     def check_arg_list(self, env):
         if len(self.exprlist) != len(self.etype.params_types):
-            raise SyntaxException("Wrong number of parameters for function "
+            exception_list_expr.append(SyntaxException("Wrong number of parameters for function "
                                   + self.funident + " - expected:"
                                   + str(len(self.etype.params_types)) + " actual: "
-                                  + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos)
+                                  + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos))
 
-        for i in range(len(self.exprlist)):
+        for i in range(min(len(self.exprlist), len(self.etype.params_types))):
             self.exprlist[i].type_check(env, self.etype.params_types[i])
 
     def generate_body(self, env):
@@ -222,8 +235,8 @@ class EApp(ZeroArgExpr):
             s += expr.generate_code_asm(env)
             env.increment_stack()
         s += "call " + self.funident + "\n"
-        env.stack_shift -= len(self.exprlist) * 4
-        s += "add rsp, " + str(len(self.exprlist) * 4) + "\n"
+        env.stack_shift -= len(self.exprlist) * env.stack_var_size
+        s += "sub rsp, " + str(len(self.exprlist) * env.stack_var_size) + "\n"
         s += "push rax\n"
         return s
 
@@ -273,19 +286,19 @@ class EObjectField(ZeroArgExpr):
 
     def get_type(self, env):
         if not env.contain_variable(self.obj):
-            raise NotDeclaredException(self.obj, False, self.no_line, self.pos)
+            exception_list_expr.append(NotDeclaredException(self.obj, False, self.no_line, self.pos))
         object_type = env.get_variable_type(self.obj)
         if object_type.is_array():
             if self.field != "length":
-                raise NotDeclaredException("array." + self.field, True, self.no_line, self.pos)
+                exception_list_expr.append(NotDeclaredException("array." + self.field, True, self.no_line, self.pos))
             return Type("int")
 
         if not env.contain_class(object_type.type):
-            raise BaseException(self.obj + " is not an object")
+            exception_list_expr.append(BaseException(self.obj + " is not an object"))
 
         field_type = env.get_field_type(object_type.type, self.field)
         if field_type is None:
-            raise BaseException(object_type + "." + self.field + " does not exist")
+            exception_list_expr.append(BaseException(object_type + "." + self.field + " does not exist"))
         return field_type
 
 
@@ -300,21 +313,21 @@ class EObjectApp(ZeroArgExpr):
 
     def get_type(self, env):
         if not env.contain_variable(self.object_name):
-            raise NotDeclaredException(self.object_name, True, self.no_line, self.pos)
+            exception_list_expr.append(NotDeclaredException(self.object_name, True, self.no_line, self.pos))
         self.object_class = env.get_variable_type()
         if not env.contain_class(self.object_class.type):
-            raise Exception("There is no class called " + self.object_class.type)
+            exception_list_expr.append(Exception("There is no class called " + self.object_class.type))
         if not env.contain_method(self.object_class.type, self.method_name):
-            raise NotDeclaredException(self.object_class.type + "." + self.method_name, True, self.no_line, self.pos)
+            exception_list_expr.append(NotDeclaredException(self.object_class.type + "." + self.method_name, True, self.no_line, self.pos))
         self.etype = env.get_method_type(self.object_class.type, self.method_name)
         self.check_arg_list(env)
 
     def check_arg_list(self, env):
         if len(self.exprlist) != len(self.etype.params_types):
-            raise SyntaxException("Wrong number of parameters for function "
+            exception_list_expr.append(SyntaxException("Wrong number of parameters for function "
                                   + self.object_class.type + "." + self.method_name + " - expected:"
                                   + str(len(self.etype.params_types)) + " actual: "
-                                  + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos)
+                                  + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos))
 
         for i in range(len(self.exprlist)):
             self.exprlist[i].type_check(env, self.etype.params_types[i])
@@ -326,17 +339,22 @@ class EMul(TwoArgExpr):
         self.type = "emul"
 
     def calculate_value(self):
-        if self.left.get_value() is not None and self.right.get_value() is not None:
-            if self.op == "/":
-                if self.right.get_value() == 0:
-                    raise SyntaxException("Division by 0", self.no_line, pos=self.pos)
-                self.value = self.left.get_value() / self.right.get_value()
-            elif self.op == "*":
-                self.value = self.left.get_value() * self.right.get_value()
-            elif self.op == "%":
-                if self.right.get_value() == 0:
-                    raise SyntaxException("Modulo by 0", self.no_line, pos=self.pos)
-                self.value = self.left.get_value() % self.right.get_value()
+        try:
+            if self.left.get_value() is not None and self.right.get_value() is not None:
+                if self.op == "/":
+                    if self.right.get_value() == 0:
+                        exception_list_expr.append(SyntaxException("Division by 0", self.no_line, pos=self.pos))
+                    self.value = self.left.get_value() / self.right.get_value()
+                elif self.op == "*":
+                    self.value = self.left.get_value() * self.right.get_value()
+                elif self.op == "%":
+                    if self.right.get_value() == 0:
+                        exception_list_expr.append(SyntaxException("Modulo by 0", self.no_line, pos=self.pos))
+                    self.value = self.left.get_value() % self.right.get_value()
+        except TypeError:
+            self.value = None
+        except ZeroDivisionError:
+            self.value = None
 
     def generate_body(self, env):
         s = super(EMul, self).generate_body(env)
@@ -440,8 +458,8 @@ class ERel(TwoArgExpr):
 
     def arg_type_check(self, rtype):
         if rtype == Type("boolean") and self.op != "==" and self.op != "!=":
-            raise SyntaxException("Boolean does not support rel operators except '==' and '!='.",
-                                  self.no_line, pos=self.pos)
+            exception_list_expr.append(SyntaxException("Boolean does not support rel operators except '==' and '!='.",
+                                  self.no_line, pos=self.pos))
 
     def calculate_value(self):
         if self.left.get_value() is not None and self.right.get_value() is not None:
@@ -504,11 +522,11 @@ class ERel(TwoArgExpr):
 
         s += " "
         s += self.label_pattern + "_t\n"
-        s += "goto " + self.label_pattern + "_f\n"
+        s += "jmp " + self.label_pattern + "_f\n"
 
         s += self.label_pattern + "_t:\n"
         s += "mov rax, 1\n"
-        s += "goto " + self.label_pattern + "\n"
+        s += "jmp " + self.label_pattern + "\n"
 
         s += self.label_pattern + "_f:\n"
         s += "mov rax, 0\n"
@@ -528,7 +546,9 @@ class EString(ZeroArgExpr):
 
     def generate_code_asm(self, env):
         label = env.add_string(self.value)
-        return "push dword [" + label + "]\n"
+        s = "mov rax, qword [" + label + "]\n"
+        s += "push rax\n"
+        return s
 
 
 class EVar(ZeroArgExpr):
@@ -539,7 +559,8 @@ class EVar(ZeroArgExpr):
     def get_type(self, env):
         if self.etype is None:
             if not env.contain_variable(self.value):
-                raise NotDeclaredException(self.value, False, self.no_line, self.pos)
+                exception_list_expr.append(NotDeclaredException(self.value, False, self.no_line, self.pos))
+                return Type("void")
             self.etype = env.get_variable_type(self.value)
         return self.etype
 
@@ -576,10 +597,10 @@ class EArrayApp(ZeroArgExpr):
 
     def get_type(self, env):
         if not env.contain_variable(self.value):
-            raise NotDeclaredException(self.value, False, self.no_line, self.pos)
+            exception_list_expr.append(NotDeclaredException(self.value, False, self.no_line, self.pos))
         array_type = env.get_array_type(self.value)
         if array_type is None:
-            raise BaseException(self.value + " is not an array.")
+            exception_list_expr.append(BaseException(self.value + " is not an array."))
         return array_type
 
     def get_value(self):

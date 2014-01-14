@@ -6,6 +6,7 @@ import subprocess
 import lattepar
 import lattelex
 from .LatteExceptions import *
+from LatteParsers import *
 from .Env import *
 
 
@@ -43,39 +44,45 @@ if __name__ == "__main__":
 
     lattelexer = lattelex.get_lexer()
     latteparser = lattepar.get_parser()
-    try:
-        result = latteparser.parse(content, lexer=lattelexer)
-        if len(lattepar.exception_list) != 0:
-            sys.stderr.write("ERROR\n")
-            for ex in lattepar.exception_list:
-                ex.find_column(content)
-                sys.stderr.write("{}\n".format(ex))
-            sys.exit(-2)
-        if result is None:
-            raise SyntaxException("Something happened wrong, but compiler could not find out :(.", -1)
-        result.set_class_name(program_name)
-        result.type_check()
-        # At this point lexer and syntax analysis is done so program is accepted.
-        sys.stderr.write("OK\n")
-        path[len(path) - 1] = program_name + (".j" if asm == 0 else ".s")
-        new_file_path = '/'.join(path)
-        print new_file_path
-        if asm == 0:
-            f = open(new_file_path, 'w+')
-            f.write(result.generate_code_jvm(Env(class_name=program_name)))
-            f.close()
-            subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1])
-                            + " " + new_file_path, shell=True)
-        else:
-            f = open(new_file_path, 'w+')
-            f.write(result.generate_code_asm(Env(class_name=program_name)))
-            f.close()
-            subprocess.call("nasm -f elf64 " + new_file_path, shell=True)
-    except LatteBaseException as e:
+    result = latteparser.parse(content, lexer=lattelexer)
+    if len(lattepar.exception_list) != 0:
         sys.stderr.write("ERROR\n")
-        e.find_column(content)
-        sys.stderr.write("{}\n".format(e))
-        sys.stdout.write("{}\n".format(e))
+        for ex in lattepar.exception_list:
+            ex.find_column(content)
+            sys.stderr.write("{}\n".format(ex))
+        sys.exit(-2)
+    if result is None:
+        sys.stderr.write("ERROR\n")
+        sys.stderr.write("Unexpected end of file.\n")
+    result.set_class_name(program_name)
+    result.type_check()
+
+    ex_li = exception_list_env
+    ex_li += LatteExpressions.exception_list_expr
+    ex_li += LatteStatements.exception_list_stmt
+    ex_li += LatteTopDefinitions.exception_list_fn
+
+    if len(ex_li) != 0:
+        sys.stderr.write("ERROR\n")
+        for ex in ex_li:
+            ex.find_column(content)
+            sys.stderr.write("{}\n".format(ex))
         sys.exit(-2)
 
+    # At this point lexer and syntax analysis is done so program is accepted.
+    sys.stderr.write("OK\n")
+    path[len(path) - 1] = program_name + (".j" if asm == 0 else ".s")
+    new_file_path = '/'.join(path)
+    print new_file_path
+    if asm == 0:
+        f = open(new_file_path, 'w+')
+        f.write(result.generate_code_jvm(Env(class_name=program_name)))
+        f.close()
+        subprocess.call("java -cp lib/*.class -jar lib/jasmin.jar -g -d " + '/'.join(path[0:-1])
+                        + " " + new_file_path, shell=True)
+    else:
+        f = open(new_file_path, 'w+')
+        f.write(result.generate_code_asm(Env(class_name=program_name)))
+        f.close()
+        subprocess.call("nasm -f elf64 " + new_file_path, shell=True)
     sys.exit()

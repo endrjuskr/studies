@@ -48,7 +48,7 @@ class InitItem(ItemBase):
 
     def generate_code_asm(self, env):
         env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
-        return self.expr.generate_body(env)
+        return self.expr.generate_code_asm(env)
 
 
 class NoInitItem(ItemBase):
@@ -71,7 +71,8 @@ class NoInitItem(ItemBase):
         s = ""
         env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
         if self.itemtype == Type("string"):
-            pass
+            s += "mov rax, qword [string_empty]\n"
+            s += "push rax\n"
         else:
             s += "mov rax, 0\n"
             s += "push rax\n"

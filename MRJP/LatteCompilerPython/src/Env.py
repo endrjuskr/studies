@@ -1,15 +1,18 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["Env"]
+__all__ = ["Env", "exception_list_env"]
 
 from .LatteExceptions import *
 from .LatteParsers.LatteTypes import *
+
+exception_list_env = []
 
 
 class Env:
     def __init__(self, orig=None, reset_declarations=True, class_name="MyClass"):
         self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
         self.stack_shift = 0
+        self.stack_var_size = 8
         if orig is None:
             self.class_name = class_name
             self.current_fun_type = None
@@ -45,19 +48,19 @@ class Env:
         return label
 
     def increment_stack(self):
-        self.stack_shift += 4
+        self.stack_shift += self.stack_var_size
 
     def decrement_stack(self):
-        self.stack_shift -= 4
+        self.stack_shift -= self.stack_var_size
 
     def add_fun(self, fun):
         if fun.ident in self.fun_env:
-            raise DuplicateDeclarationException(fun.ident, True, fun.no_line, 0)
+            exception_list_env.append(DuplicateDeclarationException(fun.ident, True, fun.no_line, 0))
         self.fun_env[fun.ident] = fun.funtype
 
     def add_class(self, class_def):
         if class_def.ident in self.class_env:
-            raise DuplicateDeclarationException(class_def.ident, True, class_def.no_line, 0)
+            exception_list_env.append(DuplicateDeclarationException(class_def.ident, True, class_def.no_line, 0))
         self.class_env[class_def.ident] = class_def
 
     def push_stack(self, number):
@@ -91,17 +94,17 @@ class Env:
 
     def add_variable(self, ident, type, no_line, pos, fun_param=True):
         if ident in self.fun_env:
-            raise SyntaxException("Trying override function " + ident + ".", no_line)
+            exception_list_env.append(SyntaxException("Trying override function " + ident + ".", no_line))
         elif not ident in self.var_decl:
             self.var_env[ident] = type
             self.var_store[ident] = self.variables_counter
             self.var_decl.append(ident)
             self.variables_counter += 1
         elif fun_param:
-            raise SyntaxException("More than one argument with the name " + ident
-                                  + ".", no_line, pos=pos)
+            exception_list_env.append(SyntaxException("More than one argument with the name " + ident +
+                                  ".", no_line, pos=pos))
         else:
-            raise DuplicateDeclarationException(ident, False, no_line, pos)
+            exception_list_env.append(DuplicateDeclarationException(ident, False, no_line, pos))
 
     def get_variable_type(self, ident):
         assert not ident in self.fun_env
@@ -124,7 +127,7 @@ class Env:
 
     def get_variable_position(self, ident):
         assert not ident in self.fun_env
-        return (max(self.var_store.values()) - self.var_store[ident] + 1) * 4 + self.stack_shift
+        return (max(self.var_store.values()) - self.var_store[ident] + 1) * self.stack_var_size + self.stack_shift
 
     def get_fun_class(self, ident):
         if ident in self.predefined_fun:

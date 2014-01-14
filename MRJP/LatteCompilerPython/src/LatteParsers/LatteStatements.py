@@ -2,12 +2,14 @@ __author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["VarAssStmt", "FieldAssStmt", "BStmt", "CondElseStmt", "CondStmt", "DeclStmt", "DecrStmt",
            "EmptyStmt", "IncrStmt", "RetStmt", "SExpStmt", "StmtBase", "VRetStmt", "WhileStmt", "ForStmt",
-           "FieldDecrStmt", "FieldIncrStmt", "ArrayAssStmt"]
+           "FieldDecrStmt", "FieldIncrStmt", "ArrayAssStmt", "exception_list_stmt"]
 
 from .LatteTypes import *
 from ..LatteExceptions import *
 from .BaseNode import *
 from ..Env import *
+
+exception_list_stmt = []
 
 
 class StmtBase(BaseNode):
@@ -30,8 +32,9 @@ class VarAssStmt(StmtBase):
 
     def type_check(self, env):
         if not env.contain_variable(self.ident):
-            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
-        self.idtype = env.get_variable_type(self.ident)
+            exception_list_stmt.append(NotDeclaredException(self.ident, False, self.no_line, self.pos))
+        else:
+            self.idtype = env.get_variable_type(self.ident)
         self.expr.type_check(env, expected_type=self.idtype)
 
     def return_check(self):
@@ -150,7 +153,7 @@ class CondElseStmt(StmtBase):
             s += "cmp rax, 0\n"
             s += "je " + self.label_pattern + "_f\n"
             s += self.stmt1.generate_code_asm(env_prim)
-            s += "goto " + self.label_pattern + "\n"
+            s += "jmp " + self.label_pattern + "\n"
             s += self.label_pattern + "_f:\n"
             s += self.stmt2.generate_code_asm(env_prim2)
             s += self.label_pattern + ":\n"
@@ -234,18 +237,18 @@ class DecrStmt(StmtBase):
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
-            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(self.ident, False, self.no_line, self.pos))
         elif env.get_variable_type(self.ident).type != "int":
-            raise SyntaxException("Decrement can be applied only to integers, but got "
+            exception_list_stmt.append(SyntaxException("Decrement can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
-                                                  + " for variable " + self.ident + ".", self.no_line)
+                                                  + " for variable " + self.ident + ".", self.no_line))
 
     def generate_body(self, env):
         return "iinc " + str(env.get_variable_value(self.ident)) + " -1\n"
 
     def generate_code_asm(self, env):
         # Sprawdzic czy moze tu by adres pamieci
-        return "inc [rsp - " + str(env.get_variable_position(self.ident)) + "]\n"
+        return "inc qword [rsp - " + str(env.get_variable_position(self.ident)) + "]\n"
 
 
 class FieldDecrStmt(StmtBase):
@@ -256,11 +259,11 @@ class FieldDecrStmt(StmtBase):
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
-            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(self.ident, False, self.no_line, self.pos))
         elif env.get_field_type(self.ident, self.field).type != "int":
-            raise SyntaxException("Decrement can be applied only to integers, but got "
+            exception_list_stmt.append(SyntaxException("Decrement can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
-                                                  + " for variable " + self.ident + ".", self.no_line)
+                                                  + " for variable " + self.ident + ".", self.no_line))
 
 class EmptyStmt(StmtBase):
     def __init__(self, no_line, pos):
@@ -274,18 +277,18 @@ class IncrStmt(StmtBase):
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
-            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(self.ident, False, self.no_line, self.pos))
         elif env.get_variable_type(self.ident).type != "int":
-            raise SyntaxException("Increment can be applied only to integers, but got "
+            exception_list_stmt.append(SyntaxException("Increment can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
-                                                  + " for variable " + self.ident + ".", self.no_line)
+                                                  + " for variable " + self.ident + ".", self.no_line))
 
     def generate_body(self, env):
         return "iinc " + str(env.get_variable_value(self.ident)) + " 1\n"
 
     def generate_code_asm(self, env):
         # Sprawdzic czy moze tu by adres pamieci
-        return "dec [rsp - " + str(env.get_variable_position(self.ident)) + "]\n"
+        return "dec qword [rsp - " + str(env.get_variable_position(self.ident)) + "]\n"
 
 
 class FieldIncrStmt(StmtBase):
@@ -296,11 +299,11 @@ class FieldIncrStmt(StmtBase):
 
     def type_check(self, env):
         if env.get_variable_type(self.ident) is None:
-            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(self.ident, False, self.no_line, self.pos))
         elif env.get_field_type(self.ident, self.field).type != "int":
-            raise SyntaxException("Decrement can be applied only to integers, but got "
+            exception_list_stmt.append(SyntaxException("Decrement can be applied only to integers, but got "
                                                   + str(env.get_variable_type(self.ident))
-                                                  + " for variable " + self.ident + ".", self.no_line)
+                                                  + " for variable " + self.ident + ".", self.no_line))
 
 
 class RetStmt(StmtBase):
@@ -355,8 +358,8 @@ class VRetStmt(StmtBase):
 
     def type_check(self, env):
         if env.current_fun_type.return_type != Type("void"):
-            raise SyntaxException("Incorrect return type, expected not void.", self.no_line,
-                                                  pos=self.pos)
+            exception_list_stmt.append(SyntaxException("Incorrect return type, expected not void.", self.no_line,
+                                                  pos=self.pos))
 
     def generate_body(self, env):
         return "return \n"
@@ -381,7 +384,7 @@ class WhileStmt(StmtBase):
         return self.stmt.return_check()
 
     def generate_body(self, env):
-        env_prim =Env(env)
+        env_prim = Env(env)
         s = self.label_pattern + "_w:\n"
         s += self.expr.generate_code_jvm(env)
         s += "ifeq " + self.label_pattern + "\n"
@@ -401,7 +404,7 @@ class WhileStmt(StmtBase):
         s += "cmp rax, 0\n"
         s += "je " + self.label_pattern + "\n"
         s += self.stmt.generate_code_asm(env_prim)
-        s += "goto " + self.label_pattern + "_w\n"
+        s += "jmp " + self.label_pattern + "_w\n"
         s += self.label_pattern + ":\n"
         return s
 
@@ -416,12 +419,12 @@ class FieldAssStmt(StmtBase):
 
     def type_check(self, env):
         if not env.contain_variable(self.ident):
-            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(self.ident, False, self.no_line, self.pos))
         variable_class = env.get_variable_type(self.ident)
         if not env.contain_class(variable_class.type):
-            raise NotDeclaredException(variable_class.type, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(variable_class.type, False, self.no_line, self.pos))
         if not env.contain_field(variable_class.type, self.field):
-            raise NotDeclaredException(variable_class.type + "." + self.field, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(variable_class.type + "." + self.field, False, self.no_line, self.pos))
         self.idtype = env.get_field_type(variable_class.type, self.field)
         self.expr.type_check(env, expected_type=self.idtype)
 
@@ -439,12 +442,12 @@ class ArrayAssStmt(StmtBase):
 
     def type_check(self, env):
         if not env.contain_variable(self.ident):
-            raise NotDeclaredException(self.ident, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(self.ident, False, self.no_line, self.pos))
 
         self.index.type_check(env, expected_type=Type("int"))
         self.idtype = env.get_array_type(self.ident)
         if self.idtype is None:
-            raise BaseException(self.ident + " is not an array.")
+            exception_list_stmt.append(BaseException(self.ident + " is not an array."))
         self.expr.type_check(env, expected_type=self.idtype)
 
     def return_check(self):
@@ -461,12 +464,12 @@ class ForStmt(StmtBase):
 
     def type_check(self, env):
         if not env.contain_variable(self.collection):
-            raise NotDeclaredException(self.collection, False, self.no_line, self.pos)
+            exception_list_stmt.append(NotDeclaredException(self.collection, False, self.no_line, self.pos))
         self.idtype = env.get_array_type(self.collection)
         if self.idtype is None:
-            raise BaseException(self.collection + " is not an array.")
+            exception_list_stmt.append(BaseException(self.collection + " is not an array."))
         if self.idtype != self.type:
-            raise TypeException(self.idtype, self.type, self.no_line, self.pos)
+            exception_list_stmt.append(TypeException(self.idtype, self.type, self.no_line, self.pos))
 
         env_prim = Env(env)
         env_prim.add_variable(self.var_ident, self.type, self.no_line, self.pos, False)
