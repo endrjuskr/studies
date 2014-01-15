@@ -281,7 +281,7 @@ def p_statement_sexp(p):
     p[0] = SExpStmt(p[1], p.lineno(1), p.lexpos(1))
 
 def p_statement_for(p):
-    'stmt : FOR LPAREN type_s ID COL ID RPAREN stmt'
+    'stmt : FOR LPAREN type_s ID COL expr RPAREN stmt'
     p[0] = ForStmt(p[4], p[3], p[6], p[8], p.lineno(1), p.lexpos(1))
 
 

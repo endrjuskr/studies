@@ -55,3 +55,8 @@ void* initArray(int length, int size)
     void * a = malloc(length * size);
     return a;
 }
+
+int* getArraySize(void * a)
+{
+    return sizeof(a);
+}

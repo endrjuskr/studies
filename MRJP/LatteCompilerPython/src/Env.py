@@ -130,6 +130,9 @@ class Env:
         assert not ident in self.fun_env
         return (self.variables_counter - 1 - self.var_store[ident]) * self.stack_var_size + self.stack_shift
 
+    def get_array_length(self, ident):
+        return (self.variables_counter - 1 - self.array_lengths[ident]) * self.stack_var_size + self.stack_shift
+
     def get_fun_class(self, ident):
         if ident in self.predefined_fun:
             return "Runtime"
