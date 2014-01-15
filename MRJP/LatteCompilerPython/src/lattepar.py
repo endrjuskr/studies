@@ -218,37 +218,37 @@ def p_statement_decl_o(p):
 
 def p_statement_var_ass(p):
     '''stmt : ID EQUALS expr SEMI '''
-    p[0] = VarAssStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
+    p[0] = VarAssStmt(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_field_ass(p):
     '''stmt : ID DOT ID EQUALS expr SEMI '''
-    p[0] = FieldAssStmt(p[1], p[3], p[5], p.lineno(1), p.lexpos(1))
+    p[0] = FieldAssStmt(p[1], p[3], p[5], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_array_ass(p):
     '''stmt : ID LARRAY expr RARRAY EQUALS expr SEMI '''
-    p[0] = ArrayAssStmt(p[1], p[3], p[6], p.lineno(1), p.lexpos(1))
+    p[0] = ArrayAssStmt(p[1], p[3], p[6], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_incr(p):
     'stmt : ID PLUSPLUS SEMI'
-    p[0] = IncrStmt(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = IncrStmt(p[1], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_decr(p):
     'stmt : ID MINUSMINUS SEMI'
-    p[0] = DecrStmt(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = DecrStmt(p[1], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_field_incr(p):
     'stmt : ID DOT ID PLUSPLUS SEMI'
-    p[0] = FieldIncrStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
+    p[0] = FieldIncrStmt(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_field_decr(p):
     'stmt : ID DOT ID MINUSMINUS SEMI'
-    p[0] = FieldDecrStmt(p[1], p[3], p.lineno(1), p.lexpos(1))
+    p[0] = FieldDecrStmt(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_ret(p):
@@ -278,7 +278,7 @@ def p_statement_while(p):
 
 def p_statement_sexp(p):
     'stmt : expr SEMI'
-    p[0] = SExpStmt(p[1], p.lineno(1), p.lexpos(1))
+    p[0] = SExpStmt(p[1], p.lineno(2), p.lexpos(2))
 
 def p_statement_for(p):
     'stmt : FOR LPAREN type_s ID COL ID RPAREN stmt'
@@ -376,7 +376,7 @@ def p_mulop(p):
 
 def p_expression_mul_2(p):
     '''expr4 : expr4 mulop expr5'''
-    p[0] = EMul(p[1], p[3], p[2], p[1].no_line, p[1].pos)
+    p[0] = EMul(p[1], p[3], p[2], p[1].no_line, p[1].pos + 1)
 
 
 def p_addop(p):
@@ -387,7 +387,7 @@ def p_addop(p):
 
 def p_expression_add_1(p):
     '''expr3 : expr3 addop expr4'''
-    p[0] = EAdd(p[1], p[3], p[2], p[1].no_line, p[1].pos)
+    p[0] = EAdd(p[1], p[3], p[2], p[1].no_line, p[1].pos + 1)
 
 
 def p_expression_add_3(p):
@@ -407,7 +407,7 @@ def p_relop(p):
 
 def p_expression_rel_1(p):
     '''expr2 : expr2 relop expr3'''
-    p[0] = ERel(p[1], p[3], p[2], p[1].no_line, p[1].pos)
+    p[0] = ERel(p[1], p[3], p[2], p[1].no_line, p[1].pos + 1)
 
 
 def p_expression_rel_2(p):
@@ -417,7 +417,7 @@ def p_expression_rel_2(p):
 
 def p_expression_and_1(p):
     '''expr1 : expr2 AND expr1'''
-    p[0] = EAnd(p[1], p[3], p[1].no_line, p[1].pos)
+    p[0] = EAnd(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_expression_and_2(p):
@@ -427,7 +427,7 @@ def p_expression_and_2(p):
 
 def p_expression_or_1(p):
     '''expr : expr1 OR expr'''
-    p[0] = EOr(p[1], p[3], p[1].no_line, p[1].pos)
+    p[0] = EOr(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_expression_or_2(p):

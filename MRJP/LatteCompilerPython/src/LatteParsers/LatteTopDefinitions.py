@@ -34,6 +34,7 @@ class Block(BaseNode):
     def generate_code_asm(self, env):
         s = ""
         for stmt in self.stmt_list:
+            print("asdasd")
             s += stmt.generate_code_asm(env)
         return s
 

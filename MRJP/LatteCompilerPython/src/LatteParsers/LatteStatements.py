@@ -463,7 +463,7 @@ class ArrayAssStmt(StmtBase):
         return False
 
     def generate_code_asm(self, env):
-        s = self.index.generate_body_asm(env)
+        s = self.index.generate_code_asm(env)
         env.increment_stack()
         s += self.expr.generate_code_asm(env)
         s += "pop rcx\n"

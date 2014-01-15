@@ -317,6 +317,13 @@ class EObjectField(ZeroArgExpr):
             exception_list_expr.append(BaseException(object_type + "." + self.field + " does not exist"))
         return field_type
 
+    def generate_code_asm(self, env):
+        position = env.get_variable_position(self.obj)
+        s = "mov rdi, [rsp + " + str(position) + "]\n"
+        s += "call getArraySize\n"
+        s += "push rax\n"
+        return s
+
 
 class EObjectApp(ZeroArgExpr):
     def __init__(self, object_name, method_name, exprlist, no_line, pos):

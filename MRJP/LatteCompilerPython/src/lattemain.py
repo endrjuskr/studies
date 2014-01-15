@@ -76,6 +76,8 @@ if __name__ == "__main__":
     new_file_path = '/'.join(path)
     path[len(path) - 1] = program_name + ".o"
     obj_file_path = '/'.join(path)
+    path[len(path) - 1] = "a.out"
+    out_file_path = '/'.join(path)
     if asm == 0:
         f = open(new_file_path, 'w+')
         f.write(result.generate_code_jvm(Env(class_name=program_name)))
@@ -87,5 +89,5 @@ if __name__ == "__main__":
         f.write(result.generate_code_asm(Env(class_name=program_name)))
         f.close()
         subprocess.call("nasm -g -f elf64 " + new_file_path, shell=True)
-        subprocess.call("gcc -g lib/runtime.o " + obj_file_path, shell=True)
+        subprocess.call("gcc -g -o " + out_file_path + " lib/runtime.o " + obj_file_path, shell=True)
     sys.exit()
