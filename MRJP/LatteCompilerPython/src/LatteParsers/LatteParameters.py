@@ -19,7 +19,6 @@ class Arg(BaseNode):
             exception_list_par.append(SyntaxException("Cannot initialize void variable.", self.no_line, self.pos))
 
 
-
 class Field(BaseNode):
     def __init__(self, type, ident, no_line, pos):
         super(Field, self).__init__("field", no_line, pos)

@@ -482,23 +482,41 @@ class ForStmt(StmtBase):
         self.type = type
         self.collection = collection
         self.stmt = stmt
+        self.label = "for_" + str(self.no_line) + "_" + str(self.pos)
 
     def type_check(self, env):
-        if not env.contain_variable(self.collection):
-            exception_list_stmt.append(NotDeclaredException(self.collection, False, self.no_line, self.pos))
-        self.idtype = env.get_array_type(self.collection)
-        if self.idtype is None:
-            exception_list_stmt.append(BaseException(self.collection + " is not an array."))
-        if self.idtype != self.type:
-            exception_list_stmt.append(TypeException(self.idtype, self.type, self.no_line, self.pos))
+        if self.type.get_type() == Type("void"):
+            exception_list_stmt.append(SyntaxException("Type void is not allowed.", self.no_line, self.pos))
+        if self.type.is_array():
+            exception_list_stmt.append(SyntaxException("Multidimensional arrays are not allowed.", self.no_line, self.pos))
 
         env_prim = Env(env)
         env_prim.add_variable(self.var_ident, self.type, self.no_line, self.pos, False)
+        self.collection.type_check(env, expected_type=self.type)
         self.stmt.type_check(env_prim)
 
     def return_check(self):
         return self.stmt.return_check()
 
     def generate_code_asm(self, env):
-        pass
-
+        self.collection.generate_code_asm(env)
+        s += "pop rdi\n"
+        s += "call getArraySize"
+        s += "push rax\n"
+        env.increment_stack()
+        s += self.label + "_f:\n"
+        s += "cmp rcx, [rsp]\n"
+        s += "jge " + self.label
+        env_prim = Env(env)
+        env_prim.add_variable(self.var_ident, self.type, self.no_line, self.pos, False)
+        s += "mov rax, [rsp]\n"
+        s += "add rax, rcx\n"
+        s += "push [rax]\n"
+        self.stmt.generate_code_asm(env_prim)
+        s += "add rcx, 8\n" # next index
+        s += "jmp " + self.label + "_f\n"
+        env.string_dict = env_prim.string_dict
+        s += self.label + ":\n"
+        env.decrement_stack()
+        s += "pop rax\n"
+        return s
