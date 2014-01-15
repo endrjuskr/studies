@@ -11,7 +11,6 @@ exception_list_env = []
 class Env:
     def __init__(self, orig=None, reset_declarations=True, class_name="MyClass"):
         self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
-        self.stack_shift = 0
         self.stack_var_size = 8
         if orig is None:
             self.class_name = class_name
@@ -26,11 +25,12 @@ class Env:
             self.max_variable_counter = 0
             self.var_decl = []
             self.string_dict = {}
+            self.stack_shift = 0
         else:
-            self.var_env = orig.var_env.copy()
-            self.fun_env = orig.fun_env.copy()
+            self.var_env = dict(orig.var_env)
+            self.fun_env = dict(orig.fun_env)
             self.class_env = orig.class_env.copy()
-            self.var_store = orig.var_store.copy()
+            self.var_store = dict(orig.var_store)
             self.var_decl = [] if reset_declarations else list(orig.var_decl)
             self.variables_counter = orig.variables_counter
             self.max_variable_counter = 0 if len(self.var_store.values()) == 0 else max(self.var_store.values()) + 1
@@ -40,6 +40,7 @@ class Env:
             self.in_main = orig.in_main
             self.class_name = orig.class_name
             self.string_dict = orig.string_dict.copy()
+            self.stack_shift = orig.stack_shift
 
     def add_string(self, s):
         size = len(self.string_dict)
@@ -127,7 +128,7 @@ class Env:
 
     def get_variable_position(self, ident):
         assert not ident in self.fun_env
-        return (max(self.var_store.values()) - self.var_store[ident] + 1) * self.stack_var_size + self.stack_shift
+        return (self.variables_counter - 1 - self.var_store[ident]) * self.stack_var_size + self.stack_shift
 
     def get_fun_class(self, ident):
         if ident in self.predefined_fun:

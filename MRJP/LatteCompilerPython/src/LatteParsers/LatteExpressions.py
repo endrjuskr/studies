@@ -97,6 +97,7 @@ class TwoArgExpr(ExprBase):
         s += "pop rax\n"
         return s
 
+
 class ZeroArgExpr(ExprBase):
     def __init__(self, value, etype, no_line, pos):
         super(ZeroArgExpr, self).__init__(etype, no_line, pos)
@@ -151,15 +152,15 @@ class EAdd(TwoArgExpr):
     def generate_code_asm(self, env):
         s = super(EAdd, self).generate_code_asm(env)
         if self.etype == Type("string"):
-            #TODO
-            pass
+            s += "mov rdi, rax\n"
+            s += "mov rsi, rbx\n"
+            s += "call contactString\n"
         elif self.op == "+":
             s += "add rax, rbx\n"
         else:
             s += "sub rax, rbx\n"
         s += "push rax\n"
         return s
-
 
 
 class EAnd(TwoArgExpr):
@@ -186,9 +187,18 @@ class EAnd(TwoArgExpr):
         return s
 
     def generate_code_asm(self, env):
-        s = super(EAnd, self).generate_code_asm(env)
-        s += "and rax, rbx\n"
+        s = self.left.generate_code_asm(env)
+        s += "mov rax, [rsp]\n"
+        s += "cmp rax, 0\n"
+        s += "je " + self.label_pattern + "\n"
+        env.increment_stack()
+        s += self.right.generate_code_asm(env)
+        env.decrement_stack()
+        s += "pop rbx\n"
+        s += "pop rax\n"
+        s += "and rax, rbx \n"
         s += "push rax\n"
+        s += self.label_pattern + ":\n"
         return s
 
 
@@ -231,13 +241,19 @@ class EApp(ZeroArgExpr):
 
     def generate_code_asm(self, env):
         s = ""
-        for expr in reversed(self.exprlist):
+        for expr in self.exprlist:
             s += expr.generate_code_asm(env)
-            env.increment_stack()
+            if self.funident in env.predefined_fun:
+                s += "pop rdi\n"
+                pass
+            else:
+                env.increment_stack()
         s += "call " + self.funident + "\n"
-        env.stack_shift -= len(self.exprlist) * env.stack_var_size
-        s += "sub rsp, " + str(len(self.exprlist) * env.stack_var_size) + "\n"
-        s += "push rax\n"
+        if not self.funident in env.predefined_fun:
+            env.stack_shift -= len(self.exprlist) * env.stack_var_size
+            s += "add rsp, " + str(len(self.exprlist) * env.stack_var_size) + "\n"
+        if env.get_fun_type(self.funident).return_type != Type("void"):
+            s += "push rax\n"
         return s
 
 
@@ -413,7 +429,7 @@ class ENot(OneArgExpr):
 
     def generate_code_asm(self, env):
         s = super(ENot, self).generate_code_asm(env)
-        s += "not rax\n"
+        s += "xor rax, 1\n"
         s += "push rax\n"
         return s
 
@@ -444,9 +460,18 @@ class EOr(TwoArgExpr):
         return s
 
     def generate_code_asm(self, env):
-        s = super(EOr, self).generate_code_asm(env)
-        s += "or rax, rbx\n"
+        s = self.left.generate_code_asm(env)
+        s += "mov rax, [rsp]\n"
+        s += "cmp rax, 1\n"
+        s += "je " + self.label_pattern + "\n"
+        env.increment_stack()
+        s += self.right.generate_code_asm(env)
+        env.decrement_stack()
+        s += "pop rbx\n"
+        s += "pop rax\n"
+        s += "or rax, rbx \n"
         s += "push rax\n"
+        s += self.label_pattern + ":\n"
         return s
 
 
@@ -546,7 +571,7 @@ class EString(ZeroArgExpr):
 
     def generate_code_asm(self, env):
         label = env.add_string(self.value)
-        s = "mov rax, qword [" + label + "]\n"
+        s = "mov rax, " + label + "\n"
         s += "push rax\n"
         return s
 
@@ -575,7 +600,7 @@ class EVar(ZeroArgExpr):
             return "iload " + str(env.get_variable_value(self.value)) + "\n"
 
     def generate_code_asm(self, env):
-        s = "mov rax, [rsp - " + str(env.get_variable_position(self.value)) + "]\n"
+        s = "mov rax, [rsp + " + str(env.get_variable_position(self.value)) + "]\n"
         s += "push rax\n"
         return s
 

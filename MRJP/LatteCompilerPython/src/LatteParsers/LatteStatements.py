@@ -56,7 +56,7 @@ class VarAssStmt(StmtBase):
         #Zakladamy, ze na stosie jest wynik i nic poza tym nie ma. Zatem zdejmujemy i mozemy normalnie odwolywac sie do zmiennych.
         position = env.get_variable_position(self.ident)
         s += "pop rax\n"
-        s += "mov [rsp - " + str(position) + "], rax\n"
+        s += "mov [rsp + " + str(position) + "], rax\n"
         return s
 
 
@@ -81,6 +81,7 @@ class BStmt(StmtBase):
     def generate_code_asm(self, env):
         env_prim = Env(env)
         s = self.block.generate_code_asm(env_prim)
+        s += "add rsp, " + str((env_prim.variables_counter - env.variables_counter) * 8) + "\n"
         env.string_dict = env_prim.string_dict
         return s
 
@@ -141,10 +142,14 @@ class CondElseStmt(StmtBase):
     def generate_code_asm(self, env):
         if self.expr.get_value() is True:
             env_prim = Env(env)
-            return self.stmt1.generate_code_asm(env_prim)
+            s = self.stmt1.generate_code_asm(env_prim)
+            env.string_dict = env_prim.string_dict
+            return s
         elif self.expr.get_value() is False:
             env_prim = Env(env)
-            return self.stmt2.generate_code_asm(env_prim)
+            s = self.stmt2.generate_code_asm(env_prim)
+            env.string_dict = env_prim.string_dict
+            return s
         else:
             env_prim = Env(env)
             env_prim2 = Env(env)
@@ -153,10 +158,12 @@ class CondElseStmt(StmtBase):
             s += "cmp rax, 0\n"
             s += "je " + self.label_pattern + "_f\n"
             s += self.stmt1.generate_code_asm(env_prim)
+            env_prim2.string_dict = env_prim.string_dict
             s += "jmp " + self.label_pattern + "\n"
             s += self.label_pattern + "_f:\n"
             s += self.stmt2.generate_code_asm(env_prim2)
             s += self.label_pattern + ":\n"
+            env.string_dict = env_prim2.string_dict
             return s
 
 
@@ -198,6 +205,7 @@ class CondStmt(StmtBase):
         s += "je " + self.label_pattern + "\n"
         s += self.stmt.generate_code_asm(env_prim)
         s += self.label_pattern + ":\n"
+        env.string_dict = env_prim.string_dict
         return s
 
 
@@ -248,7 +256,7 @@ class DecrStmt(StmtBase):
 
     def generate_code_asm(self, env):
         # Sprawdzic czy moze tu by adres pamieci
-        return "inc qword [rsp - " + str(env.get_variable_position(self.ident)) + "]\n"
+        return "dec qword [rsp + " + str(env.get_variable_position(self.ident)) + "]\n"
 
 
 class FieldDecrStmt(StmtBase):
@@ -288,7 +296,7 @@ class IncrStmt(StmtBase):
 
     def generate_code_asm(self, env):
         # Sprawdzic czy moze tu by adres pamieci
-        return "dec qword [rsp - " + str(env.get_variable_position(self.ident)) + "]\n"
+        return "inc qword [rsp + " + str(env.get_variable_position(self.ident)) + "]\n"
 
 
 class FieldIncrStmt(StmtBase):
@@ -365,7 +373,7 @@ class VRetStmt(StmtBase):
         return "return \n"
 
     def generate_code_asm(self, env):
-        return "leave\nret\n"
+        return "mov rax, 0\nleave\nret\n"
 
 
 class WhileStmt(StmtBase):
@@ -406,6 +414,7 @@ class WhileStmt(StmtBase):
         s += self.stmt.generate_code_asm(env_prim)
         s += "jmp " + self.label_pattern + "_w\n"
         s += self.label_pattern + ":\n"
+        env.string_dict = env_prim.string_dict
         return s
 
 

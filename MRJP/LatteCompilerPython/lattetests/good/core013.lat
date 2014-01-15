@@ -15,7 +15,6 @@ int main() {
   printBool(true);
   printBool(false);
   return 0 ;
-
 }
 
 void printBool(boolean b) {

@@ -69,6 +69,7 @@ string repStr(string s, int n) {
   string r = "";
   int i = 0;
   while(i<n) {
+    // printInt(i);
     r = r + s;
     i++;
   }

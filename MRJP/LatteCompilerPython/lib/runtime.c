@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define MAX_LENGTH 50
+#define MAX_LENGTH 1024
 
 
 int readInt()
 {
     int i;
-    scanf("%d", &i);
+    scanf("%d\n", &i);
     return i;
 }
 
@@ -19,8 +18,15 @@ void printInt(int i)
 
 char* readString()
 {
-    char* s = (char *)malloc(MAX_LENGTH+1);
-    scanf("%s", s);
+    char *s;
+    char c;
+    s = (char *)malloc(MAX_LENGTH+1);
+    int i = 0;
+    while((c = getchar()) != '\n')
+    {
+        s[i++] = c;
+    }
+
     return s;
 }
 
@@ -33,13 +39,13 @@ char* contactString(char* a, char* b)
 {
     char* s = (char *)malloc(strlen(a) + strlen(b) + 1);
     strcpy(s, a);
-    strcpy(s, b);
+    strcat(s, b);
     return s;
 }
 
 void error()
 {
-    char[] s = "runtime error\n";
+    char* s = "runtime error\n";
     printf("%s", s);
-    return 1;
+    exit(1);
 }
