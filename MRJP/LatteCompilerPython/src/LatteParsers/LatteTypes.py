@@ -23,6 +23,9 @@ class Type(object):
     def is_array(self):
         return False
 
+    def get_type(self):
+        return self
+
     def fill_matches(self):
         self.dict["int"] = "I"
         self.dict["string"] = "Ljava/lang/String;"

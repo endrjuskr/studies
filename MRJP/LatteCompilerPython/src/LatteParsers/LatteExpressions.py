@@ -609,10 +609,23 @@ class EArrayInit(ZeroArgExpr):
     def __init__(self, type, array_length, no_line, pos):
         super(EArrayInit, self).__init__(None, ArrayType(type), no_line, pos)
         self.array_length = array_length
+        self.a_type = type
 
     def get_type(self, env):
         self.array_length.type_check(env, expected_type=Type("int"))
         return self.etype
+
+    def generate_code_asm(self, env):
+        s = self.array_length.generate_code_asm(env)
+        s += "pop rdi\n"
+        if self.a_type == Type("string"):
+            s += "mov rsi, 1\n"
+        else:
+            s += "mov rsi, 1\n"
+        s += "call initArray\n"
+        s += "push rax\n"
+        return s
+
 
 
 class EArrayApp(ZeroArgExpr):
@@ -631,6 +644,14 @@ class EArrayApp(ZeroArgExpr):
     def get_value(self):
         return None
 
+    def generate_code_asm(self, env):
+        s = self.index.generate_code_asm(env)
+        s += "pop rbx\n"
+        s += "shl rbx, 3\n" # * 8
+        s += "mov rax, [rsp + " + str(env.get_variable_position(self.value)) + "]\n"
+        s += "add rax, rbx"
+        s += "push [rax]"
+        return s
 
 class EObjectInit(ZeroArgExpr):
     def __init__(self, class_type, no_line, pos):

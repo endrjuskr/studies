@@ -61,6 +61,7 @@ if __name__ == "__main__":
     ex_li += LatteExpressions.exception_list_expr
     ex_li += LatteStatements.exception_list_stmt
     ex_li += LatteTopDefinitions.exception_list_fn
+    ex_li += LatteParameters.exception_list_par
 
     if len(ex_li) != 0:
         sys.stderr.write("ERROR\n")

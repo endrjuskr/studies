@@ -462,6 +462,18 @@ class ArrayAssStmt(StmtBase):
     def return_check(self):
         return False
 
+    def generate_code_asm(self, env):
+        s = self.index.generate_body_asm(env)
+        env.increment_stack()
+        s += self.expr.generate_code_asm(env)
+        s += "pop rcx\n"
+        s += "pop rbx\n"
+        s += "shl rbx, 3\n"
+        s += "mov rax, [rsp + " + str(env.get_variable_position(self.ident)) + "]\n"
+        s += "add rax, rbx\n"
+        s += "mov [rax], rcx\n"
+        return s
+
 
 class ForStmt(StmtBase):
     def __init__(self, var_ident, type, collection, stmt, no_line, pos):
@@ -486,4 +498,7 @@ class ForStmt(StmtBase):
 
     def return_check(self):
         return self.stmt.return_check()
+
+    def generate_code_asm(self, env):
+        pass
 

@@ -49,3 +49,9 @@ void error()
     printf("%s", s);
     exit(1);
 }
+
+void* initArray(int length, int size)
+{
+    void * a = malloc(length * size);
+    return a;
+}

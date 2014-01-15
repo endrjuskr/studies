@@ -1,15 +1,23 @@
 __author__ = 'Andrzej Skrodzki - as292510'
 
-__all__ = ["Arg", "InitItem", "ItemBase", "NoInitItem", "Field"]
+__all__ = ["Arg", "InitItem", "ItemBase", "NoInitItem", "Field", "exception_list_par"]
 
 from .BaseNode import *
 from .LatteTypes import *
+from ..LatteExceptions import *
+
+exception_list_par = []
 
 class Arg(BaseNode):
     def __init__(self, type, ident, no_line, pos):
         super(Arg, self).__init__("arg", no_line, pos)
         self.argtype = type
         self.ident = ident
+
+    def type_check(self, env):
+        if self.argtype.get_type() == Type("void"):
+            exception_list_par.append(SyntaxException("Cannot initialize void variable.", self.no_line, self.pos))
+
 
 
 class Field(BaseNode):
@@ -23,7 +31,7 @@ class ItemBase(BaseNode):
     def __init__(self, ident, no_line, pos, type):
         super(ItemBase, self).__init__(type, no_line, pos)
         self.ident = ident
-        self.itemtype = "unknown"
+        self.itemtype = Type("void")
 
     def type_check(self, env):
         pass
@@ -35,6 +43,8 @@ class InitItem(ItemBase):
         self.expr = expr
 
     def type_check(self, env):
+        if self.itemtype.get_type() == Type("void"):
+            exception_list_par.append(SyntaxException("Cannot initialize void variable.", self.no_line, self.pos))
         self.expr.type_check(env, expected_type=self.itemtype)
 
     def generate_body(self, env):
@@ -54,6 +64,10 @@ class InitItem(ItemBase):
 class NoInitItem(ItemBase):
     def __init__(self, ident, no_line, pos):
         super(NoInitItem, self).__init__(ident, no_line, pos, "noinititem")
+
+    def type_check(self, env):
+        if self.itemtype.get_type() == Type("void"):
+            exception_list_par.append(SyntaxException("Cannot initialize void variable.", self.no_line, self.pos))
 
     def generate_body(self, env):
         s = ""
