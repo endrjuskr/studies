@@ -26,7 +26,9 @@ class Env:
             self.var_decl = []
             self.string_dict = {}
             self.stack_shift = 0
+            self.array_size = {}
         else:
+            self.array_size = dict(orig.array_size)
             self.var_env = dict(orig.var_env)
             self.fun_env = dict(orig.fun_env)
             self.class_env = orig.class_env.copy()
@@ -94,6 +96,10 @@ class Env:
         return self.fun_env[ident]
 
     def add_variable(self, ident, type, no_line, pos, fun_param=True):
+        if type is None:
+            self.array_size[ident] = self.variables_counter
+            self.variables_counter += 1
+            return
         if ident in self.fun_env:
             exception_list_env.append(SyntaxException("Trying override function " + ident + ".", no_line))
         elif not ident in self.var_decl:
@@ -131,7 +137,10 @@ class Env:
         return (self.variables_counter - 1 - self.var_store[ident]) * self.stack_var_size + self.stack_shift
 
     def get_array_length(self, ident):
-        return (self.variables_counter - 1 - self.array_lengths[ident]) * self.stack_var_size + self.stack_shift
+        return (self.variables_counter - 1 - self.array_size[ident]) * self.stack_var_size + self.stack_shift
+
+    def is_array(self, ident):
+        return ident in self.array_size.keys()
 
     def get_fun_class(self, ident):
         if ident in self.predefined_fun:

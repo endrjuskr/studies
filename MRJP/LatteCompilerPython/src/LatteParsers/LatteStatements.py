@@ -340,6 +340,8 @@ class RetStmt(StmtBase):
     def generate_code_asm(self, env):
         s = self.expr.generate_code_asm(env)
         s += "pop rax\n"
+        if self.expr.etype.is_array():
+            s += "pop rbx\n"
         s += "leave\nret\n"
         return s
 
@@ -466,6 +468,7 @@ class ArrayAssStmt(StmtBase):
         s = self.index.generate_code_asm(env)
         env.increment_stack()
         s += self.expr.generate_code_asm(env)
+        env.decrement_stack()
         s += "pop rcx\n"
         s += "pop rbx\n"
         s += "shl rbx, 3\n"
@@ -492,31 +495,33 @@ class ForStmt(StmtBase):
 
         env_prim = Env(env)
         env_prim.add_variable(self.var_ident, self.type, self.no_line, self.pos, False)
-        self.collection.type_check(env, expected_type=self.type)
+        self.collection.type_check(env, expected_type=ArrayType(self.type))
         self.stmt.type_check(env_prim)
 
     def return_check(self):
         return self.stmt.return_check()
 
     def generate_code_asm(self, env):
-        self.collection.generate_code_asm(env)
-        s += "pop rdi\n"
-        s += "call getArraySize"
-        s += "push rax\n"
-        env.increment_stack()
+        s = self.collection.generate_code_asm(env)
+        s += "push 0\n"
         s += self.label + "_f:\n"
-        s += "cmp rcx, [rsp]\n"
-        s += "jge " + self.label
+        s += "mov rcx, [rsp]\n"
+        s += "cmp rcx, [rsp + 16]\n"
+        s += "jge " + self.label + "\n"
         env_prim = Env(env)
+        env_prim.variables_counter += 3
         env_prim.add_variable(self.var_ident, self.type, self.no_line, self.pos, False)
-        s += "mov rax, [rsp]\n"
+        s += "mov rax, [rsp+8]\n"
+        s += "shl rcx, 3\n"
         s += "add rax, rcx\n"
-        s += "push [rax]\n"
-        self.stmt.generate_code_asm(env_prim)
-        s += "add rcx, 8\n" # next index
+        s += "push qword [rax]\n"
+        s += self.stmt.generate_code_asm(env_prim)
+        s += "pop rax\n"
+        s += "inc qword [rsp]\n" # next index
         s += "jmp " + self.label + "_f\n"
         env.string_dict = env_prim.string_dict
         s += self.label + ":\n"
-        env.decrement_stack()
+        s += "pop rax\n"
+        s += "pop rax\n"
         s += "pop rax\n"
         return s

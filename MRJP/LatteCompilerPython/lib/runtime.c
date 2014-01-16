@@ -52,11 +52,7 @@ void error()
 
 void* initArray(int length, int size)
 {
-    void * a = malloc(length * size);
+    printf("alloc\n");
+    void * a = calloc(length, size);
     return a;
-}
-
-int* getArraySize(void * a)
-{
-    return sizeof(a);
 }

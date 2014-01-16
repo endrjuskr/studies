@@ -23,4 +23,4 @@ class BaseNode(object):
         return ""
 
     def generate_code_asm(self, env):
-        pass
+        return ""

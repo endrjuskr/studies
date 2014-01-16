@@ -1,19 +1,9 @@
 int main() {
-
-  int[] a = new int[2];
-  int j=0;
-  string i = "asd";
-  while (j<a.length) {
-     a[1] = 1;
-     j++;
-  }
+  int[] a = new int[10];
+  a[0] = 5;
   for(int x : a)
   {
-    x++;
     printInt(x);
   }
-  printInt(x);
-  int x = 45;
-  printInt(x);
   return 0;
 }

@@ -1,8 +1,10 @@
 int main() {
 
   int[] a = new int[10];
+   int[] b = new int[20];
   int j=0;
   while (j<a.length) {
+     printInt(j);
      a[j] = j;
      j++;
   }

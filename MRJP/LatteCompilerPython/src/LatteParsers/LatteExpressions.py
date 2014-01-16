@@ -241,18 +241,25 @@ class EApp(ZeroArgExpr):
 
     def generate_code_asm(self, env):
         s = ""
+        shift = 0
         for expr in self.exprlist:
             s += expr.generate_code_asm(env)
             if self.funident in env.predefined_fun:
                 s += "pop rdi\n"
                 pass
             else:
+                if expr.etype.is_array():
+                    env.increment_stack()
+                    shift += 8
                 env.increment_stack()
+                shift += 8
         s += "call " + self.funident + "\n"
         if not self.funident in env.predefined_fun:
-            env.stack_shift -= len(self.exprlist) * env.stack_var_size
-            s += "add rsp, " + str(len(self.exprlist) * env.stack_var_size) + "\n"
+            env.stack_shift -= shift
+            s += "add rsp, " + str(shift) + "\n"
         if env.get_fun_type(self.funident).return_type != Type("void"):
+            if env.get_fun_type(self.funident).return_type.is_array():
+                s += "push rbx\n"
             s += "push rax\n"
         return s
 
@@ -318,9 +325,8 @@ class EObjectField(ZeroArgExpr):
         return field_type
 
     def generate_code_asm(self, env):
-        position = env.get_variable_position(self.obj)
-        s = "mov rdi, [rsp + " + str(position) + "]\n"
-        s += "call getArraySize\n"
+        position = env.get_array_length(self.obj)
+        s = "mov rax, [rsp + " + str(position) + "]\n"
         s += "push rax\n"
         return s
 
@@ -439,7 +445,6 @@ class ENot(OneArgExpr):
         s += "xor rax, 1\n"
         s += "push rax\n"
         return s
-
 
 class EOr(TwoArgExpr):
     def __init__(self, left, right, no_line, pos):
@@ -607,8 +612,16 @@ class EVar(ZeroArgExpr):
             return "iload " + str(env.get_variable_value(self.value)) + "\n"
 
     def generate_code_asm(self, env):
-        s = "mov rax, [rsp + " + str(env.get_variable_position(self.value)) + "]\n"
+        s = ""
+        if env.is_array(self.value):
+            position = env.get_array_length(self.value)
+            s += "mov rax, [rsp + " + str(position) + "]\n"
+            s += "push rax\n"
+            env.increment_stack()
+        s += "mov rax, [rsp + " + str(env.get_variable_position(self.value)) + "]\n"
         s += "push rax\n"
+        if env.is_array(self.value):
+            env.decrement_stack()
         return s
 
 
@@ -624,12 +637,12 @@ class EArrayInit(ZeroArgExpr):
 
     def generate_code_asm(self, env):
         s = self.array_length.generate_code_asm(env)
-        s += "pop rdi\n"
+        s += "mov rdi, [rsp]\n"
         if self.a_type == Type("string"):
             s += "mov rsi, 1\n"
         else:
-            s += "mov rsi, 1\n"
-        s += "call initArray\n"
+            s += "mov rsi, 8\n"
+        s += "call calloc\n"
         s += "push rax\n"
         return s
 
@@ -643,6 +656,7 @@ class EArrayApp(ZeroArgExpr):
     def get_type(self, env):
         if not env.contain_variable(self.value):
             exception_list_expr.append(NotDeclaredException(self.value, False, self.no_line, self.pos))
+        self.index.type_check(env, expected_type=Type("int"))
         array_type = env.get_array_type(self.value)
         if array_type is None:
             exception_list_expr.append(BaseException(self.value + " is not an array."))
@@ -656,8 +670,8 @@ class EArrayApp(ZeroArgExpr):
         s += "pop rbx\n"
         s += "shl rbx, 3\n" # * 8
         s += "mov rax, [rsp + " + str(env.get_variable_position(self.value)) + "]\n"
-        s += "add rax, rbx"
-        s += "push [rax]"
+        s += "add rax, rbx\n"
+        s += "push qword [rax]\n"
         return s
 
 class EObjectInit(ZeroArgExpr):

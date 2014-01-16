@@ -56,8 +56,11 @@ class InitItem(ItemBase):
         return s
 
     def generate_code_asm(self, env):
+        s = self.expr.generate_code_asm(env)
+        if self.itemtype.is_array():
+            env.add_variable(self.ident, None, self.no_line, self.pos, fun_param=False)
         env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
-        return self.expr.generate_code_asm(env)
+        return s
 
 
 class NoInitItem(ItemBase):
