@@ -8,19 +8,17 @@ class LatteBaseException(Exception):
     def __init__(self, no_line, pos):
         self.no_line = no_line
         self.pos = pos
-        self.column = None
+        self.code = None
 
-    def find_column(self, code):
-        if self.pos == 0:
-            return
-        last_cr = code.rfind('\n', 0, self.pos)
+    def find_column(self):
+        last_cr = self.code.rfind('\n', 0, self.pos)
         if last_cr < 0:
             last_cr = 0
-        self.column = (self.pos - last_cr) + 1
+        self.pos = (self.pos - last_cr) + 1
 
     def __str__(self):
-        if self.column is None:
-            self.column = 0
+        if self.pos != 0:
+            self.find_column()
         return "(Line:" + str(self.no_line) + ", Character:" + str(self.column) + ") " if self.no_line != -1 else ""
 
 

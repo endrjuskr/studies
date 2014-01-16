@@ -5,22 +5,24 @@ import subprocess
 
 import lattepar
 import lattelex
-from .LatteExceptions import *
-from LatteParsers import *
 from .Env import *
+from .LatteParsers.LatteStatements import exception_list_stmt
+from .LatteParsers.LatteExpressions import exception_list_expr
+from .LatteParsers.LatteParameters import exception_list_par
+from .LatteParsers.LatteTopDefinitions import exception_list_fn
 
 
 def print_usage():
-    print "##############"
-    print "\n  latc - latte compiler written in python using PLY.\n"
-    print "\tUsage:\n"
-    print "  latc [file] - passing file to compile.\n"
-    print "  latc help - showing usage.\n"
+    print("##############")
+    print("\n  latc - latte compiler written in python using PLY.\n")
+    print("\tUsage:\n")
+    print("  latc [file] - passing file to compile.\n")
+    print("  latc help - showing usage.\n")
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        print "Please provide file name.\n"
+        print("Please provide file name.\n")
         print_usage()
         sys.exit(-1)
     if sys.argv[1] == "help":
@@ -36,7 +38,7 @@ if __name__ == "__main__":
             content = content_file.read()
 
     except IOError:
-        print "File does not exist - '{}'.".format(sys.argv[1])
+        print("File does not exist - '{}'.".format(sys.argv[1]))
         sys.exit(-1)
     asm = 0
     if len(sys.argv) > 2:
@@ -48,7 +50,7 @@ if __name__ == "__main__":
     if len(lattepar.exception_list) != 0:
         sys.stderr.write("ERROR\n")
         for ex in lattepar.exception_list:
-            ex.find_column(content)
+            ex.code = content
             sys.stderr.write("{}\n".format(ex))
         sys.exit(-2)
     if result is None:
@@ -58,15 +60,15 @@ if __name__ == "__main__":
     result.type_check()
 
     ex_li = exception_list_env
-    ex_li += LatteExpressions.exception_list_expr
-    ex_li += LatteStatements.exception_list_stmt
-    ex_li += LatteTopDefinitions.exception_list_fn
-    ex_li += LatteParameters.exception_list_par
+    ex_li += exception_list_expr
+    ex_li += exception_list_stmt
+    ex_li += exception_list_fn
+    ex_li += exception_list_par
 
     if len(ex_li) != 0:
         sys.stderr.write("ERROR\n")
         for ex in ex_li:
-            ex.find_column(content)
+            ex.code = content
             sys.stderr.write("{}\n".format(ex))
         sys.exit(-2)
 
