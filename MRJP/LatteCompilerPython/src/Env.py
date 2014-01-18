@@ -114,8 +114,15 @@ class Env:
             exception_list_env.append(DuplicateDeclarationException(ident, False, no_line, pos))
 
     def get_variable_type(self, ident):
-        assert not ident in self.fun_env
-        return self.var_env[ident]
+        if not ident[0] in self.var_env:
+            return None
+        assert not ident[0] in self.fun_env
+        t = self.var_env[ident[0]]
+        for i in range(1, len(ident) - 1):
+            t = self.get_field_type(t, ident[i])
+            if t is None:
+                return None
+        return t
 
     def get_array_type(self, ident):
         assert not ident in self.fun_env
@@ -125,12 +132,15 @@ class Env:
         return self.class_env[ident].get_method_type(method)
 
     def get_field_type(self, ident, field):
-        assert not ident in self.fun_env
-        return self.class_env[ident].get_field_type(field)
+        t = self.class_env[ident].get_field_type(field)
+        if t.is_fun():
+            t = t.return_type
+        return t
 
     def get_variable_value(self, ident):
-        assert not ident in self.fun_env
-        return self.var_store[ident]
+        if len(ident) > 1:
+            return None
+        return self.var_store[ident[0]]
 
     def get_variable_position(self, ident):
         assert not ident in self.fun_env

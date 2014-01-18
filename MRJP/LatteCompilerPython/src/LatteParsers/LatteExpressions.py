@@ -2,7 +2,7 @@ __author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["EAdd", "EAnd", "EApp", "ELitBoolean", "ELitInt", "EMul", "ENeg", "ENot", "EOr", "ERel", "EString", "EVar",
            "ExprBase", "OneArgExpr", "TwoArgExpr", "ZeroArgExpr", "EArrayInit", "EArrayApp", "EObjectInit",
-           "ELitNull", "EObjectField", "EObjectApp", "exception_list_expr"]
+           "ELitNull", "EObjectField", "exception_list_expr", "EMethodApp"]
 
 from .BaseNode import *
 from ..LatteExceptions import *
@@ -28,6 +28,9 @@ class ExprBase(BaseNode):
 
     def get_value(self):
         return self.value
+
+    def get_id(self):
+        return None
 
 
 class OneArgExpr(ExprBase):
@@ -264,6 +267,66 @@ class EApp(ZeroArgExpr):
         return s
 
 
+class EMethodApp(ZeroArgExpr):
+    def __init__(self, expr, funident, exprlist, no_line, pos):
+        super(EMethodApp, self).__init__(None, None, no_line, pos)
+        self.type = "eapp"
+        self.funident = funident
+        self.objident = expr
+        self.exprlist = exprlist
+        self.etype = None
+
+    def get_type(self, env):
+        if self.etype is None:
+            t = env.get_variable_type(self.objident.get_id())
+            if t is None:
+                return None
+            if not env.contain_function(self.funident, t):
+                exception_list_expr.append(NotDeclaredException(self.funident, True, self.no_line, self.pos))
+                return Type("void")
+            else:
+                self.etype = env.get_fun_type(self.funident, t)
+                self.check_arg_list(env)
+
+        return self.etype.return_type
+
+    def check_arg_list(self, env):
+        if len(self.exprlist) != len(self.etype.params_types):
+            exception_list_expr.append(SyntaxException("Wrong number of parameters for function "
+                                  + self.funident + " - expected:"
+                                  + str(len(self.etype.params_types)) + " actual: "
+                                  + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos))
+
+        for i in range(min(len(self.exprlist), len(self.etype.params_types))):
+            self.exprlist[i].type_check(env, self.etype.params_types[i])
+
+    def generate_code_asm(self, env):
+        s = ""
+        shift = 8
+        self.objident.generate_code_asm(env)
+        env.increment_stack()
+        for expr in self.exprlist:
+            s += expr.generate_code_asm(env)
+            if self.funident in env.predefined_fun:
+                s += "pop rdi\n"
+                pass
+            else:
+                if expr.etype.is_array():
+                    env.increment_stack()
+                    shift += 8
+                env.increment_stack()
+                shift += 8
+        s += "call o_" + self.funident + "\n"
+        if not self.funident in env.predefined_fun:
+            env.stack_shift -= shift
+            s += "add rsp, " + str(shift) + "\n"
+        if env.get_fun_type(self.funident).return_type != Type("void"):
+            if env.get_fun_type(self.funident).return_type.is_array():
+                s += "push rbx\n"
+            s += "push rax\n"
+        return s
+
+
 class ELitBoolean(ZeroArgExpr):
     def __init__(self, lit, no_line, pos):
         super(ELitBoolean, self).__init__(True if lit == "true" else False, Type("boolean"), no_line, pos)
@@ -306,60 +369,34 @@ class EObjectField(ZeroArgExpr):
         self.type = "objectfield"
         self.obj = obj
         self.field = field
+        self.object_type = None
 
     def get_type(self, env):
-        if not env.contain_variable(self.obj):
-            exception_list_expr.append(NotDeclaredException(self.obj, False, self.no_line, self.pos))
-        object_type = env.get_variable_type(self.obj)
-        if object_type.is_array():
+        self.object_type = env.get_variable_type(self.obj.get_id())
+        if self.object_type is None:
+            return None
+        if self.object_type.is_array():
             if self.field != "length":
                 exception_list_expr.append(NotDeclaredException("array." + self.field, True, self.no_line, self.pos))
             return Type("int")
 
-        if not env.contain_class(object_type.type):
-            exception_list_expr.append(BaseException(self.obj + " is not an object"))
+        if not env.contain_class(self.object_type):
+            exception_list_expr.append(SyntaxException(str(self.object_type) + " is not an object or class is not defined."))
 
-        field_type = env.get_field_type(object_type.type, self.field)
+        field_type = env.get_field_type(self.object_type, self.field)
         if field_type is None:
-            exception_list_expr.append(BaseException(object_type + "." + self.field + " does not exist"))
+            exception_list_expr.append(SyntaxException(str(self.object_type) + "." + self.field + " does not exist."))
         return field_type
 
     def generate_code_asm(self, env):
-        position = env.get_array_length(self.obj)
-        s = "mov rax, [rsp + " + str(position) + "]\n"
-        s += "push rax\n"
+        s = self.obj.generate_code_asm(env)
+        s += "pop rax\n"
+        if self.object_type.is_array():
+            s += "add rax, 8\n"
+        else:
+            s += "add rax, " + env.get_field_position(self.field) + "\n"
+        s += "push qword [rax]\n"
         return s
-
-
-class EObjectApp(ZeroArgExpr):
-    def __init__(self, object_name, method_name, exprlist, no_line, pos):
-        super(EObjectApp, self).__init__(None, None, no_line, pos)
-        self.type = "objectapp"
-        self.object_name = object_name
-        self.method_name = method_name
-        self.exprlist = exprlist
-        self.object_class = None
-
-    def get_type(self, env):
-        if not env.contain_variable(self.object_name):
-            exception_list_expr.append(NotDeclaredException(self.object_name, True, self.no_line, self.pos))
-        self.object_class = env.get_variable_type()
-        if not env.contain_class(self.object_class.type):
-            exception_list_expr.append(Exception("There is no class called " + self.object_class.type))
-        if not env.contain_method(self.object_class.type, self.method_name):
-            exception_list_expr.append(NotDeclaredException(self.object_class.type + "." + self.method_name, True, self.no_line, self.pos))
-        self.etype = env.get_method_type(self.object_class.type, self.method_name)
-        self.check_arg_list(env)
-
-    def check_arg_list(self, env):
-        if len(self.exprlist) != len(self.etype.params_types):
-            exception_list_expr.append(SyntaxException("Wrong number of parameters for function "
-                                  + self.object_class.type + "." + self.method_name + " - expected:"
-                                  + str(len(self.etype.params_types)) + " actual: "
-                                  + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos))
-
-        for i in range(len(self.exprlist)):
-            self.exprlist[i].type_check(env, self.etype.params_types[i])
 
 
 class EMul(TwoArgExpr):
@@ -597,19 +634,22 @@ class EVar(ZeroArgExpr):
         if self.etype is None:
             if not env.contain_variable(self.value):
                 exception_list_expr.append(NotDeclaredException(self.value, False, self.no_line, self.pos))
-                return Type("void")
-            self.etype = env.get_variable_type(self.value)
+                return None
+            self.etype = env.get_variable_type([self.value])
         return self.etype
 
     def get_value(self):
         return None
 
+    def get_id(self):
+        return [self.value]
+
     def generate_body(self, env):
         env.push_stack(1)
         if self.etype == Type("string"):
-            return "aload " + str(env.get_variable_value(self.value)) + "\n"
+            return "aload " + str(env.get_variable_value([self.value])) + "\n"
         else:
-            return "iload " + str(env.get_variable_value(self.value)) + "\n"
+            return "iload " + str(env.get_variable_value([self.value])) + "\n"
 
     def generate_code_asm(self, env):
         s = ""
@@ -647,19 +687,19 @@ class EArrayInit(ZeroArgExpr):
         return s
 
 
-
 class EArrayApp(ZeroArgExpr):
     def __init__(self, ident, index, no_line, pos):
         super(EArrayApp, self).__init__(ident, None, no_line, pos)
         self.index = index
 
     def get_type(self, env):
-        if not env.contain_variable(self.value):
-            exception_list_expr.append(NotDeclaredException(self.value, False, self.no_line, self.pos))
+        t = env.get_variable_type(self.value.get_id())
+        if t is None:
+            return None
         self.index.type_check(env, expected_type=Type("int"))
-        array_type = env.get_array_type(self.value)
+        array_type = env.get_array_type(self.value.get_id())
         if array_type is None:
-            exception_list_expr.append(BaseException(self.value + " is not an array."))
+            exception_list_expr.append(SyntaxException("Expected array, but received " + str(t) + "."))
         return array_type
 
     def get_value(self):
@@ -667,13 +707,26 @@ class EArrayApp(ZeroArgExpr):
 
     def generate_code_asm(self, env):
         s = self.index.generate_code_asm(env)
+        env.increment_stack()
+        s += self.value.generate_code_asm(env)
+        env.decrement_stack()
+        s += "pop rax\n"
         s += "pop rbx\n"
         s += "shl rbx, 3\n" # * 8
-        s += "mov rax, [rsp + " + str(env.get_variable_position(self.value)) + "]\n"
         s += "add rax, rbx\n"
         s += "push qword [rax]\n"
         return s
 
+
 class EObjectInit(ZeroArgExpr):
     def __init__(self, class_type, no_line, pos):
         super(EObjectInit, self).__init__(None, class_type, no_line, pos)
+
+    def get_type(self, env):
+        return self.etype
+
+    def generate_code_asm(self, env):
+        s = "mov rsi, " + env.get_struct_size(self.etype) + "\n"
+        s += "call calloc\n"
+        s += "push rax\n"
+        return s

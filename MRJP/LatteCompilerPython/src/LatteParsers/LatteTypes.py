@@ -70,3 +70,14 @@ class FunType(Type):
         return s
 
 
+class ClassType(Type):
+    def __init__(self, var_dict):
+        super(ClassType, self).__init__("funtype")
+        self.var_dict = var_dict
+
+    def get_field_type(self, ident):
+        if not ident in self.var_dict:
+            return None
+        return self.var_dict[ident]
+
+

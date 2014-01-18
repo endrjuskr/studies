@@ -50,9 +50,9 @@ class InitItem(ItemBase):
         s = self.expr.generate_body(env)
         env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
         if self.itemtype == Type("string"):
-            s += "astore " + str(env.get_variable_value(self.ident)) + "\n"
+            s += "astore " + str(env.get_variable_value([self.ident])) + "\n"
         else:
-            s += "istore " + str(env.get_variable_value(self.ident)) + "\n"
+            s += "istore " + str(env.get_variable_value([self.ident])) + "\n"
         return s
 
     def generate_code_asm(self, env):
@@ -76,10 +76,10 @@ class NoInitItem(ItemBase):
         env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
         if self.itemtype == Type("string"):
             s += "ldc \"\" \n"
-            s += "astore " + str(env.get_variable_value(self.ident)) + "\n"
+            s += "astore " + str(env.get_variable_value([self.ident])) + "\n"
         else:
             s += "iconst_0 \n"
-            s += "istore " + str(env.get_variable_value(self.ident)) + "\n"
+            s += "istore " + str(env.get_variable_value([self.ident])) + "\n"
 
         return s
 

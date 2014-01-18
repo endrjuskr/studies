@@ -9,6 +9,7 @@ class LatteBaseException(Exception):
         self.no_line = no_line
         self.pos = pos
         self.code = None
+        self.column = 0
 
     def find_column(self):
         last_cr = self.code.rfind('\n', 0, self.pos)
@@ -19,7 +20,7 @@ class LatteBaseException(Exception):
     def __str__(self):
         if self.pos != 0:
             self.find_column()
-        return "(Line:" + str(self.no_line) + ", Character:" + str(self.column) + ") " if self.no_line != -1 else ""
+        return "(Line:" + str(self.no_line) + ", Character:" + str(self.pos) + ") " if self.no_line != -1 else ""
 
 
 class DuplicateDeclarationException(LatteBaseException):

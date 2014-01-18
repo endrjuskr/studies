@@ -46,3 +46,51 @@ done
     rm -f lattetests/extensions/arrays1/*.o
     rm -f lattetests/extensions/arrays1/*.out
 echo Done!
+
+echo Running extensions/struct tests!
+for i in $( cd lattetests/extensions/struct && ls *.lat); do
+	./latc_x86_64 lattetests/extensions/struct/$i 2> test.err > test.out
+	if [[ "OK" != $(head -n 1 "test.err") ]]; then
+        echo error in $i
+        cat test.err
+        cat test.out
+    fi
+    cat test.err
+    echo "" >> lattetests/extensions/struct/"${i%%.*}".input
+    ./lattetests/extensions/struct/a.out < lattetests/extensions/struct/"${i%%.*}".input > lattetests/extensions/struct/"${i%%.*}".test.output
+
+    # To see error code add - ; echo $?
+    diff lattetests/extensions/struct/"${i%%.*}".output lattetests/extensions/struct/"${i%%.*}".test.output
+done
+    rm -f *.err
+    rm -f *.out
+    rm -f lattetests/extensions/struct/*.test.output
+    rm -f lattetests/extensions/struct/*.s
+    rm -f lattetests/extensions/struct/*.asm
+    rm -f lattetests/extensions/struct/*.o
+    rm -f lattetests/extensions/struct/*.out
+echo Done!
+
+echo Running extensions/object1 tests!
+for i in $( cd lattetests/extensions/object1 && ls *.lat); do
+	./latc_x86_64 lattetests/extensions/object1/$i 2> test.err > test.out
+	if [[ "OK" != $(head -n 1 "test.err") ]]; then
+        echo error in $i
+        cat test.err
+        cat test.out
+    fi
+    cat test.err
+    echo "" >> lattetests/extensions/object1/"${i%%.*}".input
+    ./lattetests/extensions/object1/a.out < lattetests/extensions/object1/"${i%%.*}".input > lattetests/extensions/object1/"${i%%.*}".test.output
+
+    # To see error code add - ; echo $?
+    diff lattetests/extensions/object1/"${i%%.*}".output lattetests/extensions/object1/"${i%%.*}".test.output
+done
+    rm -f *.err
+    rm -f *.out
+    rm -f lattetests/extensions/object1/*.test.output
+    rm -f lattetests/extensions/object1/*.s
+    rm -f lattetests/extensions/object1/*.asm
+    rm -f lattetests/extensions/object1/*.o
+    rm -f lattetests/extensions/object1/*.out
+echo Done!
