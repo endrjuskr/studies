@@ -23,6 +23,12 @@ class Type(object):
     def is_array(self):
         return False
 
+    def is_fun(self):
+        return False
+
+    def is_simple(self):
+        return type in ["int", "string", "boolean"]
+
     def get_type(self):
         return self
 
@@ -44,6 +50,10 @@ class ArrayType(Type):
     def get_type(self):
         return self.array_type
 
+    def is_simple(self):
+        return self.array_type.is_simple()
+
+
     def is_array(self):
         return True
 
@@ -60,6 +70,9 @@ class FunType(Type):
 
     def __str__(self):
         return "(" + str(self.return_type) + ", " + str(self.params_types) + ")"
+
+    def is_fun(self):
+        return True
 
     def generate_code_jvm(self):
         s = "("
@@ -80,4 +93,6 @@ class ClassType(Type):
             return None
         return self.var_dict[ident]
 
+    def is_simple(self):
+        return False
 

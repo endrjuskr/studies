@@ -1,14 +1,14 @@
-#!/bin/bash          
+#!/bin/bash
 echo Running good tests!
 for i in $( cd lattetests/good && ls *.lat); do
-	./latc_x86_64 lattetests/good/$i 2> test.err > test.out
-	if [[ "OK" != $(head -n 1 "test.err") ]]; then
+./latc_x86_64 lattetests/good/$i 2> test.err > test.out
+if [[ "OK" != $(head -n 1 "test.err") ]]; then
         echo error in $i
         cat test.err
     fi
     echo "" >> lattetests/good/"${i%%.*}".input
     cat test.err
-    ./lattetests/good/a.out < lattetests/good/"${i%%.*}".input > lattetests/good/"${i%%.*}".test.output
+    #./lattetests/good/a.out < lattetests/good/"${i%%.*}".input > lattetests/good/"${i%%.*}".test.output
 
     # To see error code add - ; echo $?
     echo $i
@@ -33,7 +33,7 @@ for i in $( cd lattetests/extensions/arrays1 && ls *.lat); do
     fi
     cat test.err
     echo "" >> lattetests/extensions/arrays1/"${i%%.*}".input
-    ./lattetests/extensions/arrays1/a.out < lattetests/extensions/arrays1/"${i%%.*}".input > lattetests/extensions/arrays1/"${i%%.*}".test.output
+    #./lattetests/extensions/arrays1/a.out < lattetests/extensions/arrays1/"${i%%.*}".input > lattetests/extensions/arrays1/"${i%%.*}".test.output
 
     # To see error code add - ; echo $?
     diff lattetests/extensions/arrays1/"${i%%.*}".output lattetests/extensions/arrays1/"${i%%.*}".test.output
@@ -57,7 +57,7 @@ for i in $( cd lattetests/extensions/struct && ls *.lat); do
     fi
     cat test.err
     echo "" >> lattetests/extensions/struct/"${i%%.*}".input
-    ./lattetests/extensions/struct/a.out < lattetests/extensions/struct/"${i%%.*}".input > lattetests/extensions/struct/"${i%%.*}".test.output
+    #./lattetests/extensions/struct/a.out < lattetests/extensions/struct/"${i%%.*}".input > lattetests/extensions/struct/"${i%%.*}".test.output
 
     # To see error code add - ; echo $?
     diff lattetests/extensions/struct/"${i%%.*}".output lattetests/extensions/struct/"${i%%.*}".test.output
@@ -71,26 +71,26 @@ done
     rm -f lattetests/extensions/struct/*.out
 echo Done!
 
-echo Running extensions/object1 tests!
-for i in $( cd lattetests/extensions/object1 && ls *.lat); do
-	./latc_x86_64 lattetests/extensions/object1/$i 2> test.err > test.out
+echo Running extensions/objects1 tests!
+for i in $( cd lattetests/extensions/objects1 && ls *.lat); do
+	./latc_x86_64 lattetests/extensions/objects1/$i 2> test.err > test.out
 	if [[ "OK" != $(head -n 1 "test.err") ]]; then
         echo error in $i
         cat test.err
         cat test.out
     fi
     cat test.err
-    echo "" >> lattetests/extensions/object1/"${i%%.*}".input
-    ./lattetests/extensions/object1/a.out < lattetests/extensions/object1/"${i%%.*}".input > lattetests/extensions/object1/"${i%%.*}".test.output
+    echo "" >> lattetests/extensions/objects1/"${i%%.*}".input
+    #./lattetests/extensions/objects1/a.out < lattetests/extensions/objects1/"${i%%.*}".input > lattetests/extensions/objects1/"${i%%.*}".test.output
 
     # To see error code add - ; echo $?
-    diff lattetests/extensions/object1/"${i%%.*}".output lattetests/extensions/object1/"${i%%.*}".test.output
+    diff lattetests/extensions/objects1/"${i%%.*}".output lattetests/extensions/objects1/"${i%%.*}".test.output
 done
     rm -f *.err
     rm -f *.out
-    rm -f lattetests/extensions/object1/*.test.output
-    rm -f lattetests/extensions/object1/*.s
-    rm -f lattetests/extensions/object1/*.asm
-    rm -f lattetests/extensions/object1/*.o
-    rm -f lattetests/extensions/object1/*.out
+    rm -f lattetests/extensions/objects1/*.test.output
+    rm -f lattetests/extensions/objects1/*.s
+    rm -f lattetests/extensions/objects1/*.asm
+    rm -f lattetests/extensions/objects1/*.o
+    rm -f lattetests/extensions/objects1/*.out
 echo Done!

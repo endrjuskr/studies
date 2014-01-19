@@ -39,7 +39,7 @@ class OneArgExpr(ExprBase):
         self.expr = expr
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != self.etype:
+        if expected_type is not None and not env.check_types(expected_type, self.etype):
             exception_list_expr.append(TypeException(expected_type, self.etype, self.no_line, self.pos))
         self.expr.type_check(env, self.etype)
         return self.etype
@@ -71,10 +71,10 @@ class TwoArgExpr(ExprBase):
         self.right.type_check(env, rtype)
 
         error_occured = False
-        if expected_type is not None and self.etype is not None and expected_type != self.etype:
+        if expected_type is not None and self.etype is not None and not env.check_types(expected_type, self.etype):
             exception_list_expr.append(TypeException(expected_type, self.etype, self.no_line, self.pos))
             error_occured = True
-        if expected_type is not None and self.etype is None and expected_type != rtype:
+        if expected_type is not None and self.etype is None and not env.check_types(expected_type, rtype):
             exception_list_expr.append(TypeException(expected_type, rtype, self.no_line, self.pos))
             error_occured = True
 
@@ -107,7 +107,7 @@ class ZeroArgExpr(ExprBase):
         self.value = value
 
     def type_check(self, env, expected_type=None):
-        if expected_type is not None and expected_type != self.get_type(env):
+        if expected_type is not None and not env.check_types(expected_type, self.get_type(env)):
             exception_list_expr.append(TypeException(expected_type, self.get_type(env), self.no_line, self.pos))
             return expected_type
 
@@ -281,11 +281,11 @@ class EMethodApp(ZeroArgExpr):
             t = env.get_variable_type(self.objident.get_id())
             if t is None:
                 return None
-            if not env.contain_function(self.funident, t):
+            if not env.contain_method(t.type, self.funident):
                 exception_list_expr.append(NotDeclaredException(self.funident, True, self.no_line, self.pos))
                 return Type("void")
             else:
-                self.etype = env.get_fun_type(self.funident, t)
+                self.etype = env.get_method_type(t.type, self.funident)
                 self.check_arg_list(env)
 
         return self.etype.return_type
@@ -317,11 +317,8 @@ class EMethodApp(ZeroArgExpr):
                 env.increment_stack()
                 shift += 8
         s += "call o_" + self.funident + "\n"
-        if not self.funident in env.predefined_fun:
-            env.stack_shift -= shift
-            s += "add rsp, " + str(shift) + "\n"
-        if env.get_fun_type(self.funident).return_type != Type("void"):
-            if env.get_fun_type(self.funident).return_type.is_array():
+        if self.etype.return_type != Type("void"):
+            if self.etype.return_type.is_array():
                 s += "push rbx\n"
             s += "push rax\n"
         return s
@@ -347,6 +344,9 @@ class ELitNull(ZeroArgExpr):
         super(ELitNull, self).__init__(None, Type(type), no_line, pos)
         self.type = "elitnull"
 
+    def generate_code_asm(self, env):
+        return "push 0\n" # represent null as 0
+
 
 class ELitInt(ZeroArgExpr):
     def __init__(self, value, no_line, pos):
@@ -369,34 +369,40 @@ class EObjectField(ZeroArgExpr):
         self.type = "objectfield"
         self.obj = obj
         self.field = field
-        self.object_type = None
+        self.etype = None
 
     def get_type(self, env):
-        self.object_type = env.get_variable_type(self.obj.get_id())
-        if self.object_type is None:
+        self.etype = env.get_variable_type(self.obj.get_id())
+        if self.etype is None:
             return None
-        if self.object_type.is_array():
+        if self.etype.is_array():
             if self.field != "length":
                 exception_list_expr.append(NotDeclaredException("array." + self.field, True, self.no_line, self.pos))
             return Type("int")
 
-        if not env.contain_class(self.object_type):
-            exception_list_expr.append(SyntaxException(str(self.object_type) + " is not an object or class is not defined."))
+        if not env.contain_class(self.etype.type):
+            exception_list_expr.append(SyntaxException(str(self.etype) + " is not an object or class is not defined.",
+                                                       self.no_line))
 
-        field_type = env.get_field_type(self.object_type, self.field)
+        field_type = env.get_field_type(self.etype.type, self.field)
         if field_type is None:
-            exception_list_expr.append(SyntaxException(str(self.object_type) + "." + self.field + " does not exist."))
+            exception_list_expr.append(SyntaxException(str(self.etype) + "." + self.field + " does not exist."))
         return field_type
 
     def generate_code_asm(self, env):
         s = self.obj.generate_code_asm(env)
         s += "pop rax\n"
-        if self.object_type.is_array():
+        if self.etype.is_array():
             s += "add rax, 8\n"
         else:
-            s += "add rax, " + env.get_field_position(self.field) + "\n"
+            s += "add rax, " + str(env.get_field_position(self.etype.type, self.field)) + "\n"
         s += "push qword [rax]\n"
         return s
+
+    def get_id(self):
+        t = self.obj.get_id()
+        t.append(self.field)
+        return t
 
 
 class EMul(TwoArgExpr):
@@ -702,6 +708,10 @@ class EArrayApp(ZeroArgExpr):
             exception_list_expr.append(SyntaxException("Expected array, but received " + str(t) + "."))
         return array_type
 
+
+    def get_id(self):
+        return [self.value]
+
     def get_value(self):
         return None
 
@@ -726,7 +736,7 @@ class EObjectInit(ZeroArgExpr):
         return self.etype
 
     def generate_code_asm(self, env):
-        s = "mov rsi, " + env.get_struct_size(self.etype) + "\n"
+        s = "mov rsi, " + str(env.get_struct_size(self.etype.type)) + "\n"
         s += "call calloc\n"
         s += "push rax\n"
         return s

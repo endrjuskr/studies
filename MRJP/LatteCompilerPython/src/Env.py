@@ -88,6 +88,12 @@ class Env:
     def contain_method(self, ident, method):
         return ident in self.class_env and self.class_env[ident].contain_method(method)
 
+    def get_class(self, ident):
+        if not ident in self.class_env:
+            exception_list_env.append(SyntaxException("Class " + ident + " does not exist.", 0))
+            return None
+        return self.class_env[ident]
+
     def contain_main(self):
         return "main" in self.fun_env and self.fun_env["main"] == FunType(Type("int"), [])
 
@@ -118,15 +124,17 @@ class Env:
             return None
         assert not ident[0] in self.fun_env
         t = self.var_env[ident[0]]
-        for i in range(1, len(ident) - 1):
-            t = self.get_field_type(t, ident[i])
+        for ide in ident[1:]:
+            t = self.get_field_type(t.type, ide)
             if t is None:
                 return None
         return t
 
     def get_array_type(self, ident):
-        assert not ident in self.fun_env
-        return None if not self.var_env[ident].is_array() else self.var_env[ident].get_type()
+        t = self.get_variable_type(ident)
+        if t is not None:
+            t = t.array_type
+        return t
 
     def get_method_type(self, ident, method):
         return self.class_env[ident].get_method_type(method)
@@ -135,6 +143,8 @@ class Env:
         t = self.class_env[ident].get_field_type(field)
         if t.is_fun():
             t = t.return_type
+        if t.is_array():
+            t = t.array_type
         return t
 
     def get_variable_value(self, ident):
@@ -146,11 +156,17 @@ class Env:
         assert not ident in self.fun_env
         return (self.variables_counter - 1 - self.var_store[ident]) * self.stack_var_size + self.stack_shift
 
+    def get_field_position(self, obj, field):
+        return self.class_env[obj].get_field_position(field) * 8
+
     def get_array_length(self, ident):
         return (self.variables_counter - 1 - self.array_size[ident]) * self.stack_var_size + self.stack_shift
 
     def is_array(self, ident):
         return ident in self.array_size.keys()
+
+    def get_struct_size(self, ident):
+        return self.class_env[ident].get_size() * 8
 
     def get_fun_class(self, ident):
         if ident in self.predefined_fun:
@@ -179,3 +195,15 @@ class Env:
 
     def get_id_asm(self):
         pass
+
+    def check_types(self, type1, type2):
+        if type1.is_simple() or type2.is_simple():
+            return type1 == type2
+        if type1 == type2:
+            return True
+        cl = self.class_env[type2.type]
+        while len(cl.extlist) > 0:
+            cl = self.class_env[cl.extlist[0]]
+            if type1.type == cl.ident:
+                return True
+        return False

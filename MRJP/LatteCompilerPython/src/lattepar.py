@@ -80,14 +80,10 @@ def p_list_stmt(p):
         p[0].append(p[2])
 
 def p_list_fields(p):
-    '''listfields :
-            | field
+    '''listfields : field
             | listfields field'''
 
-    if len(p) == 1:
-        # empty list
-        p[0] = []
-    elif len(p) == 2:
+    if len(p) == 2:
         # last statement
         p[0] = [p[1]]
     else:
@@ -153,6 +149,11 @@ def p_field_s(p):
     'field : type ID SEMI'
     p[0] = Field(p[1], p[2], p.lineno(2), p.lexpos(2))
 
+def p_methoddef(p):
+    'field : type ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
+
+
 
 # Function definition
 
@@ -163,13 +164,13 @@ def p_class_extends(p):
     if len(p) == 1:
         p[0] = []
 
-    elif len(p) == 2:
-        p[0] = [p[1]]
+    elif len(p) == 3:
+        p[0] = [p[2]]
 
 
 def p_classdef(p):
-    'topdef : CLASS ID ext LBRACE listfields listtopdef RBRACE'
-    p[0] = ClassDef(p[2], p[3], p[5], p[6], p.lineno(2))
+    'topdef : CLASS ID ext LBRACE listfields RBRACE'
+    p[0] = ClassDef(p[2], p[3], p[5], p.lineno(2))
 
 
 def p_fndef(p):
@@ -271,7 +272,7 @@ def p_expression_var(p):
 
 def p_expression_field(p):
     'expr6 : expr6 DOT ID'
-    p[0] = EObjectField(p[1], p[3], p.lineno(1), p.lexpos(1))
+    p[0] = EObjectField(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_expression_array(p):
@@ -408,6 +409,7 @@ def p_type_s(p):
     '''type_s : INT
             | STRING
             | VOID
+            | ID
             | BOOLEAN '''
     p[0] = Type(p[1])
 
