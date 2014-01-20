@@ -1,0 +1,18 @@
+class list {
+  int elem;
+  list next;
+}
+
+class list2
+{
+    int elem;
+}
+
+int main() {
+
+    list[] a = new list2[3];
+    a[0].next.next.next.elem2 = 0;
+    a[0].next.next.next2.elem = 0;
+    a[0].next.next.next.elem = "ssa";
+  return a;
+}

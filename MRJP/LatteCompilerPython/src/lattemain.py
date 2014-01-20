@@ -56,6 +56,7 @@ if __name__ == "__main__":
     if result is None:
         sys.stderr.write("ERROR\n")
         sys.stderr.write("Unexpected end of file.\n")
+        sys.exit(-2)
     result.set_class_name(program_name)
     result.type_check()
 

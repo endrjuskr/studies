@@ -1,0 +1,31 @@
+int main() {
+
+  int[] a = new int[2];
+  int[] b = new int[20 + 2];
+  printArray(a);
+  int j=0;
+  while (j<a.length) {
+     a[j] = j;
+     j++;
+  }
+
+  a[i] = "aasa";
+  a["asd"] = 1;
+
+
+  for(string x : a) printInt(x);
+  for(string x : f()) printInt(x);
+  int x = 45;
+  printInt(x);
+  return 0;
+}
+
+int[] f()
+{
+    return new string[20];
+}
+
+void printArray(string[] a)
+{
+    return;
+}

@@ -13,6 +13,7 @@ class Env:
         self.predefined_fun = ["readInt", "readString", "error", "printInt", "printString", "concatenateString"]
         self.stack_var_size = 8
         if orig is None:
+            self.field_env = []
             self.class_name = class_name
             self.current_fun_type = None
             self.current_stack_count = 0
@@ -28,6 +29,7 @@ class Env:
             self.stack_shift = 0
             self.array_size = {}
         else:
+            self.field_env = list(orig.field_env)
             self.array_size = dict(orig.array_size)
             self.var_env = dict(orig.var_env)
             self.fun_env = dict(orig.fun_env)
@@ -82,6 +84,9 @@ class Env:
     def contain_class(self, ident):
         return ident in self.class_env
 
+    def is_field(self, ident):
+        return ident in self.field_env
+
     def contain_field(self, ident, field):
         return ident in self.class_env and self.class_env[ident].contain_field(field)
 
@@ -101,11 +106,13 @@ class Env:
         assert not ident in self.var_env
         return self.fun_env[ident]
 
-    def add_variable(self, ident, type, no_line, pos, fun_param=True):
+    def add_variable(self, ident, type, no_line, pos, fun_param=True, is_field=False):
         if type is None:
             self.array_size[ident] = self.variables_counter
             self.variables_counter += 1
             return
+        if is_field:
+            self.field_env.append(ident)
         if ident in self.fun_env:
             exception_list_env.append(SyntaxException("Trying override function " + ident + ".", no_line))
         elif not ident in self.var_decl:
@@ -119,32 +126,40 @@ class Env:
         else:
             exception_list_env.append(DuplicateDeclarationException(ident, False, no_line, pos))
 
-    def get_variable_type(self, ident):
+    def get_variable_type(self, ident, ar=True):
         if not ident[0] in self.var_env:
             return None
         assert not ident[0] in self.fun_env
         t = self.var_env[ident[0]]
         for ide in ident[1:]:
-            t = self.get_field_type(t.type, ide)
-            if t is None:
-                return None
+            if ide is 0:
+                t = t.array_type
+            else:
+                t = self.get_field_type(t.type, ide, ar)
+                if t is None:
+                    return None
         return t
 
     def get_array_type(self, ident):
         t = self.get_variable_type(ident)
         if t is not None:
-            t = t.array_type
+            if t.is_array():
+                t = t.array_type
+            else:
+                t = None
         return t
 
     def get_method_type(self, ident, method):
         return self.class_env[ident].get_method_type(method)
 
-    def get_field_type(self, ident, field):
+    def get_field_type(self, ident, field, ar=True):
+        if not ident in self.class_env:
+            return None
         t = self.class_env[ident].get_field_type(field)
+        if t is None:
+            return t
         if t.is_fun():
             t = t.return_type
-        if t.is_array():
-            t = t.array_type
         return t
 
     def get_variable_value(self, ident):
@@ -154,6 +169,8 @@ class Env:
 
     def get_variable_position(self, ident):
         assert not ident in self.fun_env
+        assert self.stack_shift >= 0
+        assert self.variables_counter > 0
         return (self.variables_counter - 1 - self.var_store[ident]) * self.stack_var_size + self.stack_shift
 
     def get_field_position(self, obj, field):
@@ -166,7 +183,7 @@ class Env:
         return ident in self.array_size.keys()
 
     def get_struct_size(self, ident):
-        return self.class_env[ident].get_size() * 8
+        return self.class_env[ident].get_size()
 
     def get_fun_class(self, ident):
         if ident in self.predefined_fun:
@@ -197,10 +214,16 @@ class Env:
         pass
 
     def check_types(self, type1, type2):
+        if type1 is None or type2 is None:
+            return True
         if type1.is_simple() or type2.is_simple():
             return type1 == type2
         if type1 == type2:
             return True
+        if type2.is_array():
+            if type1.is_array():
+                return type1 == type2
+            return False
         cl = self.class_env[type2.type]
         while len(cl.extlist) > 0:
             cl = self.class_env[cl.extlist[0]]

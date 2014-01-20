@@ -2,7 +2,7 @@ __author__ = 'Andrzej Skrodzki - as292510'
 
 __all__ = ["VarAssStmt", "BStmt", "CondElseStmt", "CondStmt", "DeclStmt", "DecrStmt",
            "EmptyStmt", "IncrStmt", "RetStmt", "SExpStmt", "StmtBase", "VRetStmt", "WhileStmt", "ForStmt",
-        "ArrayAssStmt", "exception_list_stmt"]
+            "exception_list_stmt"]
 
 from .LatteTypes import *
 from ..LatteExceptions import *
@@ -49,13 +49,26 @@ class VarAssStmt(StmtBase):
         env.pop_stack(1)
         return s
 
-    def generate_code_asm(self, env):
-        s = self.expr.generate_code_asm(env)
-        s += self.ident.generate_code_asm(env)
+    def generate_code_asm(self, env, get_value=True):
+        s = self.expr.generate_code_asm(env, get_value)
+        env.increment_stack()
+        if self.idtype.is_array():
+            env.increment_stack()
+
+        s += self.ident.generate_code_asm(env, get_value=False)
+        env.decrement_stack()
+        if self.idtype.is_array():
+            env.decrement_stack()
+
         #Zakladamy, ze na stosie jest wynik i nic poza tym nie ma. Zatem zdejmujemy i mozemy normalnie odwolywac sie do zmiennych.
         s += "pop rbx\n"
         s += "pop rax\n"
+        if self.idtype.is_array():
+            s += "pop rcx\n"
         s += "mov [rbx], rax\n"
+        if self.idtype.is_array():
+            s += "mov [rbx + 8], rcx\n"
+
         return s
 
 
@@ -77,7 +90,7 @@ class BStmt(StmtBase):
         env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
         return s
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         env_prim = Env(env)
         s = self.block.generate_code_asm(env_prim)
         s += "add rsp, " + str((env_prim.variables_counter - env.variables_counter) * 8) + "\n"
@@ -138,7 +151,7 @@ class CondElseStmt(StmtBase):
             env.max_stack_count = max(env.max_stack_count, env_prim2.max_stack_count)
             return s
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         if self.expr.get_value() is True:
             env_prim = Env(env)
             s = self.stmt1.generate_code_asm(env_prim)
@@ -152,7 +165,7 @@ class CondElseStmt(StmtBase):
         else:
             env_prim = Env(env)
             env_prim2 = Env(env)
-            s = self.expr.generate_code_asm(env)
+            s = self.expr.generate_code_asm(env, get_value)
             s += "pop rax\n"
             s += "cmp rax, 0\n"
             s += "je " + self.label_pattern + "_f\n"
@@ -196,9 +209,9 @@ class CondStmt(StmtBase):
         env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
         return s
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         env_prim = Env(env)
-        s = self.expr.generate_code_asm(env)
+        s = self.expr.generate_code_asm(env, get_value)
         s += "pop rax\n"
         s += "cmp rax, 0\n"
         s += "je " + self.label_pattern + "\n"
@@ -230,10 +243,10 @@ class DeclStmt(StmtBase):
             s += item.generate_code_jvm(env)
         return s
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         s = ""
         for item in self.itemlist:
-            s += item.generate_code_asm(env)
+            s += item.generate_code_asm(env, get_value)
         return s
 
 
@@ -250,9 +263,9 @@ class DecrStmt(StmtBase):
     def generate_body(self, env):
         return "iinc " + str(env.get_variable_value(self.ident.get_id())) + " -1\n"
 
-    def generate_code_asm(self, env):
-        s = self.ident.generate_code_asm(env)
-        s += "pop rax"
+    def generate_code_asm(self, env, get_value=True):
+        s = self.ident.generate_code_asm(env, get_value=False)
+        s += "pop rax\n"
         s += "dec qword [rax]\n"
         return s
 
@@ -275,9 +288,9 @@ class IncrStmt(StmtBase):
     def generate_body(self, env):
         return "iinc " + str(env.get_variable_value(self.ident.get_id())) + " 1\n"
 
-    def generate_code_asm(self, env):
-        s = self.ident.generate_code_asm(env)
-        s += "pop rax"
+    def generate_code_asm(self, env, get_value=True):
+        s = self.ident.generate_code_asm(env, get_value=False)
+        s += "pop rax\n"
         s += "inc qword [rax]\n"
         return s
 
@@ -305,8 +318,8 @@ class RetStmt(StmtBase):
         env.pop_stack(1)
         return s
 
-    def generate_code_asm(self, env):
-        s = self.expr.generate_code_asm(env)
+    def generate_code_asm(self, env, get_value=True):
+        s = self.expr.generate_code_asm(env, get_value)
         s += "pop rax\n"
         if self.expr.etype.is_array():
             s += "pop rbx\n"
@@ -326,8 +339,8 @@ class SExpStmt(StmtBase):
     def generate_body(self, env):
         return self.expr.generate_code_jvm(env)
 
-    def generate_code_asm(self, env):
-        return self.expr.generate_code_asm(env)
+    def generate_code_asm(self, env, get_value=True):
+        return self.expr.generate_code_asm(env, get_value)
 
 
 class VRetStmt(StmtBase):
@@ -342,7 +355,7 @@ class VRetStmt(StmtBase):
     def generate_body(self, env):
         return "return \n"
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         return "mov rax, 0\nleave\nret\n"
 
 
@@ -374,10 +387,10 @@ class WhileStmt(StmtBase):
         env.max_stack_count = max(env.max_stack_count, env_prim.max_stack_count)
         return s
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         env_prim = Env(env)
         s = self.label_pattern + "_w:\n"
-        s += self.expr.generate_code_asm(env)
+        s += self.expr.generate_code_asm(env, get_value)
         s += "pop rax\n"
         s += "cmp rax, 0\n"
         s += "je " + self.label_pattern + "\n"
@@ -385,44 +398,6 @@ class WhileStmt(StmtBase):
         s += "jmp " + self.label_pattern + "_w\n"
         s += self.label_pattern + ":\n"
         env.string_dict = env_prim.string_dict
-        return s
-
-
-class ArrayAssStmt(StmtBase):
-    def __init__(self, ident, index, expr, no_line, pos):
-        super(ArrayAssStmt, self).__init__("fieldassstmt", no_line, pos)
-        self.ident = ident
-        self.index = index
-        self.expr = expr
-        self.idtype = None
-
-    def type_check(self, env):
-        t = env.get_variable_type(self.ident.get_id())
-        self.index.type_check(env, expected_type=Type("int"))
-        if t is None:
-            return
-        self.idtype = env.get_array_type(self.ident.get_id())
-        if self.idtype is None:
-            exception_list_stmt.append(SyntaxException("Expected array but received " + str(t) + ".", self.no_line))
-        self.expr.type_check(env, expected_type=self.idtype)
-
-    def return_check(self):
-        return False
-
-    def generate_code_asm(self, env):
-        s = self.index.generate_code_asm(env)
-        env.increment_stack()
-        s += self.expr.generate_code_asm(env)
-        env.increment_stack()
-        s += self.ident.generate_code_asm(env)
-        env.decrement_stack()
-        env.decrement_stack()
-        s += "pop rcx\n"
-        s += "pop rbx\n"
-        s += "pop rax\n"
-        s += "shl rbx, 3\n"
-        s += "add rax, rbx\n"
-        s += "mov [rax], rcx\n"
         return s
 
 
@@ -449,8 +424,8 @@ class ForStmt(StmtBase):
     def return_check(self):
         return self.stmt.return_check()
 
-    def generate_code_asm(self, env):
-        s = self.collection.generate_code_asm(env)
+    def generate_code_asm(self, env, get_value=True):
+        s = self.collection.generate_code_asm(env, get_value=True)
         s += "push 0\n"
         s += self.label + "_f:\n"
         s += "mov rcx, [rsp]\n"

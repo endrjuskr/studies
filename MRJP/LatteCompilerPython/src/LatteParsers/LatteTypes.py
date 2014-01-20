@@ -27,7 +27,7 @@ class Type(object):
         return False
 
     def is_simple(self):
-        return type in ["int", "string", "boolean"]
+        return self.type in ["int", "string", "boolean"]
 
     def get_type(self):
         return self

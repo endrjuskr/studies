@@ -144,10 +144,30 @@ def p_arg(p):
     'arg : type ID'
     p[0] = Arg(p[1], p[2], p.lineno(2), p.lexpos(2))
 
+def p_arg_o(p):
+    'arg : ID ID'
+    p[0] = Arg(Type(p[1]), p[2], p.lineno(2), p.lexpos(2))
+
+def p_arg_oa(p):
+    'arg : ID LARRAY RARRAY ID'
+    p[0] = Arg(ArrayType(Type(p[1])), p[4], p.lineno(2), p.lexpos(2))
+
 
 def p_field_s(p):
     'field : type ID SEMI'
     p[0] = Field(p[1], p[2], p.lineno(2), p.lexpos(2))
+
+
+def p_field_o(p):
+    'field : ID ID SEMI'
+    p[0] = Field(Type(p[1]), p[2], p.lineno(2), p.lexpos(2))
+
+
+def p_field_oa(p):
+    'field : ID LARRAY RARRAY ID SEMI'
+    p[0] = Field(ArrayType(Type(p[1])), p[4], p.lineno(2), p.lexpos(2))
+
+
 
 def p_methoddef(p):
     'field : type ID LPAREN listarg RPAREN block'
@@ -177,6 +197,15 @@ def p_fndef(p):
     'topdef : type ID LPAREN listarg RPAREN block'
     p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
 
+def p_fndef_o(p):
+    'topdef : ID ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(Type(p[1]), p[2], p[4], p[6], p.lineno(2))
+
+
+def p_fndef_oa(p):
+    'topdef : ID LARRAY RARRAY ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(ArrayType(Type(p[1])), p[4], p[6], p[8], p.lineno(2))
+
 
 def p_block(p):
     '''block : LBRACE RBRACE
@@ -204,18 +233,28 @@ def p_statement_decl(p):
     p[0] = DeclStmt(p[1], p[2], p.lineno(3), p.lexpos(3))
 
 
+def p_statement_decl_0(p):
+    'stmt : ID listitem SEMI'
+    p[0] = DeclStmt(Type(p[1]), p[2], p.lineno(1), p.lexpos(1))
+
+
+def p_statement_decl_1(p):
+    'stmt : ID LARRAY RARRAY listitem SEMI'
+    p[0] = DeclStmt(ArrayType(Type(p[1])), p[4], p.lineno(1), p.lexpos(1))
+
+
 def p_statement_var_ass(p):
-    '''stmt : expr EQUALS expr SEMI '''
+    '''stmt : expr6 EQUALS expr SEMI '''
     p[0] = VarAssStmt(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_incr(p):
-    'stmt : expr PLUSPLUS SEMI'
+    'stmt : expr6 PLUSPLUS SEMI'
     p[0] = IncrStmt(p[1], p.lineno(2), p.lexpos(2))
 
 
 def p_statement_decr(p):
-    'stmt : expr MINUSMINUS SEMI'
+    'stmt : expr6 MINUSMINUS SEMI'
     p[0] = DecrStmt(p[1], p.lineno(2), p.lexpos(2))
 
 
@@ -248,9 +287,15 @@ def p_statement_sexp(p):
     'stmt : expr SEMI'
     p[0] = SExpStmt(p[1], p.lineno(2), p.lexpos(2))
 
+
 def p_statement_for(p):
     'stmt : FOR LPAREN type_s ID COL expr RPAREN stmt'
     p[0] = ForStmt(p[4], p[3], p[6], p[8], p.lineno(1), p.lexpos(1))
+
+
+def p_statement_for_2(p):
+    'stmt : FOR LPAREN ID ID COL expr RPAREN stmt'
+    p[0] = ForStmt(p[4], Type(p[3]), p[6], p[8], p.lineno(1), p.lexpos(1))
 
 
 # Expression definitions
@@ -258,6 +303,11 @@ def p_statement_for(p):
 def p_expression_array_init(p):
     'expr6 : NEW type_s LARRAY expr RARRAY'
     p[0] = EArrayInit(p[2], p[4], p.lineno(1), p.lexpos(1))
+
+
+def p_expression_array_init_2(p):
+    'expr6 : NEW ID LARRAY expr RARRAY'
+    p[0] = EArrayInit(Type(p[2]), p[4], p.lineno(1), p.lexpos(1))
 
 
 def p_expression_object_init(p):
@@ -275,9 +325,14 @@ def p_expression_field(p):
     p[0] = EObjectField(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
+def p_expression_field_a(p):
+    'expr6 : expr6 DOT ID LARRAY expr RARRAY'
+    p[0] = EObjectFieldApp(p[1], p[3], p[5], p.lineno(2), p.lexpos(2))
+
+
 def p_expression_array(p):
-    'expr6 : expr6 LARRAY expr RARRAY'
-    p[0] = EArrayApp(p[1], p[3], p.lineno(1), p.lexpos(1))
+    'expr6 : ID LARRAY expr RARRAY'
+    p[0] = EArrayApp(p[1], p[3], p.lineno(2), p.lexpos(2))
 
 
 def p_expression_int(p):
@@ -409,7 +464,6 @@ def p_type_s(p):
     '''type_s : INT
             | STRING
             | VOID
-            | ID
             | BOOLEAN '''
     p[0] = Type(p[1])
 

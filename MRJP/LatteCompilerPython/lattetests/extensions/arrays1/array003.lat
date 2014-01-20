@@ -1,9 +1,17 @@
+class list {
+  int elem;
+  int[] next;
+}
+
 int main() {
-  int[] a = new int[10];
-  a[0] = 5;
-  for(int x : a)
-  {
-    printInt(x);
-  }
+  int[] a = new int[3];
+  list[] b = new list[3];
+  b[0] = new list;
+  b[0].elem = 10;
+  list t = new list;
+  t.next = new int[2];
+  t.next[1] = 5;
+  printInt(t.next[1]);
+  printInt(b[0].elem);
   return 0;
 }

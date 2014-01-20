@@ -55,8 +55,8 @@ class InitItem(ItemBase):
             s += "istore " + str(env.get_variable_value([self.ident])) + "\n"
         return s
 
-    def generate_code_asm(self, env):
-        s = self.expr.generate_code_asm(env)
+    def generate_code_asm(self, env, get_value=True):
+        s = self.expr.generate_code_asm(env, get_value)
         if self.itemtype.is_array():
             env.add_variable(self.ident, None, self.no_line, self.pos, fun_param=False)
         env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
@@ -83,7 +83,7 @@ class NoInitItem(ItemBase):
 
         return s
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         s = ""
         env.add_variable(self.ident, self.itemtype, self.no_line, self.pos, fun_param=False)
         if self.itemtype == Type("string"):

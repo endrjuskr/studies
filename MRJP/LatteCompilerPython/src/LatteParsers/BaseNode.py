@@ -22,5 +22,5 @@ class BaseNode(object):
     def generate_footer(self):
         return ""
 
-    def generate_code_asm(self, env):
+    def generate_code_asm(self, env, get_value=True):
         return ""
