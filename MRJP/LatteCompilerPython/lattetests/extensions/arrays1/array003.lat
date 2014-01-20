@@ -1,6 +1,12 @@
 class list {
   int elem;
   int[] next;
+  list el;
+}
+
+list fun(list a)
+{
+    return a;
 }
 
 int main() {
@@ -8,10 +14,19 @@ int main() {
   list[] b = new list[3];
   b[0] = new list;
   b[0].elem = 10;
+  b[0].el = new list;
+  b[0].el.elem = 12;
+  b[0].el.next = new int[31];
   list t = new list;
+  t.elem = 1;
   t.next = new int[2];
   t.next[1] = 5;
   printInt(t.next[1]);
+  printInt(t.next.length);
   printInt(b[0].elem);
+  printInt(b[0].el.elem);
+  printInt(b[0].el.next.length);
+  fun(t).elem = 6;
+  printInt(t.elem);
   return 0;
 }

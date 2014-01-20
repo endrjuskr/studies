@@ -5,8 +5,6 @@ for i in $( cd lattetests/bad && ls *.lat); do
 	if [[ "ERROR" != $(head -n 1 "test.err") ]]; then
         echo error in $i
     fi
-    cat test.err
-    cat test.out
     rm *.err
     rm *.out
 done

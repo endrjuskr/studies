@@ -51,11 +51,7 @@ class ClassDef(BaseNode):
         self.extlist = extlist
         self.derived = False
         self.size_s = 0
-        for f in self.fieldpositions:
-            v = self.fieldlist[f]
-            if v.field_type.is_array():
-                self.size_s += 1
-            self.size_s += 1
+        self.vis = False
 
     def prepare_env(self, env):
         env.add_variable("self", Type(self.ident), 0, 0)
@@ -63,24 +59,36 @@ class ClassDef(BaseNode):
             v = self.fieldlist[f]
             if v.field_type.is_array():
                 env.add_variable(v.ident, None, 0, 0)
-            env.add_variable(v.ident, v.field_type, v.no_line, v.pos)
+            env.add_variable(v.ident, v.field_type, v.no_line, v.pos, is_field=True)
 
     def get_size(self):
         return self.size_s
 
     def get_derived(self, env):
+        if self.vis:
+            exception_list_fn.append(SyntaxException("Cycle in inheritance.", 0))
+            return None
         if self.derived:
             return
+        self.vis = True
         self.derived = True
         if len(self.extlist) != 0:
             cl = env.get_class(self.extlist[0])
             if cl is not None:
                 cl.get_derived(env)
-                self.fieldpositions += cl.fieldpositions
+                self.fieldpositions = cl.fieldpositions + self.fieldpositions
                 for k, v in cl.fieldlist.iteritems():
                     self.fieldlist[k] = v
                 for k, v in cl.methodslist.iteritems():
+                    if k in self.methodslist:
+                        exception_list_fn.append(SyntaxException("Overriding method is not possible - " + k, 0))
                     self.methodslist[k] = v
+        for f in self.fieldpositions:
+            v = self.fieldlist[f]
+            if v.field_type.is_array():
+                self.size_s += 1
+            self.size_s += 1
+        self.vis = False
 
     def get_field_position(self, ident):
         index = 0
@@ -94,8 +102,11 @@ class ClassDef(BaseNode):
 
 
     def type_check(self, env):
+        env_p = Env(env)
         for fn in self.methodslist.values():
-            env_prim = Env(env)
+            env_p.add_fun(fn)
+        for fn in self.methodslist.values():
+            env_prim = Env(env_p)
             self.prepare_env(env_prim)
             fn.type_check(env_prim)
 
@@ -155,6 +166,8 @@ class FnDef(BaseNode):
                 exception_list_fn.append(ReturnException(self.ident, self.no_line))
 
     def prepare_env(self, env):
+        #if self.is_class_method:
+        #    env.add_variable("self", Type(self.class_id), 0, 0)
         for arg in self.arglist:
             if arg.argtype.is_array():
                 env.add_variable(arg.ident, None, 0, 0)
@@ -267,6 +280,9 @@ class Program(BaseNode):
 
         for classdef in filter(lambda x: hasattr(x, "methodslist"), self.topdeflist):
             classdef.get_derived(env)
+
+        if len(exception_list_fn) > 0:
+            return
 
         for fndef in filter(lambda x: not hasattr(x, "methodslist"), self.topdeflist):
             self.fun_check(fndef, env)

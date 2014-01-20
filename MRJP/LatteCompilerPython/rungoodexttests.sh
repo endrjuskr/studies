@@ -28,10 +28,10 @@ for i in $( cd lattetests/extensions/arrays1 && ls *.lat); do
         echo error in $i
         cat test.err
     fi
-    cat test.err
     ./lattetests/extensions/arrays1/a.out < lattetests/extensions/arrays1/"${i%%.*}".input > lattetests/extensions/arrays1/"${i%%.*}".test.output
 
     # To see error code add - ; echo $?
+    echo $i
     diff lattetests/extensions/arrays1/"${i%%.*}".output lattetests/extensions/arrays1/"${i%%.*}".test.output
 done
     rm -f *.err
@@ -54,6 +54,7 @@ for i in $( cd lattetests/extensions/struct && ls *.lat); do
     ./lattetests/extensions/struct/a.out < lattetests/extensions/struct/"${i%%.*}".input > lattetests/extensions/struct/"${i%%.*}".test.output
 
     # To see error code add - ; echo $?
+    echo $i
     diff lattetests/extensions/struct/"${i%%.*}".output lattetests/extensions/struct/"${i%%.*}".test.output
 done
     rm -f *.err
@@ -76,6 +77,7 @@ if [[ "OK" != $(head -n 1 "test.err") ]]; then
     ./lattetests/extensions/objects1/a.out < lattetests/extensions/objects1/"${i%%.*}".input > lattetests/extensions/objects1/"${i%%.*}".test.output
 
     # To see error code add - ; echo $?
+    echo $i
     diff lattetests/extensions/objects1/"${i%%.*}".output lattetests/extensions/objects1/"${i%%.*}".test.output
 done
     rm -f *.err

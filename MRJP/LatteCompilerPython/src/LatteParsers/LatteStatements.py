@@ -60,7 +60,6 @@ class VarAssStmt(StmtBase):
         if self.idtype.is_array():
             env.decrement_stack()
 
-        #Zakladamy, ze na stosie jest wynik i nic poza tym nie ma. Zatem zdejmujemy i mozemy normalnie odwolywac sie do zmiennych.
         s += "pop rbx\n"
         s += "pop rax\n"
         if self.idtype.is_array():
@@ -290,7 +289,7 @@ class IncrStmt(StmtBase):
 
     def generate_code_asm(self, env, get_value=True):
         s = self.ident.generate_code_asm(env, get_value=False)
-        s += "pop rax\n"
+        s += "incr_" + str(self.no_line) + ":\npop rax\n"
         s += "inc qword [rax]\n"
         return s
 
