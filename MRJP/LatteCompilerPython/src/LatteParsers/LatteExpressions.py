@@ -233,7 +233,6 @@ class EApp(ZeroArgExpr):
                                   + str(len(self.exprlist)) + ".", self.no_line, pos=self.pos))
 
         for i in range(min(len(self.exprlist), len(self.etype.params_types))):
-            print(self.exprlist[i])
             self.exprlist[i].type_check(env, self.etype.params_types[i])
 
     def generate_body(self, env):
@@ -267,6 +266,9 @@ class EApp(ZeroArgExpr):
                 s += "push rbx\n"
             s += "push rax\n"
         return s
+
+    def get_id(self):
+        return [self.funident]
 
 
 class EMethodApp(ZeroArgExpr):
@@ -305,7 +307,7 @@ class EMethodApp(ZeroArgExpr):
     def generate_code_asm(self, env, get_value=True):
         s = ""
         shift = 8
-        self.objident.generate_code_asm(env, get_value)
+        s += self.objident.generate_code_asm(env, True)
         env.increment_stack()
         for expr in self.exprlist:
             s += expr.generate_code_asm(env, get_value)
@@ -320,12 +322,17 @@ class EMethodApp(ZeroArgExpr):
                 shift += 8
         s += "call o_" + self.funident + "\n"
         env.stack_shift -= shift
+        s += "add rsp, " + str(shift) + "\n"
         if self.etype.return_type != Type("void"):
             if self.etype.return_type.is_array():
                 s += "push rbx\n"
             s += "push rax\n"
-        s += "add rsp, " + str(shift) + "\n"
         return s
+
+    def get_id(self):
+        t = self.objident.get_id()
+        t.append(self.funident)
+        return t
 
 
 class ELitBoolean(ZeroArgExpr):
@@ -397,12 +404,16 @@ class EObjectField(ZeroArgExpr):
 
     def generate_code_asm(self, env, get_value=True):
         s = self.obj.generate_code_asm(env, True)
-        s += "object_field_" + str(self.pos) + ":\n"
+        s += "object_field_" + str(self.pos) + "_" + str(self.no_line) + ":\n"
         s += "pop rax\n"
-        if self.etype.is_array():
+        if self.field == "length":
             return s
         else:
             s += "add rax, " + str(env.get_field_position(self.etype.type, self.field)) + "\n"
+            if get_value and env.get_field_type(self.etype.type, self.field).is_array():
+                s += "mov rbx, rax\n"
+                s += "add rbx, 8\n"
+                s += "push qword [rbx]\n"
         if get_value:
             s += "push qword [rax]\n"
         else:
@@ -668,17 +679,22 @@ class EVar(ZeroArgExpr):
             return "iload " + str(env.get_variable_value([self.value])) + "\n"
 
     def generate_code_asm(self, env, get_value=True):
-        s = ""
+        s = "evar_" + str(self.pos) + "_" + str(self.no_line) + ":\n"
         if env.is_field(self.value):
             s += "mov rax, rsp\n"
             s += "add rax, " + str(env.get_variable_position("self")) + "\n"
             s += "mov rbx, qword [rax]\n"
             s += "mov rax, rbx\n"
-            if env.get_field_type(env.class_name, self.value).is_array():
+            s += "add rax, " + str(env.get_field_position(env.class_name, self.value)) + "\n"
+            if env.get_field_type(env.class_name, self.value).is_array() and get_value:
                 s += "mov rbx, rax\n"
-                s += "sub rbx, 8\n"
+                s += "add rbx, 8\n"
                 s += "push rbx\n"
-            s += "push qword [rax]\n"
+            if get_value: # and not env.is_array(self.value):
+                s += "push qword [rax]\n"
+            else:
+                s += "push rax\n"
+            return s
         if env.is_array(self.value) and get_value:
             position = env.get_array_length(self.value)
             s += "mov rax, [rsp + " + str(position) + "]\n"
@@ -739,7 +755,7 @@ class EArrayApp(ZeroArgExpr):
         return None
 
     def generate_code_asm(self, env, get_value=True):
-        s = "array_app_" + str(self.pos) + ":\n" + self.index.generate_code_asm(env)
+        s = "array_app_" + str(self.pos) + "_" + str(self.no_line) + ":\n" + self.index.generate_code_asm(env)
         s += "pop rbx\n"
         s += "mov rax, [rsp + " + str(env.get_variable_position(self.value)) + "]\n"
         s += "shl rbx, 3\n" # * 8

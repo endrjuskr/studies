@@ -12,7 +12,7 @@ int main () {
 class Counter {
   int val;
 
-  void incr () {val++; return;}
+  void incr () { val++; return;}
 
   int value () {return val;}
 

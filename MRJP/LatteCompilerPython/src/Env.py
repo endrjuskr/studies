@@ -117,9 +117,10 @@ class Env:
             exception_list_env.append(SyntaxException("Trying override function " + ident + ".", no_line))
         elif not ident in self.var_decl:
             self.var_env[ident] = type
-            self.var_store[ident] = self.variables_counter
+            if not is_field:
+                self.var_store[ident] = self.variables_counter
+                self.variables_counter += 1
             self.var_decl.append(ident)
-            self.variables_counter += 1
         elif fun_param:
             exception_list_env.append(SyntaxException("More than one argument with the name " + ident +
                                   ".", no_line, pos=pos))
@@ -127,17 +128,27 @@ class Env:
             exception_list_env.append(DuplicateDeclarationException(ident, False, no_line, pos))
 
     def get_variable_type(self, ident, ar=True):
+        t = None
         if not ident[0] in self.var_env:
-            return None
-        assert not ident[0] in self.fun_env
-        t = self.var_env[ident[0]]
+            if not ident[0] in self.fun_env:
+                return None
+            else:
+                t = self.fun_env[ident[0]].return_type
+        else:
+            t = self.var_env[ident[0]]
         for ide in ident[1:]:
+            if t is None:
+                return None
             if ide is 0:
                 t = t.array_type
             else:
-                t = self.get_field_type(t.type, ide, ar)
-                if t is None:
-                    return None
+                r = self.get_field_type(t.type, ide, ar)
+                if r is None:
+                    t = self.get_method_type(t.type, ide)
+                    if t is not None:
+                        t = t.return_type
+                else:
+                    t = r
         return t
 
     def get_array_type(self, ident):
@@ -150,6 +161,8 @@ class Env:
         return t
 
     def get_method_type(self, ident, method):
+        if not ident in self.class_env:
+            return None
         return self.class_env[ident].get_method_type(method)
 
     def get_field_type(self, ident, field, ar=True):

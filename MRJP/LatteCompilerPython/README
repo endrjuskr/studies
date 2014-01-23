@@ -34,6 +34,11 @@ Compiler assumption:
 3. Values of variables are not counted during return checking.
 4. Used parser - LALR.
 
+Extensions:
+1. Arrays
+2. Structs
+3. Objects1
+
 
 Note:
 Right now, there are no extensions, so only tests from 'good' and 'bad' folders work.

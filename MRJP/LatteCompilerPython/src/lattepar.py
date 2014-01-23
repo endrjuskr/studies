@@ -173,6 +173,14 @@ def p_methoddef(p):
     'field : type ID LPAREN listarg RPAREN block'
     p[0] = FnDef(p[1], p[2], p[4], p[6], p.lineno(2))
 
+def p_methoddef_o(p):
+    'field : ID ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(Type(p[1]), p[2], p[4], p[6], p.lineno(2))
+
+def p_methoddef_oa(p):
+    'field : ID LARRAY RARRAY ID LPAREN listarg RPAREN block'
+    p[0] = FnDef(ArrayType(Type(p[1])), p[4], p[6], p[8], p.lineno(2))
+
 
 
 # Function definition
