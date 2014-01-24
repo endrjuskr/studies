@@ -2,32 +2,52 @@
 #include <stdlib.h>
 #include <assert.h>
 
+extern void convert_ppm(int*, int, int, int, int);
+
 int main(int argc, char **argv){
+  if (argc != 5)
+  {
+     printf("Usage - original_file destination_file color_component color_change.\n");
+     return 1;
+  }
   FILE * ppm_file = fopen(argv[1], "r");
   FILE * converted_ppm_file = fopen(argv[2], "w+");
+  
+  if(ppm_file == NULL)
+  {
+    printf("Cannot open original file.\n");
+    return 1;
+  }
+  
+  if(converted_ppm_file == NULL)
+  {
+    printf("Cannot open destination file.\n");
+    return 1;
+  }
+  
   int color_component = atoi(argv[3]);
   int color_change = atoi(argv[4]);
+  printf("%d %d\n", color_component, color_change);
   int * image_array;
-  char * line;
-  size_t len = 1028;
-  ssize_t read = 0;
-  int width;
-  int height;
-  int max_size;
+  int width, height, max_size;
+  unsigned char c;
   // Wczytaj typ
-  getline(&line, &len, ppm_file);
+  while((c = fgetc(ppm_file)) != '\n');
   fprintf(converted_ppm_file, "P3\n");
-  getline(&line, &len, ppm_file);
-  fprintf(converted_ppm_file, "%s", line);
+  while((c = fgetc(ppm_file)) != '\n');
   fscanf(ppm_file, "%d %d\n", &width, &height);
   printf("%d %d\n", width, height);
   fprintf(converted_ppm_file, "%d %d\n", width, height);
   fscanf(ppm_file, "%d\n", &max_size);
   printf("%d\n", max_size); 
+  if(color_component > 3 || color_component < 1)
+  {
+    printf("Wrong color component number. It should be between 1 and 3.\n");
+    return 1;
+  }
+  
   fprintf(converted_ppm_file, "%d\n", max_size);
-  image_array = (int *)malloc(sizeof(int) * width * height);
-  unsigned char c;
-  int tmp;
+  image_array = (int *)malloc(sizeof(int) * width * height * 3);
   int i, j;
   for (i = 0; i < height; i++)
   {
@@ -35,25 +55,27 @@ int main(int argc, char **argv){
     {
       int current_component = i * (width * 3) + j * 3;
       fread(&c, 1, 1, ppm_file);
-      printf("1 - %d\n", (int)c);
-      image_array[current_component] = (int)c;
+      image_array[current_component] = c;
       fread(&c, 1, 1, ppm_file);
-      printf("2- %d\n", (int)c);
-      image_array[current_component + 1] = (int)c;
+      image_array[current_component + 1] = c;
       fread(&c, 1, 1, ppm_file);
-      printf("3 - %d\n", (int)c);
-      image_array[current_component + 2] = (int)c;
+      image_array[current_component + 2] = c;
     }
   }
   printf("end of file\n");
   for(i = 0; i<width * height * 3; i++)
   {
-    printf("%d\n", image_array[i]);
+    assert(image_array[i] >= 0);
+  }
+  // Color component to 1, 2 lub 3 ale w convert_ppm uzywamy prostego dodawania wiec tutaj juz przesuniemy.
+  convert_ppm(image_array, width, height, color_component - 1, color_change);
+  for(i = 0; i<width * height * 3; i++)
+  {
     assert(image_array[i] >= 0);
   }
   for(i = 0; i<width * height * 3; i++)
   {
-    fprintf(converted_ppm_file, "%d\n", image_array[i]);
+    fprintf(converted_ppm_file, "%u\n", (unsigned char)image_array[i]);
   }
   fclose(ppm_file);
   fclose(converted_ppm_file);
