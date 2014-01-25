@@ -21,11 +21,12 @@ count_component:
     add r7, r7, r7
     ldr r8, [r0, r7]       @ znajdujemy to w tablicy
 convertion:
+    add r8, r8, r4
 .ifdef ENABLE_STURATION
-    qadd r8, r8, r4        @ nasycenie
-    usat r8, #8, r8  
-.else
-    add r8, r8, r4         @ bez nasycenia
+    cmp r8, #255
+    movgt r8, #255
+    cmp r8, #0
+    movlt r8, #0
 .endif
     str r8, [r0, r7]       @ zapisujemy to do tablicy
 inc_loop:

@@ -76,6 +76,7 @@ int main(int argc, char **argv){
   for(i = 0; i<width * height * 3; i++)
   {
     fprintf(converted_ppm_file, "%u\n", (unsigned char)image_array[i]);
+    //fwrite(image_array + i, sizeof(unsigned char), 1, fp);
   }
   fclose(ppm_file);
   fclose(converted_ppm_file);
