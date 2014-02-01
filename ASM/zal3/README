@@ -1,0 +1,8 @@
+Andrzej Skrodzki 292510
+
+1. Uruchomienie programu:
+./ppm_reader <nazwa pliku oryginalnego> <nazwa pliku docelowego> <numer skladowej> <wartosc>
+
+2. Nasycenie osiaga sie przez zdefiniowanie symbolu ENABLE_SATURATION
+3. Skladowe to R - 1, G - 2, B - 3
+4. 
