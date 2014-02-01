@@ -1,3 +1,5 @@
+/* Andrzej Skrodzki as292510.
+   Programowanie w Asemblerze - zadanie 3. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -33,8 +35,9 @@ int main(int argc, char **argv){
   unsigned char c;
   // Wczytaj typ
   while((c = fgetc(ppm_file)) != '\n');
-  fprintf(converted_ppm_file, "P3\n");
+  fprintf(converted_ppm_file, "P6\n");
   while((c = fgetc(ppm_file)) != '\n');
+  fprintf(converted_ppm_file, "#Modified file by as292510.\n");
   fscanf(ppm_file, "%d %d\n", &width, &height);
   printf("%d %d\n", width, height);
   fprintf(converted_ppm_file, "%d %d\n", width, height);
@@ -67,16 +70,21 @@ int main(int argc, char **argv){
   {
     assert(image_array[i] >= 0);
   }
+  
   // Color component to 1, 2 lub 3 ale w convert_ppm uzywamy prostego dodawania wiec tutaj juz przesuniemy.
   convert_ppm(image_array, width, height, color_component - 1, color_change);
+  
   for(i = 0; i<width * height * 3; i++)
   {
     assert(image_array[i] >= 0);
   }
+  
   for(i = 0; i<width * height * 3; i++)
   {
-    fprintf(converted_ppm_file, "%u\n", (unsigned char)image_array[i]);
+    c = (unsigned char)image_array[i];
+    fwrite(&c, sizeof(unsigned char), 1, converted_ppm_file);
   }
+  
   fclose(ppm_file);
   fclose(converted_ppm_file);
   return 0;

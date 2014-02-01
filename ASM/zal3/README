@@ -3,6 +3,13 @@ Andrzej Skrodzki 292510
 1. Uruchomienie programu:
 ./ppm_reader <nazwa pliku oryginalnego> <nazwa pliku docelowego> <numer skladowej> <wartosc>
 
-2. Nasycenie osiaga sie przez zdefiniowanie symbolu ENABLE_SATURATION
+1a. Plik docelowy i oryginalny powinny byc rozne.
+2. Nasycenie osiaga sie przez zdefiniowanie symbolu ENABLE_SATURATION w pliku ppm_converter. Domyslnie jest ustawiona
 3. Skladowe to R - 1, G - 2, B - 3
-4. 
+4. Zapis pliku jest w fromacie raw, nie ASCII, czyli tak jak w przykladowych plikach.
+5. Zawartosc folderu:
+  - Makefile
+  - ppm_reader.c - czesc w C odpowiadajaca za wczytanie i zapis do nowego pliku
+  - ppm_converter.s - czesc w ASM odpowiadajaca za konwersje
+  - README
+  - kilka malych plikow do testowania
