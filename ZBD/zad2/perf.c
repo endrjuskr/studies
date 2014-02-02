@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	for(i = 1; i <= test_count; i++)
 	{
 		operation_number_in_test = 0;
-		int t = 500000;
+		int t = 20000;
 		gettimeofday(&t1, NULL);
 		while (t--)
 		{
