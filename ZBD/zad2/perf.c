@@ -5,7 +5,7 @@
 
 #define BLOCK_SIZE 1024 * 8 // rozmiar bloku, czyli 8kB
 
-#define READ 1
+// #define READ 1 // Zakomentowac w przypadku testu zapisu
 
 struct timeval t1, t2;
 
@@ -45,16 +45,16 @@ int main(int argc, char** argv)
 	for(i = 1; i <= test_count; i++)
 	{
 		operation_number_in_test = 0;
-		int t = 200000;
+		int t = 500000;
 		gettimeofday(&t1, NULL);
 		while (t--)
 		{
 			picked_block = drand48();
 			fseek(fd, picked_block, SEEK_SET);
 			#ifdef READ
-			fgets(data, BLOCK_SIZE * block_count, fd);
+			fread(data, sizeof(data[0]), sizeof(data) / sizeof(data[0]), fd);
 			#else
-			fgets(data, fd);
+			fwrite(data, sizeof(data[0]), sizeof(data) / sizeof(data[0]), fd);
 			#endif
 			operation_number_in_test++;
 		}
