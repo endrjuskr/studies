@@ -1,0 +1,26 @@
+Andrzej Skrodzki 292510
+ZBD - Zadanie 5
+
+Rozwiazanie zostało wykonane w języku Python i wykorzystało bibliotekę pymongo - http://api.mongodb.org/python/current/.
+
+W celu zainstalowania pymongo należy wykonać następującą isntrukcję:
+pip install pymongo
+
+W rozwiązaniu została użyta zdalna baza, lecz można użyć lokalnej.
+
+Rozwiązanie zawiera następujące pliki:
+1. siatkowka-as292510.pdf - diagram ERD
+2. mongo-connector.py - program łączący się do bazy MongoDB oraz tworzący schemat bazy danych
+
+
+Opis diagramu:
+System będzie dla jednego zespołu, więc Match będzie zawierał tylko referencje do jednej drużyny, czyli przeciwnika.
+Może być kilku trenerów związanych z jednym zespołem, ale tylko ten co nie ma wpisanej end_date, będzie aktualnym trenerem.
+Możemy śledzić każde zagranie i jaki był skład w danym zagraniu.
+W skład wchodzi 6 zawodników i na jakich są pozycjach. Pozycja jest to liczba całkowita, więc będzie to enumerator, bo mamy ograniczoną liczbę pozycji.
+Możemy też śledzić kontuzje graczy.
+
+Uruchomienie rozwiązania:
+W obecnym rozwiązaniu łączę się z bazą - ds027699.mongolab.com:27699/, lecz możemy to zmienić na localhost, jeśli mamy zainstalowane mongodb lokalnie.
+Następnie wykonujemy:
+python mongo-connector.py
