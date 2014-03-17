@@ -16,7 +16,7 @@
 *.lai
 *.la
 *.a
-
+*.json
 # ide files
 MRJP/LatteCompilerPython/.idea/
 
